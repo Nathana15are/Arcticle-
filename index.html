@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>📰 Mon Journal</title>
+<style>
+body{margin:0;font-family:Georgia, serif;background:#f2f2f2;color:#333;}
+header{background:#222;color:#fff;padding:20px;text-align:center;position:sticky;top:0;}
+header h1{margin:0;font-size:2.5em;}
+header select{margin-top:10px;padding:8px;border-radius:6px;border:none;}
+#articles{display:flex;flex-wrap:wrap;justify-content:center;padding:20px;}
+.article{background:white;border-radius:12px;margin:15px;width:300px;box-shadow:0 4px 20px rgba(0,0,0,0.1);overflow:hidden;transition:transform 0.2s;}
+.article:hover{transform:scale(1.03);}
+.article img{width:100%;height:180px;object-fit:cover;}
+.article .text{padding:15px;}
+.article h2{margin:0;font-size:1.4em;color:#222;}
+.article p{margin:10px 0;font-size:0.95em;line-height:1.4;}
+.article small{color:#777;}
+footer{text-align:center;padding:15px;background:#222;color:#aaa;}
+#adminPanel{display:none;padding:20px;background:#e0e0e0;}
+input,textarea,select,button{display:block;width:100%;margin:10px 0;padding:10px;border-radius:8px;border:1px solid #ccc;}
+button{background:#222;color:#fff;cursor:pointer;}
+button:hover{background:#444;}
+.articleItem{border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:10px;background:white;}
+.articleItem img{width:100%;height:150px;object-fit:cover;border-radius:6px;}
+#visitorCounter{margin-top:10px;font-size:1em;color:#fff;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>📰 Mon Journal</h1>
+<select id="sort"><option value="date">📅 Trier par date</option><option value="popularity">⭐ Trier par popularité</option></select>
+<select id="filterTheme"><option value="all">Tous les thèmes</option></select>
+<div id="visitorCounter">Visites totales : 0</div>
+</header>
+
+<main id="articles"></main>
+<footer>✨ Propulsé par SheetDB ✨</footer>
+
+<hr>
+<div id="login">
+<input type="password" id="password" placeholder="Mot de passe">
+<button onclick="checkPassword()">Se connecter</button>
+</div>
+
+<div id="adminPanel">
+<h2>Ajouter / Modifier Article</h2>
+<input type="text" id="title" placeholder="Titre">
+<textarea id="content" placeholder="Contenu"></textarea>
+<input type="text" id="image" placeholder="URL image">
+<input type="number" id="popularity" placeholder="Popularité">
+<input type="date" id="date">
+<input type="text" id="theme" placeholder="Thème">
+<button onclick="addArticle()">Ajouter Article</button>
+<h2>Articles existants</h2>
+<div id="articlesList"></div>
+</div>
+
+<script>
+const API_URL="https://sheetdb.io/api/v1/ki97uz4ffxzca";
+const ADMIN_PASS="Marius2013.";
+
+// Compteur visiteurs global via countapi.xyz
+const counterNamespace = "mon_journal_site_123"; // modifie si tu veux
+const counterKey = "visites";
+
+async function updateVisitorCounter(){
+  const res = await fetch(`https://api.countapi.xyz/hit/${counterNamespace}/${counterKey}`);
+  const data = await res.json();
+  document.getElementById("visitorCounter").textContent = "Visites totales : " + data.value;
+}
+
+// Compteur local (visites sur ce navigateur)
+if(!localStorage.getItem("localVisits")) localStorage.setItem("localVisits", 0);
+localStorage.setItem("localVisits", parseInt(localStorage.getItem("localVisits"))+1);
+
+updateVisitorCounter();
+
+function checkPassword(){
+  if(document.getElementById("password").value===ADMIN_PASS){
+    document.getElementById("login").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    fetchArticles();
+  } else alert("Mot de passe incorrect");
+}
+
+async function fetchArticles(){
+  const res=await fetch(API_URL);
+  const articles=await res.json();
+  const filter=document.getElementById("filterTheme");
+  const themes=[...new Set(articles.map(a=>a.theme))];
+  filter.innerHTML='<option value="all">Tous les thèmes</option>';
+  themes.forEach(t=>filter.innerHTML+=`<option value="${t}">${t}</option>`);
+  displayArticles(articles);
+}
+
+function displayArticles(articles){
+  const container=document.getElementById("articles");
+  container.innerHTML="";
+  const theme=document.getElementById("filterTheme").value;
+  if(theme!=="all") articles=articles.filter(a=>a.theme.toLowerCase()===theme.toLowerCase());
+  const sort=document.getElementById("sort").value;
+  if(sort==="popularity") articles.sort((a,b)=>b.popularity-a.popularity);
+  else articles.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  articles.forEach(a=>{
+    const div=document.createElement("div");
+    div.className="article";
+    div.innerHTML=`<img src="${a.image}" alt=""><div class="text"><h2>${a.title}</h2><p>${a.content}</p><small>⭐ ${a.popularity} | 📅 ${a.date} | 🏷️ ${a.theme}</small></div>`;
+    container.appendChild(div);
+  });
+
+  const adminContainer=document.getElementById("articlesList");
+  if(adminContainer){
+    adminContainer.innerHTML="";
+    articles.forEach(a=>{
+      const div=document.createElement("div");
+      div.className="articleItem";
+      div.innerHTML=`<img src="${a.image}" alt=""><strong>${a.title}</strong> | 🏷️ ${a.theme} | ⭐ ${a.popularity} | 📅 ${a.date} <button onclick="deleteArticle(${a.id})">Supprimer</button><button onclick="editArticle(${a.id}, '${a.title.replaceAll("'", "\\'")}', '${a.content.replaceAll("'", "\\'")}', '${a.image}', ${a.popularity}, '${a.date}', '${a.theme}')">Modifier</button>`;
+      adminContainer.appendChild(div);
+    });
+  }
+}
+
+function editArticle(id,title,content,image,popularity,date,theme){
+  document.getElementById("title").value=title;
+  document.getElementById("content").value=content;
+  document.getElementById("image").value=image;
+  document.getElementById("popularity").value=popularity;
+  document.getElementById("date").value=date;
+  document.getElementById("theme").value=theme;
+  deleteArticle(id);
+}
+
+async function addArticle(){
+  const title=document.getElementById("title").value;
+  const content=document.getElementById("content").value;
+  const image=document.getElementById("image").value;
+  const popularity=document.getElementById("popularity").value;
+  const date=document.getElementById("date").value;
+  const theme=document.getElementById("theme").value;
+  const data={data:{title,content,image,popularity,date,theme}};
+  await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+  alert("Article ajouté !");
+  fetchArticles();
+}
+
+async function deleteArticle(id){
+  await fetch(`${API_URL}/id/${id}`,{method:"DELETE"});
+  fetchArticles();
+}
+
+document.getElementById("sort").addEventListener("change", fetchArticles);
+document.getElementById("filterTheme").addEventListener("change", fetchArticles);
+fetchArticles();
+</script>
+
+</body>
+</html>
