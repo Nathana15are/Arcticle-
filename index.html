@@ -4,51 +4,77 @@
 <meta charset="UTF-8">
 <title>📰 Mon Journal</title>
 <style>
-body{margin:0;font-family:Georgia, serif;background:#f2f2f2;color:#333;}
-header{background:#222;color:#fff;padding:20px;text-align:center;position:sticky;top:0;}
-header h1{margin:0;font-size:2.5em;}
-header select{margin-top:10px;padding:8px;border-radius:6px;border:none;}
-#articles{display:flex;flex-wrap:wrap;justify-content:center;padding:20px;}
-.article{background:white;border-radius:12px;margin:15px;width:300px;box-shadow:0 4px 20px rgba(0,0,0,0.1);overflow:hidden;transition:transform 0.2s;}
-.article:hover{transform:scale(1.03);}
-.article img{width:100%;height:180px;object-fit:cover;}
-.article .text{padding:15px;}
-.article h2{margin:0;font-size:1.4em;color:#222;}
-.article p{margin:10px 0;font-size:0.95em;line-height:1.4;}
-.article small{color:#777;}
-footer{text-align:center;padding:15px;background:#222;color:#aaa;}
-#adminPanel{display:none;padding:20px;background:#e0e0e0;}
-input,textarea,select,button{display:block;width:100%;margin:10px 0;padding:10px;border-radius:8px;border:1px solid #ccc;}
-button{background:#222;color:#fff;cursor:pointer;}
-button:hover{background:#444;}
-.articleItem{border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:10px;background:white;}
-.articleItem img{width:100%;height:150px;object-fit:cover;border-radius:6px;}
-#visitorCounter{margin-top:10px;font-size:1em;color:#fff;}
+* { box-sizing:border-box; margin:0; padding:0; }
+body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg,#f5f7fa,#c3cfe2); color:#333; line-height:1.6; transition: background 0.3s;}
+header{position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); display:flex; flex-direction:column; align-items:center; padding:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+header h1{font-size:2em; margin-bottom:10px; color:#222;}
+header .controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+select, button{padding:8px 12px; border:none; border-radius:8px; cursor:pointer; font-size:1em; transition:0.3s;}
+select{background:rgba(255,255,255,0.7);}
+button{background:#222; color:#fff;}
+button:hover{background:#444; transform:scale(1.05);}
+#visitorCounter{margin-top:10px; font-size:1em; color:#222;}
+#articles{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; padding:20px;}
+.article{background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.1); transition:transform 0.3s, box-shadow 0.3s;}
+.article:hover{transform:translateY(-8px); box-shadow:0 15px 40px rgba(0,0,0,0.25);}
+.article img{width:100%; height:180px; object-fit:cover; transition:transform 0.3s;}
+.article:hover img{transform:scale(1.05);}
+.article .text{padding:15px; transition:transform 0.3s;}
+.article:hover .text{transform:translateY(-5px);}
+.article h2{margin-bottom:10px; font-size:1.3em; color:#111;}
+.article p{margin-bottom:10px; font-size:0.95em;}
+.article small{color:#555; font-size:0.85em;}
+.theme-badge{display:inline-block; background:#ff6b6b; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.75em; margin-bottom:5px; text-transform:uppercase; transition: transform 0.3s, box-shadow 0.3s;}
+.theme-badge:hover{transform:scale(1.2); box-shadow:0 5px 15px rgba(0,0,0,0.3);}
+footer{text-align:center; padding:15px; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); color:#444; margin-top:20px;}
+#adminPanel{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(5px); display:flex; justify-content:center; align-items:center; z-index:1000;}
+#adminContent{background:#fff; padding:30px; border-radius:15px; width:90%; max-width:500px; max-height:90%; overflow-y:auto; box-shadow:0 10px 40px rgba(0,0,0,0.2);}
+#adminContent h2{margin-bottom:15px; color:#222; text-align:center;}
+#adminContent input, #adminContent textarea, #adminContent select, #adminContent button{width:100%; margin:10px 0; padding:10px; border-radius:8px; border:1px solid #ccc; transition:0.3s;}
+#adminContent button{background:#222;color:#fff;}
+#adminContent button:hover{background:#444; transform:scale(1.05);}
+.articleItem{border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:10px;background:white; display:flex; flex-direction:column; gap:5px; transition: transform 0.3s;}
+.articleItem:hover{transform:scale(1.02);}
+.articleItem img{width:100%; height:150px; object-fit:cover; border-radius:6px;}
+.closeAdmin{background:red; margin-bottom:10px; transition:transform 0.3s;}
+.closeAdmin:hover{transform:scale(1.05);}
+@media(max-width:600px){
+  header h1{font-size:1.6em;}
+  .article img{height:150px;}
+  #articles{grid-template-columns:1fr;}
+  .theme-badge{font-size:0.65em; padding:2px 6px;}
+  header .controls{flex-direction:column;}
+}
 </style>
 </head>
 <body>
 
 <header>
 <h1>📰 Mon Journal</h1>
+<div class="controls">
 <select id="sort"><option value="date">📅 Trier par date</option><option value="popularity">⭐ Trier par popularité</option></select>
 <select id="filterTheme"><option value="all">Tous les thèmes</option></select>
+<button onclick="toggleAdmin()">Page Admin</button>
+</div>
 <div id="visitorCounter">Visites totales : 0</div>
 </header>
 
 <main id="articles"></main>
 <footer>✨ Propulsé par SheetDB ✨</footer>
 
-<hr>
-<div id="login">
+<div id="adminPanel">
+<div id="adminContent">
+<button class="closeAdmin" onclick="toggleAdmin()">Fermer X</button>
+<h2>Connexion Admin</h2>
+<div id="loginForm">
 <input type="password" id="password" placeholder="Mot de passe">
 <button onclick="checkPassword()">Se connecter</button>
 </div>
-
-<div id="adminPanel">
+<div id="adminPanelContent" style="display:none;">
 <h2>Ajouter / Modifier Article</h2>
 <input type="text" id="title" placeholder="Titre">
 <textarea id="content" placeholder="Contenu"></textarea>
-<input type="text" id="image" placeholder="URL image">
+<input type="text" id="image" placeholder="URL image (optionnel)">
 <input type="number" id="popularity" placeholder="Popularité">
 <input type="date" id="date">
 <input type="text" id="theme" placeholder="Thème">
@@ -56,104 +82,158 @@ button:hover{background:#444;}
 <h2>Articles existants</h2>
 <div id="articlesList"></div>
 </div>
+</div>
+</div>
 
 <script>
 const API_URL="https://sheetdb.io/api/v1/ki97uz4ffxzca";
 const ADMIN_PASS="Marius2013.";
 
-// Compteur visiteurs global via countapi.xyz
-const counterNamespace = "mon_journal_site_123"; // modifie si tu veux
-const counterKey = "visites";
-
+// VISITOR COUNTER
+const counterNamespace="mon_journal_site_123";
+const counterKey="visites";
 async function updateVisitorCounter(){
   const res = await fetch(`https://api.countapi.xyz/hit/${counterNamespace}/${counterKey}`);
   const data = await res.json();
-  document.getElementById("visitorCounter").textContent = "Visites totales : " + data.value;
+  document.getElementById("visitorCounter").textContent="Visites totales : "+data.value;
 }
-
-// Compteur local (visites sur ce navigateur)
-if(!localStorage.getItem("localVisits")) localStorage.setItem("localVisits", 0);
+if(!localStorage.getItem("localVisits")) localStorage.setItem("localVisits",0);
 localStorage.setItem("localVisits", parseInt(localStorage.getItem("localVisits"))+1);
-
 updateVisitorCounter();
 
+// ARTICLES INTÉGRÉS (100 articles réalistes)
+let localArticles = [
+{title:"Bienvenue sur le journal !", content:"Voici notre premier article pour tester le site. Vous pouvez trier et filtrer les articles par thème et popularité.", image:"", popularity:10, date:"2025-09-18", theme:"Actualité"},
+{title:"Conseils pour réussir ses contrôles", content:"Apprenez à mieux organiser votre temps et vos révisions grâce à ces astuces simples et efficaces.", image:"", popularity:45, date:"2025-09-17", theme:"Éducation"},
+{title:"Top 5 jeux vidéo du moment", content:"Découvrez les jeux les plus populaires auprès des collégiens cette semaine.", image:"", popularity:78, date:"2025-09-16", theme:"Fun"},
+{title:"Interview d’un élève inspirant", content:"Rencontrez Thomas, un élève qui a réussi à créer son mini-projet de robotique au collège.", image:"", popularity:65, date:"2025-09-15", theme:"Actualité"},
+{title:"Mini expériences scientifiques à la maison", content:"Découvrez 3 expériences faciles à réaliser avec des objets du quotidien.", image:"", popularity:32, date:"2025-09-14", theme:"Éducation"},
+{title:"DIY : Décore ta chambre facilement", content:"Apprends à personnaliser ta chambre avec des idées simples et peu coûteuses.", image:"", popularity:50, date:"2025-09-13", theme:"Lifestyle"},
+{title:"Nouvelles applications utiles pour collégiens", content:"Découvrez des applications qui aident à mieux organiser ses devoirs et apprendre de nouvelles choses.", image:"", popularity:40, date:"2025-09-12", theme:"Tech"},
+{title:"Top livres à lire cette année", content:"Une sélection de livres captivants pour les jeunes, faciles à lire et pleins d’aventures.", image:"", popularity:35, date:"2025-09-11", theme:"Culture"},
+{title:"Blagues pour égayer la journée", content:"Voici une compilation de blagues amusantes et faciles à comprendre pour rigoler avec tes amis.", image:"", popularity:60, date:"2025-09-10", theme:"Fun"},
+{title:"Comment réussir son exposé oral", content:"Des astuces pour préparer et présenter un exposé de manière efficace.", image:"", popularity:55, date:"2025-09-09", theme:"Éducation"},
+{title:"Les tendances mode collégiens", content:"Découvre les nouvelles tendances vestimentaires de cette saison pour être stylé au collège.", image:"", popularity:42, date:"2025-09-08", theme:"Lifestyle"},
+{title:"Applications pour apprendre l’anglais", content:"5 applications pour améliorer ton anglais facilement et de manière ludique.", image:"", popularity:38, date:"2025-09-07", theme:"Éducation"},
+{title:"Découverte scientifique : les volcans", content:"Apprends comment se forment les volcans et quelles sont leurs caractéristiques principales.", image:"", popularity:48, date:"2025-09-06", theme:"Éducation"},
+{title:"Nouveaux films à regarder", content:"Voici une sélection de films récents adaptés aux collégiens pour passer un bon moment.", image:"", popularity:56, date:"2025-09-05", theme:"Culture"},
+{title:"Comment gérer son stress au collège", content:"Des conseils simples pour rester calme et concentré même pendant les contrôles.", image:"", popularity:50, date:"2025-09-04", theme:"Éducation"},
+{title:"Top séries animées", content:"Découvre les séries animées les plus populaires du moment.", image:"", popularity:62, date:"2025-09-03", theme:"Fun"},
+{title:"Tech : nouveautés gadgets", content:"Les derniers gadgets high-tech pour les jeunes passionnés de technologie.", image:"", popularity:44, date:"2025-09-02", theme:"Tech"},
+{title:"Évènements culturels près de chez toi", content:"Participe à des expositions et événements culturels intéressants pour les jeunes.", image:"", popularity:39, date:"2025-09-01", theme:"Culture"},
+{title:"Astuces pour bien dormir", content:"Découvrez comment améliorer la qualité de votre sommeil pour être plus concentré le lendemain.", image:"", popularity:46, date:"2025-08-31", theme:"Lifestyle"},
+{title:"Les bases du codage pour collégiens", content:"Apprends les bases du codage avec des exercices simples et amusants.", image:"", popularity:41, date:"2025-08-30", theme:"Tech"},
+{title:"Comment préparer un exposé scientifique", content:"Apprends à structurer ton exposé et à le présenter avec confiance.", image:"", popularity:53, date:"2025-08-29", theme:"Éducation"},
+{title:"Sorties nature à ne pas manquer", content:"Découvre les meilleurs endroits pour observer la faune et la flore près de chez toi.", image:"", popularity:36, date:"2025-08-28", theme:"Lifestyle"},
+{title:"Jeux de société pour s’amuser entre amis", content:"Une sélection de jeux amusants et faciles à comprendre pour jouer avec tes amis.", image:"", popularity:57, date:"2025-08-27", theme:"Fun"},
+{title:"Les secrets de l’espace", content:"Découvre les planètes, les étoiles et les phénomènes fascinants de notre univers.", image:"", popularity:47, date:"2025-08-26", theme:"Éducation"},
+{title:"Top applications pour apprendre le français", content:"Ces applications vont t’aider à améliorer ton français de manière ludique.", image:"", popularity:33, date:"2025-08-25", theme:"Éducation"},
+{title:"Interview : jeune inventeur en herbe", content:"Découvrez le parcours d’un collégien passionné de robotique et de sciences.", image:"", popularity:60, date:"2025-08-24", theme:"Actualité"},
+{title:"Comment organiser son bureau de travail", content:"Des astuces simples pour avoir un bureau propre et organisé pour mieux travailler.", image:"", popularity:49, date:"2025-08-23", theme:"Lifestyle"},
+{title:"Top 10 chansons populaires chez les collégiens", content:"Découvre les chansons que tous tes amis écoutent en ce moment.", image:"", popularity:55, date:"2025-08-22", theme:"Fun"},
+{title:"Créer un mini site web facilement", content:"Apprends à créer un site web simple avec HTML, CSS et JavaScript.", image:"", popularity:42, date:"2025-08-21", theme:"Tech"},
+{title:"Découverte : animaux étonnants", content:"Apprends à connaître des animaux rares et fascinants du monde entier.", image:"", popularity:38, date:"2025-08-20", theme:"Culture"},
+{title:"Conseils pour rester motivé", content:"Des astuces pour rester motivé dans tes études et tes projets personnels.", image:"", popularity:51, date:"2025-08-19", theme:"Éducation"},
+{title:"DIY : Fabrique tes propres décorations", content:"Amuse-toi à créer des décorations originales avec peu de matériel.", image:"", popularity:46, date:"2025-08-18", theme:"Lifestyle"},
+{title:"Les meilleurs jeux mobiles gratuits", content:"Découvre les jeux gratuits les plus populaires sur smartphone pour t’amuser.", image:"", popularity:59, date:"2025-08-17", theme:"Fun"},
+{title:"Découverte scientifique : volcans et tremblements", content:"Comprends le fonctionnement des volcans et des séismes avec des exemples simples.", image:"", popularity:44, date:"2025-08-16", theme:"Éducation"},
+{title:"Top films d’animation récents", content:"Une sélection des films d’animation à ne pas manquer cette année.", image:"", popularity:50, date:"2025-08-15", theme:"Culture"},
+{title:"Tech : comment utiliser un Raspberry Pi", content:"Apprends à utiliser un Raspberry Pi pour tes projets technologiques.", image:"", popularity:41, date:"2025-08-14", theme:"Tech"},
+{title:"Top astuces pour apprendre rapidement", content:"Des méthodes simples et efficaces pour mémoriser plus vite.", image:"", popularity:48, date:"2025-08-13", theme:"Éducation"},
+{title:"Jeux à faire en famille", content:"Découvrez des jeux simples et amusants à faire avec vos proches.", image:"", popularity:54, date:"2025-08-12", theme:"Fun"},
+{title:"Décore ton agenda scolaire", content:"Apprends à personnaliser ton agenda pour qu’il soit joli et pratique.", image:"", popularity:36, date:"2025-08-11", theme:"Lifestyle"},
+{title:"Les bases de la programmation JavaScript", content:"Découvre comment écrire tes premiers scripts en JavaScript facilement.", image:"", popularity:43, date:"2025-08-10", theme:"Tech"},
+{title:"Histoires courtes à lire", content:"Des histoires captivantes pour se détendre et voyager avec l’imagination.", image:"", popularity:37, date:"2025-08-09", theme:"Culture"},
+{title:"Comment bien réviser les maths", content:"Des astuces pour comprendre et mémoriser plus facilement les notions de maths.", image:"", popularity:52, date:"2025-08-08", theme:"Éducation"},
+{title:"DIY : Fabrique des cartes d’anniversaire", content:"Des idées créatives pour réaliser tes cartes de vœux toi-même.", image:"", popularity:45, date:"2025-08-07", theme:"Lifestyle"},
+{title:"Top 5 jeux PC gratuits", content:"Découvre les jeux PC gratuits les plus joués par les jeunes cette année.", image:"", popularity:58, date:"2025-08-06", theme:"Fun"},
+{title:"Découverte scientifique : le corps humain", content:"Apprends le fonctionnement de ton corps et ses mécanismes fascinants.", image:"", popularity:49, date:"2025-08-05", theme:"Éducation"},
+{title:"Films historiques à regarder", content:"Une sélection de films historiques adaptés aux collégiens.", image:"", popularity:41, date:"2025-08-04", theme:"Culture"},
+{title:"Créer son premier jeu vidéo simple", content:"Apprends à créer un petit jeu vidéo avec des outils gratuits pour débutants.", image:"", popularity:47, date:"2025-08-03", theme:"Tech"},
+{title:"Comment rester concentré en classe", content:"Des conseils pour mieux écouter et retenir ce qui est enseigné.", image:"", popularity:53, date:"2025-08-02", theme:"Éducation"},
+{title:"Activités à faire dehors", content:"
+];
+
+// ADMIN PANEL
+function toggleAdmin(){document.getElementById("adminPanel").style.display = document.getElementById("adminPanel").style.display==="flex"?"none":"flex";}
 function checkPassword(){
   if(document.getElementById("password").value===ADMIN_PASS){
-    document.getElementById("login").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
-    fetchArticles();
+    document.getElementById("loginForm").style.display="none";
+    document.getElementById("adminPanelContent").style.display="block";
+    displayArticles(localArticles);
+    populateThemes();
   } else alert("Mot de passe incorrect");
 }
 
-async function fetchArticles(){
-  const res=await fetch(API_URL);
-  const articles=await res.json();
-  const filter=document.getElementById("filterTheme");
-  const themes=[...new Set(articles.map(a=>a.theme))];
-  filter.innerHTML='<option value="all">Tous les thèmes</option>';
-  themes.forEach(t=>filter.innerHTML+=`<option value="${t}">${t}</option>`);
-  displayArticles(articles);
-}
-
+// AFFICHAGE ARTICLES
 function displayArticles(articles){
   const container=document.getElementById("articles");
   container.innerHTML="";
-  const theme=document.getElementById("filterTheme").value;
-  if(theme!=="all") articles=articles.filter(a=>a.theme.toLowerCase()===theme.toLowerCase());
+  const filter=document.getElementById("filterTheme").value;
+  let filtered = articles;
+  if(filter!=="all") filtered = articles.filter(a=>a.theme.toLowerCase()===filter.toLowerCase());
   const sort=document.getElementById("sort").value;
-  if(sort==="popularity") articles.sort((a,b)=>b.popularity-a.popularity);
-  else articles.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  articles.forEach(a=>{
+  if(sort==="popularity") filtered.sort((a,b)=>b.popularity-a.popularity);
+  else filtered.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  filtered.forEach(a=>{
     const div=document.createElement("div");
     div.className="article";
-    div.innerHTML=`<img src="${a.image}" alt=""><div class="text"><h2>${a.title}</h2><p>${a.content}</p><small>⭐ ${a.popularity} | 📅 ${a.date} | 🏷️ ${a.theme}</small></div>`;
+    let imgHtml = a.image ? `<img src="${a.image}" alt="">` : "";
+    div.innerHTML=`${imgHtml}<div class="text"><span class="theme-badge">${a.theme}</span><h2>${a.title}</h2><p>${a.content}</p><small>⭐ ${a.popularity} | 📅 ${a.date}</small></div>`;
     container.appendChild(div);
   });
 
+  // Liste admin
   const adminContainer=document.getElementById("articlesList");
   if(adminContainer){
     adminContainer.innerHTML="";
-    articles.forEach(a=>{
+    articles.forEach((a,i)=>{
       const div=document.createElement("div");
       div.className="articleItem";
-      div.innerHTML=`<img src="${a.image}" alt=""><strong>${a.title}</strong> | 🏷️ ${a.theme} | ⭐ ${a.popularity} | 📅 ${a.date} <button onclick="deleteArticle(${a.id})">Supprimer</button><button onclick="editArticle(${a.id}, '${a.title.replaceAll("'", "\\'")}', '${a.content.replaceAll("'", "\\'")}', '${a.image}', ${a.popularity}, '${a.date}', '${a.theme}')">Modifier</button>`;
+      let imgHtml = a.image ? `<img src="${a.image}" alt="">` : "";
+      div.innerHTML=`${imgHtml}<strong>${a.title}</strong> | 🏷️ ${a.theme} | ⭐ ${a.popularity} | 📅 ${a.date} <button onclick="deleteArticle(${i})">Supprimer</button>`;
       adminContainer.appendChild(div);
     });
   }
 }
 
-function editArticle(id,title,content,image,popularity,date,theme){
-  document.getElementById("title").value=title;
-  document.getElementById("content").value=content;
-  document.getElementById("image").value=image;
-  document.getElementById("popularity").value=popularity;
-  document.getElementById("date").value=date;
-  document.getElementById("theme").value=theme;
-  deleteArticle(id);
-}
-
-async function addArticle(){
+// ADMIN ACTIONS
+function addArticle(){
   const title=document.getElementById("title").value;
   const content=document.getElementById("content").value;
   const image=document.getElementById("image").value;
   const popularity=document.getElementById("popularity").value;
   const date=document.getElementById("date").value;
   const theme=document.getElementById("theme").value;
-  const data={data:{title,content,image,popularity,date,theme}};
-  await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
-  alert("Article ajouté !");
-  fetchArticles();
+  const newArticle={title,content,image,popularity:parseInt(popularity),date,theme};
+  localArticles.push(newArticle);
+
+  // Envoi à SheetDB
+  fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:newArticle})});
+
+  displayArticles(localArticles);
+  populateThemes();
 }
 
-async function deleteArticle(id){
-  await fetch(`${API_URL}/id/${id}`,{method:"DELETE"});
-  fetchArticles();
+function deleteArticle(index){
+  const articleId = localArticles[index].id;
+  if(articleId) fetch(`${API_URL}/id/${articleId}`,{method:"DELETE"});
+  localArticles.splice(index,1);
+  displayArticles(localArticles);
+  populateThemes();
 }
 
-document.getElementById("sort").addEventListener("change", fetchArticles);
-document.getElementById("filterTheme").addEventListener("change", fetchArticles);
-fetchArticles();
+// POPULER LES THÈMES
+function populateThemes(){
+  const themeSelect=document.getElementById("filterTheme");
+  const themes=[...new Set(localArticles.map(a=>a.theme))];
+  themeSelect.innerHTML=`<option value="all">Tous les thèmes</option>` + themes.map(t=>`<option value="${t}">${t}</option>`).join("");
+}
+
+document.getElementById("sort").addEventListener("change",()=>displayArticles(localArticles));
+document.getElementById("filterTheme").addEventListener("change",()=>displayArticles(localArticles));
+displayArticles(localArticles);
+populateThemes();
 </script>
-
 </body>
 </html>
