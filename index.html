@@ -90,11 +90,6 @@ async function updateVisitorCounter(){
 }
 updateVisitorCounter();
 
-// ARTICLES (exemple 10, tu peux ajouter tes 100)
-let localArticles = [
-
-];
-
 // ADMIN PANEL
 function toggleAdmin(){
   const panel=document.getElementById("adminPanel");
@@ -106,12 +101,24 @@ function checkPassword(){
   if(pass===ADMIN_PASS){
     document.getElementById("loginForm").style.display="none";
     document.getElementById("adminPanelContent").style.display="block";
-    displayArticles(localArticles);
-    populateThemes();
+    fetchArticles();
   } else alert("Mot de passe incorrect");
 }
 
-// AFFICHAGE ARTICLES
+// FETCH ARTICLES
+async function fetchArticles(){
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    displayArticles(data);
+    populateThemes(data);
+    displayAdminArticles(data);
+  } catch(err){
+    console.error("Erreur lors du chargement des articles :", err);
+  }
+}
+
+// DISPLAY ARTICLES
 function displayArticles(articles){
   const container=document.getElementById("articles");
   container.innerHTML="";
@@ -130,33 +137,70 @@ function displayArticles(articles){
   });
 }
 
-// ADMIN ACTIONS
-function addArticle(){
+// POPULATE THEME FILTER
+function populateThemes(articles){
+  const themeSelect=document.getElementById("filterTheme");
+  const themes=[...new Set(articles.map(a=>a.theme))];
+  themeSelect.innerHTML=`<option value="all">Tous les thèmes</option>`+themes.map(t=>`<option value="${t}">${t}</option>`).join("");
+}
+
+// ADD ARTICLE
+async function addArticle(){
   const title=document.getElementById("title").value;
   const content=document.getElementById("content").value;
   const image=document.getElementById("image").value;
   const popularity=document.getElementById("popularity").value;
   const date=document.getElementById("date").value;
   const theme=document.getElementById("theme").value;
-  const newArticle={title,content,image,popularity:parseInt(popularity),date,theme};
-  localArticles.push(newArticle);
-  displayArticles(localArticles);
-  populateThemes();
+
+  const newArticle = {data:{title,content,image,popularity,date,theme}};
+  try {
+    await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(newArticle)});
+    alert("Article ajouté !");
+    fetchArticles();
+  } catch(err){console.error("Erreur ajout article :", err);}
 }
 
-// FILTRES
-function populateThemes(){
-  const themeSelect=document.getElementById("filterTheme");
-  const themes=[...new Set(localArticles.map(a=>a.theme))];
-  themeSelect.innerHTML=`<option value="all">Tous les thèmes</option>`+themes.map(t=>`<option value="${t}">${t}</option>`).join("");
+// DISPLAY ADMIN LIST
+function displayAdminArticles(articles){
+  const list=document.getElementById("articlesList");
+  list.innerHTML="";
+  articles.forEach(a=>{
+    const div=document.createElement("div");
+    div.className="articleItem";
+    div.innerHTML=`<strong>${a.title}</strong>
+      <button onclick="editArticle('${a.id}')">Modifier</button>
+      <button onclick="deleteArticle('${a.id}')">Supprimer</button>`;
+    list.appendChild(div);
+  });
 }
 
-document.getElementById("sort").addEventListener("change",()=>displayArticles(localArticles));
-document.getElementById("filterTheme").addEventListener("change",()=>displayArticles(localArticles));
+// EDIT ARTICLE
+async function editArticle(id){
+  const title=prompt("Nouveau titre :");
+  const content=prompt("Nouveau contenu :");
+  if(!title || !content) return;
+  const updated={data:{title,content}};
+  try {
+    await fetch(`${API_URL}/id/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)});
+    alert("Article modifié !");
+    fetchArticles();
+  } catch(err){console.error("Erreur mise à jour :", err);}
+}
 
-// INITIALISATION
-displayArticles(localArticles);
-populateThemes();
+// DELETE ARTICLE
+async function deleteArticle(id){
+  if(!confirm("Voulez-vous vraiment supprimer cet article ?")) return;
+  try {
+    await fetch(`${API_URL}/id/${id}`,{method:"DELETE"});
+    alert("Article supprimé !");
+    fetchArticles();
+  } catch(err){console.error("Erreur suppression :", err);}
+}
+
+// EVENT LISTENERS
+document.getElementById("sort").addEventListener("change",()=>fetchArticles());
+document.getElementById("filterTheme").addEventListener("change",()=>fetchArticles());
 </script>
 </body>
 </html>
