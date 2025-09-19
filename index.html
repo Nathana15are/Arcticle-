@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur de Citations</title>
+<title>Générateur de Citations Ultra Complet</title>
 <style>
 body{margin:0;padding:20px;font-family:'Arial',sans-serif;background:#f0f0f0;display:flex;flex-direction:column;align-items:center;}
 .container{background:white;padding:20px;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.1);width:320px;text-align:center;}
@@ -16,7 +16,7 @@ select,button{padding:10px;margin:5px;border-radius:5px;border:1px solid #ccc;cu
 </head>
 <body>
 <div class="container">
-<h1>🎯 Générateur de Citations</h1>
+<h1>🎯 Générateur de Citations Ultra Complet</h1>
 <select id="themeSelect">
   <option value="nature">Nature</option>
   <option value="technology">Technologie</option>
@@ -30,37 +30,135 @@ select,button{padding:10px;margin:5px;border-radius:5px;border:1px solid #ccc;cu
 </div>
 
 <script>
-// Citations par thème
+// 50 citations par thème
 const quotesByTheme={
-  nature:["La nature ne fait rien en vain.","Le monde est un livre et ceux qui ne voyagent pas n'en lisent qu'une page.","Respire la nature pour apaiser ton esprit."],
-  technology:["La technologie distingue un leader d'un suiveur.","L'innovation est le moteur de l'avenir.","Chaque code écrit est une petite révolution."],
-  love:["L'amour est la seule réalité.","Aimer, c'est savoir dire je t'aime sans parler.","Le vrai amour se voit dans les gestes."],
-  life:["La vie est ce qui se passe pendant que nous faisons d'autres projets.","Vivez comme si vous deviez mourir demain.","Chaque jour est une nouvelle chance."]
+  nature:[
+    "La nature ne fait rien en vain.","Le monde est un livre et ceux qui ne voyagent pas n'en lisent qu'une page.","Respire la nature pour apaiser ton esprit.",
+    "Chaque arbre est une leçon de vie.","Les fleurs sont les sourires de la terre.","La nature est le meilleur des remèdes.",
+    "Écoute le vent et comprends la vie.","Les montagnes nous apprennent la patience.","Chaque rivière a son chemin.",
+    "La forêt nous enseigne la tranquillité.","Marcher dans la nature purifie l'âme.","Le soleil se lève pour tout le monde.",
+    "Le ciel change et nous rappelle l'impermanence.","Respire profondément et sens la vie.","Le chant des oiseaux est une symphonie.",
+    "Les saisons nous enseignent le changement.","Le vent nous raconte des histoires anciennes.","Chaque pierre a son histoire.",
+    "La pluie est un cadeau pour la terre.","Le lever du soleil est une promesse.","La nature est un miroir de notre esprit.",
+    "Les étoiles nous guident dans la nuit.","Chaque jour est une aventure dans la nature.","Les fleurs sauvages sont des trésors.",
+    "La mer a des secrets millénaires.","Le désert enseigne la résilience.","Les feuilles tombent pour renaître.",
+    "Chaque goutte de pluie est précieuse.","La neige transforme le monde en magie.","Les océans nous rappellent notre grandeur.",
+    "La nature est une source infinie d'inspiration.","Les rivières chantent la vie.","Le ciel bleu est un souffle de liberté.",
+    "Les arbres centenaires ont tant à nous apprendre.","Marcher pieds nus sur la terre est un bonheur simple.","Chaque sentier est une invitation.",
+    "Le printemps réveille nos sens.","Les forêts sont des cathédrales de verdure.","Les animaux sont nos compagnons silencieux.",
+    "Le coucher de soleil est un poème visuel.","Chaque nuage raconte une histoire.","La nature est un art vivant.",
+    "La brise légère caresse nos pensées.","Le chant des cigales rythme l'été.","La lune éclaire nos nuits de réflexion.",
+    "Les étoiles filantes exaucent des souhaits.","La nature nous apprend l'humilité.","Les montagnes sont des géants silencieux.",
+    "Le parfum des fleurs emplit nos souvenirs.","La forêt profonde est un sanctuaire.","La pluie douce apaise le cœur."
+  ],
+  technology:[
+    "La technologie distingue un leader d'un suiveur.","L'innovation est le moteur de l'avenir.","Chaque code écrit est une petite révolution.",
+    "Les robots sont les ouvriers du futur.","La technologie transforme nos vies chaque jour.","Le progrès est inévitable.",
+    "L'internet connecte le monde entier.","Chaque invention commence par une idée.","La science et la technologie avancent main dans la main.",
+    "L'IA ouvre des portes inimaginables.","Les gadgets modernes simplifient notre quotidien.","L'information est le pouvoir du XXIe siècle.",
+    "La technologie doit servir l'humain.","Chaque application peut changer la vie.","Les ordinateurs sont des fenêtres vers le monde.",
+    "La programmation est un art.","L'avenir est numérique.","La cybersécurité est essentielle.",
+    "Les réseaux sociaux rapprochent et divisent.","La réalité virtuelle ouvre de nouveaux univers.","Le numérique façonne notre culture.",
+    "Chaque innovation apporte des défis.","Les drones explorent l'inaccessible.","Le futur est programmable.",
+    "Les algorithmes influencent nos vies.","La technologie stimule la créativité.","L'impression 3D change la production.",
+    "Les données sont précieuses.","L'intelligence artificielle apprend de nous.","Chaque pixel compte.",
+    "Les smartphones sont nos compagnons.","La technologie est une extension de l'esprit.","Les logiciels simplifient les tâches complexes.",
+    "Chaque innovation nécessite responsabilité.","Le cloud stocke notre mémoire numérique.","L'électronique est partout.",
+    "L'énergie renouvelable est le futur.","La technologie médicale sauve des vies.","Les puces électroniques sont invisibles mais puissantes.",
+    "La robotique explore de nouvelles frontières.","Les satellites observent notre planète.","Le monde est plus connecté que jamais.",
+    "La technologie change notre façon de penser.","Le codage est une langue universelle.","Chaque invention a une histoire."
+  ],
+  love:[
+    "L'amour est la seule réalité.","Aimer, c'est savoir dire je t'aime sans parler.","Le vrai amour se voit dans les gestes.",
+    "L'amour est patient et généreux.","Le cœur aime sans compter.","L'amour transforme la vie.",
+    "Un sourire peut exprimer l'amour.","L'amour est une aventure sans fin.","Aimer, c'est écouter.",
+    "Les petits gestes sont de grands messages.","L'amour est un langage universel.","Le pardon est une preuve d'amour.",
+    "Chaque rencontre peut être magique.","L'amour rend fort et vulnérable.","Le respect est la base de l'amour.",
+    "Les souvenirs d'amour durent éternellement.","L'amour est un choix quotidien.","Aimer, c'est comprendre.",
+    "Les mots doux sont des caresses du cœur.","L'amour guérit les blessures.","Le partage nourrit l'amour.",
+    "L'amour sincère ne connaît pas la peur.","Chaque regard peut dire je t'aime.","L'amour est un voyage intérieur.",
+    "Le temps passé ensemble est précieux.","L'amour est un trésor à protéger.","L'affection est un feu doux mais constant.",
+    "Les cœurs connectés battent ensemble.","L'amour se construit dans la confiance.","Le désir naît de l'attention.",
+    "L'amour est lumière dans l'obscurité.","Chaque baiser raconte une histoire.","Les mains liées sont un symbole fort.",
+    "L'amour est contagieux et libérateur.","La passion nourrit la vie.","L'amour rend le monde plus doux.",
+    "Un mot gentil peut faire fondre un cœur.","L'amour est un art subtil.","La tendresse est un langage silencieux.",
+    "Les promesses sincères ont de la valeur.","L'amour est un cadeau quotidien.","Chaque étreinte est un poème.",
+    "Les coeurs aimants s'épanouissent ensemble.","L'amour grandit dans la patience.","L'affection se montre dans l'action.",
+    "L'amour est la plus belle des aventures.","Les souvenirs amoureux réchauffent l'âme.","Le vrai amour se reconnaît au quotidien.",
+    "La confiance est la base de toute relation.","Aimer, c'est accepter l'autre pleinement.","L'amour est une danse de deux âmes."
+  ],
+  life:[
+    "La vie est ce qui se passe pendant que nous faisons d'autres projets.","Vivez comme si vous deviez mourir demain.","Chaque jour est une nouvelle chance.",
+    "La patience est une vertu essentielle.","Les erreurs sont des leçons.","Rêver grand est vital.",
+    "Chaque instant compte.","Profitez de chaque moment.","La vie est un voyage, pas une destination.",
+    "Apprendre est un processus sans fin.","Sourire change la journée.","La gratitude transforme la vie.",
+    "Les défis forgent le caractère.","Le courage ouvre des portes.","Chaque expérience est précieuse.",
+    "La simplicité est un art de vie.","Les amis sont des trésors.","Le bonheur se trouve dans les petites choses.",
+    "Chaque matin est un nouveau départ.","La persévérance mène au succès.","L'espoir éclaire les ténèbres.",
+    "La liberté commence dans l'esprit.","La curiosité ouvre de nouvelles perspectives.","La vie est un miroir de nos pensées.",
+    "Écouter est une forme de sagesse.","La joie se partage.","Chaque échec est une opportunité.",
+    "Les souvenirs construisent l'identité.","La bienveillance enrichit l'âme.","Chaque rencontre a un sens.",
+    "La créativité colore la vie.","L'amour de soi est fondamental.","Les passions donnent du sens.",
+    "Vivre pleinement est un choix quotidien.","La résilience est la clé du bonheur.","Chaque sourire est une victoire.",
+    "Le temps est précieux, ne le gaspillez pas.","Les rêves guident l'existence.","La vie est une aventure unique.",
+    "La nature enseigne la patience.","La santé est un trésor.","La sagesse s'acquiert avec l'expérience.",
+    "Le rire est un médicament naturel.","La curiosité enrichit l'esprit.","La confiance en soi est libératrice.",
+    "Le partage est source de bonheur.","La méditation apaise l'esprit.","Chaque jour apporte son enseignement."
+  ]
 };
 
-// Images par thème
+// 10 images par thème
 const imagesByTheme={
   nature:[
     "https://images.pexels.com/photos/34950/pexels-photo.jpg",
     "https://images.pexels.com/photos/326055/pexels-photo.jpg",
-    "https://images.pexels.com/photos/36717/amazing-nature-beautiful-day.jpg"
+    "https://images.pexels.com/photos/36717/amazing-nature-beautiful-day.jpg",
+    "https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg",
+    "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg",
+    "https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg",
+    "https://images.pexels.com/photos/248771/pexels-photo-248771.jpeg",
+    "https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg",
+    "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg",
+    "https://images.pexels.com/photos/158607/cairn-fog-mystical-background-158607.jpeg"
   ],
   technology:[
     "https://images.pexels.com/photos/3861969/pexels-photo.jpg",
     "https://images.pexels.com/photos/1181244/pexels-photo.jpg",
-    "https://images.pexels.com/photos/210394/pexels-photo-210394.jpeg"
+    "https://images.pexels.com/photos/210394/pexels-photo-210394.jpeg",
+    "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg",
+    "https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg",
+    "https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg",
+    "https://images.pexels.com/photos/735911/pexels-photo-735911.jpeg",
+    "https://images.pexels.com/photos/256657/pexels-photo-256657.jpeg",
+    "https://images.pexels.com/photos/1334597/pexels-photo-1334597.jpeg",
+    "https://images.pexels.com/photos/3861972/pexels-photo-3861972.jpeg"
   ],
   love:[
     "https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg",
-    "https://images.pexels.com/photos/256737/pexels-photo-256737.jpeg"
+    "https://images.pexels.com/photos/256737/pexels-photo-256737.jpeg",
+    "https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg",
+    "https://images.pexels.com/photos/433356/pexels-photo-433356.jpeg",
+    "https://images.pexels.com/photos/210869/pexels-photo-210869.jpeg",
+    "https://images.pexels.com/photos/67636/pexels-photo-67636.jpeg",
+    "https://images.pexels.com/photos/236047/pexels-photo-236047.jpeg",
+    "https://images.pexels.com/photos/311039/pexels-photo-311039.jpeg",
+    "https://images.pexels.com/photos/1918299/pexels-photo-1918299.jpeg",
+    "https://images.pexels.com/photos/1003624/pexels-photo-1003624.jpeg"
   ],
   life:[
     "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg",
-    "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg"
+    "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg",
+    "https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg",
+    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+    "https://images.pexels.com/photos/207962/pexels-photo-207962.jpeg",
+    "https://images.pexels.com/photos/301599/pexels-photo-301599.jpeg",
+    "https://images.pexels.com/photos/842544/pexels-photo-842544.jpeg",
+    "https://images.pexels.com/photos/1231231/pexels-photo-1231231.jpeg",
+    "https://images.pexels.com/photos/317157/pexels-photo-317157.jpeg",
+    "https://images.pexels.com/photos/736716/pexels-photo-736716.jpeg"
   ]
 };
 
-// Fonction pour générer citation et image
 function generateQuote(){
   const theme=document.getElementById("themeSelect").value;
   const quotes=quotesByTheme[theme];
@@ -72,7 +170,6 @@ function generateQuote(){
   document.getElementById("image").src=randomImg;
 }
 
-// Fonction mode sombre
 function toggleTheme(){
   document.body.classList.toggle("dark-mode");
 }
