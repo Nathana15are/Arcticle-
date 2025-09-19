@@ -2,43 +2,47 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Générateur de Citations</title>
+  <title>Générateur de Citations Stylé</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    
     body {
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #6e8efb, #a777e3);
-      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 100vh;
       margin: 0;
+      padding: 20px;
+      background: linear-gradient(270deg, #6e8efb, #a777e3, #f7971e, #ffd200);
+      background-size: 800% 800%;
+      animation: gradient 20s ease infinite;
+      color: #fff;
+    }
+
+    @keyframes gradient {
+      0% {background-position:0% 50%;}
+      50% {background-position:100% 50%;}
+      100% {background-position:0% 50%;}
     }
 
     h1 {
       margin-bottom: 20px;
       text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+      text-align: center;
     }
 
-    select, button {
+    select, button, input[type="file"] {
       padding: 12px 20px;
       margin: 10px;
       border: none;
       border-radius: 10px;
       font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.3s all;
     }
-    .card .face {
-  box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(255,255,255,0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.card .face:hover {
-  transform: scale(1.05) rotateY(5deg);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 35px rgba(255,255,255,0.3);
-}
 
     select {
       background: #fff;
@@ -52,7 +56,8 @@
 
     button:hover {
       background: #ff3b2e;
-      transform: scale(1.05);
+      transform: scale(1.1) rotate(-2deg);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
 
     .card {
@@ -60,84 +65,7 @@
       height: 250px;
       perspective: 1000px;
       margin-top: 20px;
-    }
-    body {
-  background: linear-gradient(270deg, #6e8efb, #a777e3, #f7971e, #ffd200);
-  background-size: 800% 800%;
-  animation: gradient 15s ease infinite;
-}
-
-@keyframes gradient {
-  0% {background-position:0% 50%;}
-  50% {background-position:100% 50%;}
-  100% {background-position:0% 50%;}
-}
-    .face .theme {
-  opacity: 0;
-  animation: fadeIn 1s forwards;
-}
-    const colors = ["#ff6f61","#6fe3ff","#ffeb6f","#7fff6f","#e36fff"];
-back.querySelector("p").style.color = colors[Math.floor(Math.random()*colors.length)];
-    
-    button {
-  transition: 0.3s all;
-}
-    
-    <input type="file" id="uploadImage">
-button:hover {
-  transform: scale(1.1) rotate(-2deg);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-    card.classList.toggle("flipped"); // déjà présent dans ton script
-@keyframes fadeIn { to {opacity: 1;} }
-
-    .face {
-      width: 100%;
-      height: 100%;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      position: absolute;
-      backface-visibility: hidden;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      padding: 20px;
-    }
-
-    .face img {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
-    }
-
-    .face p, .face .theme {
       position: relative;
-      z-index: 1;
-      text-align: center;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
-    }
-
-    .face p {
-      font-size: 18px;
-      margin-top: 10px;
-    }
-
-    .face .theme {
-      font-weight: bold;
-      font-size: 22px;
-    }
-
-    .watermark {
-      position: absolute;
-      bottom: 10px;
-      right: 15px;
-      font-size: 16px;
-      opacity: 0.7;
-      z-index: 2;
     }
 
     .inner-card {
@@ -152,12 +80,73 @@ button:hover {
       transform: rotateY(180deg);
     }
 
-    .front, .back {
+    .face {
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 25px rgba(255,255,255,0.2);
+      position: absolute;
+      backface-visibility: hidden;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
       background: rgba(0,0,0,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .front { transform: rotateY(0deg); }
-    .back { transform: rotateY(180deg); }
+    .face:hover {
+      transform: scale(1.05) rotateY(5deg);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 35px rgba(255,255,255,0.3);
+    }
+
+    .face img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .face .theme {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      font-weight: 600;
+      font-size: 22px;
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+    }
+
+    .face p {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 16px;
+      opacity: 0.7;
+      z-index: 2;
+    }
+
+    @keyframes fadeIn { to {opacity: 1;} }
+
+    @media screen and (max-width: 480px){
+      .card { width: 90%; height: auto; }
+      select, button, input[type="file"] { width: 90%; font-size: 14px; }
+      .face p { font-size: 16px; }
+      .face .theme { font-size: 18px; }
+    }
   </style>
 </head>
 <body>
@@ -176,6 +165,8 @@ button:hover {
     <option value="Courage">🦁 Courage</option>
     <option value="Sagesse">🧠 Sagesse</option>
   </select>
+
+  <input type="file" id="uploadImage">
 
   <div>
     <button onclick="generateQuote()">🎲 Générer</button>
@@ -200,21 +191,19 @@ button:hover {
   </div>
 
   <script>
-    // Citations fixes par thème
     const citations={
-      "Amour":["L'amour est la clé de la vie.","Aimer, c'est donner sans rien attendre.","Un cœur sincère vaut mieux que mille promesses."],
-      "Amitié":["Un ami, c'est quelqu'un qui sait tout de toi et qui t'aime quand même.","Les amis sont la famille que l'on choisit.","L'amitié double les joies et réduit de moitié les peines."],
-      "École":["Apprendre, c'est grandir.","Chaque erreur est une leçon déguisée.","La curiosité est le début de la sagesse."],
-      "Motivation":["Ne rêve pas ta vie, vis tes rêves.","Le succès n’est pas final, l’échec n’est pas fatal.","Croire en soi est le premier secret du succès."],
-      "Humour":["Je suis en forme… mais forme de quoi exactement ?","Rire, c’est bon pour la santé.","La vie est courte… alors souris tant que tu as encore des dents !"],
-      "Vie":["Vis chaque jour comme si c'était le dernier.","Profite des petits moments.","Rien n'arrive sans raison."],
-      "Famille":["La famille est tout.","Aime et protège les tiens.","Les liens familiaux sont précieux."],
-      "Succès":["Travaille en silence, laisse ton succès parler.","Rien n’est impossible.","Le succès appartient à ceux qui osent."],
-      "Courage":["Le courage, c’est de continuer malgré la peur.","Ose sortir de ta zone de confort.","Affronte tes peurs pour grandir."],
-      "Sagesse":["Écoute plus que tu ne parles.","Apprends de chaque expérience.","La patience est la clé de la sagesse."]
+      "Amour":["L'amour véritable ne meurt jamais.","Aimer, c'est se donner sans attendre.","Un cœur sincère vaut mieux que mille promesses.","Tomber amoureux rend la vie plus belle.","Chaque geste d'amour compte.","L'amour est la lumière de la vie.","Aimer quelqu'un, c'est accepter ses défauts.","Un sourire partagé est un acte d'amour.","Le véritable amour sait pardonner.","L'amour transforme tout ce qu'il touche."],
+      "Amitié":["Un ami véritable est un trésor.","Les amis sont la famille que l'on choisit.","L'amitié double les joies et réduit les peines.","Un ami est là même dans le silence.","Partager des moments crée des souvenirs.","L'amitié se nourrit de confiance.","Un bon ami écoute sans juger.","Les vrais amis restent malgré la distance.","Avoir un ami, c'est avoir un refuge.","L'amitié rend la vie plus douce."],
+      "École":["Apprendre, c'est grandir chaque jour.","Chaque erreur est une leçon déguisée.","La curiosité est le début de la sagesse.","Étudier ouvre des portes vers l'avenir.","L'école construit le chemin de demain.","Apprendre enrichit l'esprit et le cœur.","Chaque connaissance acquise est un trésor.","L'éducation est un cadeau précieux.","Les leçons d'aujourd'hui sont les succès de demain.","Apprendre rend libre et confiant."],
+      "Motivation":["Ne rêve pas ta vie, vis tes rêves.","Le succès n’est pas final, l’échec n’est pas fatal.","Croire en soi est le premier secret du succès.","Avancer malgré la peur est un vrai courage.","Chaque effort compte vers ton objectif.","Persévérer transforme les obstacles en opportunités.","Se relever après un échec forge le caractère.","Rien n’est impossible à celui qui ose.","Travaille en silence, laisse ton succès parler.","Le courage d'aujourd'hui crée le succès de demain."],
+      "Humour":["Rire est le meilleur des remèdes.","Un sourire peut illuminer une journée.","L'humour rapproche les gens.","Rire de soi-même est un signe de sagesse.","Une blague partagée rend heureux.","L'humour transforme les moments difficiles.","Rire libère l'esprit et le cœur.","Un fou rire est une petite victoire.","Les sourires sont contagieux.","L'humour est l'épice de la vie."],
+      "Vie":["Vis chaque jour comme si c'était le dernier.","Profite des petits moments.","Rien n'arrive sans raison.","La vie est un voyage, pas une destination.","Chaque instant compte.","La vie est belle quand on la savoure.","Les expériences forgent notre chemin.","Apprends à apprécier le présent.","Vivre pleinement est un art.","Chaque jour offre une nouvelle chance."],
+      "Famille":["La famille est un trésor précieux.","Aime et protège les tiens.","Les liens familiaux sont inestimables.","La famille est un refuge sûr.","Soutenir sa famille est un devoir sacré.","Chaque membre apporte sa lumière.","La famille se construit dans l'amour.","Les souvenirs familiaux sont éternels.","Aimer sa famille enrichit l'âme.","La famille est la base de la vie."],
+      "Succès":["Le succès appartient à ceux qui osent.","Rien n’est impossible pour qui persévère.","Travaille dur et reste humble.","Les efforts d'aujourd'hui portent les fruits de demain.","Le succès est une question de constance.","Atteindre ses buts demande courage et patience.","Chaque victoire commence par un premier pas.","La réussite sourit à ceux qui n'abandonnent jamais.","Croire en soi est la clé du succès.","Le succès inspire ceux qui viennent après."],
+      "Courage":["Le courage consiste à avancer malgré la peur.","Affronter ses peurs est la vraie force.","Se relever après un échec montre sa valeur.","Oser est le premier pas vers la réussite.","Chaque défi surmonté renforce l'âme.","Le courage transforme les obstacles en opportunités.","Ne jamais abandonner est un acte de bravoure.","Le courage est la clé de la liberté.","Agir malgré le doute est courageux.","La persévérance est une forme de courage."],
+      "Sagesse":["Écouter avant de parler est un signe de sagesse.","Apprendre de chaque expérience rend sage.","La patience est une vertu précieuse.","La réflexion précède les bonnes décisions.","Comprendre les autres enrichit l'esprit.","La sagesse se cultive avec le temps.","Agir avec discernement est la clé.","Les erreurs d'hier forgent la sagesse de demain.","Savoir attendre est un art.","La connaissance combinée à l'expérience mène à la sagesse."]
     };
 
-    // Générateur automatique
     const genererCitations={
       "Amour":{debuts:["L'amour","Être aimé","Tomber amoureux","Partager un sourire"],milieux:[" est comme une lumière"," est le plus beau cadeau"," illumine la vie"],fins:[" qui ne s'éteint jamais."," qu’on n’oublie jamais."," malgré la distance."]},
       "Amitié":{debuts:["Un ami","L’amitié","Un vrai compagnon"],milieux:[" est une étoile"," est un trésor"," brille dans l’ombre"],fins:[" qui éclaire nos nuits."," que rien ne peut briser."," sans fin."]},
@@ -250,6 +239,17 @@ button:hover {
       typing();
     }
 
+    document.getElementById("uploadImage").addEventListener("change", function(e){
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = function(ev){
+          document.querySelector(".back img").src = ev.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
     function generateQuote(){
       const theme=document.getElementById("themeSelect").value;
       if(!theme || !citations[theme]) return alert("Sélectionne un thème !");
@@ -264,13 +264,20 @@ button:hover {
       const card=document.getElementById("card");
       const front=card.querySelector(".front");
       const back=card.querySelector(".back");
+
+      // couleur aléatoire
+      const colors = ["#ff6f61","#6fe3ff","#ffeb6f","#7fff6f","#e36fff"];
+      const randomColor = colors[Math.floor(Math.random()*colors.length)];
+
       if(!card.classList.contains("flipped")){
         back.querySelector("img").src=imgUrl;
         back.querySelector(".theme").textContent=theme;
+        back.querySelector(".theme").style.color=randomColor;
         typeText(back.querySelector("p"),text);
       }else{
         front.querySelector("img").src=imgUrl;
         front.querySelector(".theme").textContent=theme;
+        front.querySelector(".theme").style.color=randomColor;
         typeText(front.querySelector("p"),text);
       }
       card.classList.toggle("flipped");
