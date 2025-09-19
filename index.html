@@ -3,42 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur de Citations</title>
+<title>Générateur de Citations Aléatoires</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-body{
-  margin:0;padding:20px;font-family:'Poppins',sans-serif;
-  display:flex;flex-direction:column;align-items:center;
-  background: linear-gradient(270deg,#6e8efb,#a777e3,#f7971e,#ffd200);
-  background-size:800% 800%;animation:grad 20s ease infinite;color:#fff;
-}
+body{margin:0;padding:20px;font-family:'Poppins',sans-serif;display:flex;flex-direction:column;align-items:center;
+background: linear-gradient(270deg,#6e8efb,#a777e3,#f7971e,#ffd200);
+background-size:800% 800%;animation:grad 25s ease infinite;color:#fff;transition: background 0.5s, color 0.5s;}
+body.dark{background:linear-gradient(135deg,#232526,#414345);color:#fff;}
 @keyframes grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 h1{text-align:center;font-size:2rem;margin-bottom:15px;text-shadow:0 6px 20px rgba(0,0,0,0.3);}
 .controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:10px;}
-select,input[type=file],button{padding:10px 14px;border-radius:10px;border:0;font-weight:600;font-size:15px;cursor:pointer;}
+select,input[type=file],button,input[type=color]{padding:10px 14px;border-radius:10px;border:0;font-weight:600;font-size:15px;cursor:pointer;}
 select{background:#fff;color:#111;}
 input[type=file]{background:rgba(255,255,255,0.12);color:#fff;}
 button{background:linear-gradient(45deg,#ff6f61,#fbc531);color:#fff;box-shadow:0 8px 20px rgba(0,0,0,0.15);}
 button:hover{transform:scale(1.03);}
-.card-wrap{width:420px;max-width:94%;perspective:1200px;margin-bottom:12px;}
-.card{width:100%;height:270px;position:relative;border-radius:16px;transform-style:preserve-3d;transition:transform .8s;overflow:visible;}
-.card.flipped{transform:rotateY(180deg);}
-.face{position:absolute;inset:0;border-radius:16px;overflow:hidden;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;padding:20px;box-shadow:0 18px 40px rgba(0,0,0,0.35);background:linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35));}
-.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(2px) brightness(0.75);z-index:1;}
-.text-container{position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;}
-.theme{font-weight:700;font-size:20px;margin-bottom:10px;opacity:0;animation:fadeIn .9s forwards;transition:color .35s;}
-.quote{font-size:18px;line-height:1.35;color:#fff;text-shadow:0 6px 20px rgba(0,0,0,0.45);}
-.watermark{position:absolute;bottom:10px;right:12px;z-index:3;font-weight:800;color:rgba(255,255,255,0.85);text-shadow:0 0 8px rgba(0,0,0,0.6);font-size:14px;}
-#history{margin-top:14px;max-height:160px;overflow:auto;width:92%;background:rgba(255,255,255,0.08);border-radius:10px;padding:10px;color:#fff;}
-#history p{margin:6px 0;font-size:14px;opacity:.95;}
-@keyframes fadeIn{to{opacity:1}}
-@media(max-width:460px){.quote{font-size:16px}.face{padding:12px}.card{height:230px}}
+.card-wrap{width:420px;max-width:94%;margin-bottom:12px;perspective:1200px;}
+.card{width:100%;height:280px;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);transition:transform 0.2s ease;}
+.card.portrait{height:480px;}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.7);}
+.card .text-container{position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;}
+.card .theme{font-weight:700;font-size:20px;margin-bottom:10px;color:#fff;text-shadow:0 3px 15px rgba(0,0,0,0.6);}
+.card .quote{font-size:18px;line-height:1.35;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,0.7);}
+.card .watermark{position:absolute;bottom:10px;right:12px;font-weight:800;color:rgba(255,255,255,0.85);text-shadow:0 0 8px rgba(0,0,0,0.6);font-size:14px;}
+@media(max-width:460px){.quote{font-size:16px}.card{height:240px}.card.portrait{height:400px}}
 </style>
 </head>
 <body>
-<h1>✨ Générateur de Citations</h1>
-
+<h1>🎲 Générateur de Citations Aléatoires</h1>
 <div class="controls">
 <select id="themeSelect">
   <option value="">-- Choisis un thème --</option>
@@ -46,32 +38,31 @@ button:hover{transform:scale(1.03);}
   <option value="Amitié">🤝 Amitié</option>
   <option value="Motivation">💪 Motivation</option>
   <option value="Humour">😂 Humour</option>
-  <option value="Vie">🌍 Vie quotidienne</option>
-  <option value="Succès">🎯 Réussite</option>
+  <option value="Vie">🌍 Vie</option>
+  <option value="Succès">🎯 Succès</option>
   <option value="Sagesse">📖 Sagesse</option>
   <option value="Rêves">✨ Rêves</option>
-  <option value="École">📚 Collège / Études</option>
-  <option value="Aléatoire">🤯 Citations aléatoires</option>
+  <option value="École">📚 École</option>
+  <option value="Sport">🏀 Sport</option>
+  <option value="Musique">🎵 Musique</option>
+  <option value="Voyage">✈️ Voyage</option>
+  <option value="Technologie">💻 Technologie</option>
 </select>
-
+<select id="orientationSelect">
+  <option value="landscape">🌄 Paysage</option>
+  <option value="portrait">📱 Portrait</option>
+</select>
+<input id="fontSelect" type="color" title="Couleur du texte">
 <input id="uploadImage" type="file" accept="image/*">
 <button id="genBtn">🎲 Générer</button>
 <button id="surpriseBtn">🎲 Surprise</button>
 <button id="downloadBtn">📥 Télécharger</button>
+<button id="toggleThemeBtn">🌙 Mode Clair/Sombre</button>
 </div>
 
 <div class="card-wrap">
 <div class="card" id="card">
-<div class="face front">
-<img crossOrigin="anonymous" src="">
-<div class="text-container">
-<div class="theme"></div>
-<div class="quote"></div>
-</div>
-<div class="watermark">nth</div>
-</div>
-<div class="face back" style="transform:rotateY(180deg)">
-<img crossOrigin="anonymous" src="">
+<img src="">
 <div class="text-container">
 <div class="theme"></div>
 <div class="quote"></div>
@@ -79,93 +70,77 @@ button:hover{transform:scale(1.03);}
 <div class="watermark">nth</div>
 </div>
 </div>
-</div>
-
-<div id="history"></div>
 
 <script>
-const citations={
-"Amour":["L'amour rend la vie plus belle.","Tomber amoureux illumine l'existence.","Un cœur sincère vaut mieux que mille promesses.","Chaque geste d'amour compte.","L'amour transforme tout.","Aimer quelqu'un, c'est accepter ses défauts.","Un sourire partagé est un acte d'amour.","L'amour véritable ne meurt jamais.","Chaque jour est une chance d'aimer.","L'amour est la lumière de la vie."],
-"Amitié":["Un ami véritable est un trésor.","Les amis sont la famille que l'on choisit.","L'amitié double les joies et réduit les peines.","Partager des moments crée des souvenirs.","Les vrais amis restent malgré la distance.","Un bon ami écoute sans juger.","L'amitié se nourrit de confiance.","Avoir un ami, c'est avoir un refuge.","L'amitié rend la vie plus douce.","Un ami est là même dans le silence."],
-"Motivation":["Ne rêve pas ta vie, vis tes rêves.","Croire en soi est le premier secret du succès.","Persévérer transforme les obstacles en opportunités.","Se relever après un échec forge le caractère.","Chaque effort compte vers ton objectif.","Avancer malgré la peur est un vrai courage.","Rien n’est impossible à celui qui ose.","Travaille en silence, laisse ton succès parler.","Le courage d'aujourd'hui crée le succès de demain.","Le succès n’est pas final, l’échec n’est pas fatal."],
-"Humour":["Rire est le meilleur des remèdes.","Un sourire peut illuminer une journée.","L'humour rapproche les gens.","Rire de soi-même est un signe de sagesse.","Une blague partagée rend heureux.","Rire libère l'esprit et le cœur.","Les sourires sont contagieux.","L'humour est l'épice de la vie.","Un fou rire est une petite victoire.","L'humour transforme les moments difficiles."],
-"Vie":["Vis chaque jour comme si c'était le dernier.","Profite des petits moments.","Rien n'arrive sans raison.","La vie est un voyage, pas une destination.","Chaque instant compte.","Les expériences forgent notre chemin.","La vie est belle quand on la savoure.","Apprends à apprécier le présent.","Vivre pleinement est un art.","Chaque jour offre une nouvelle chance."],
-"Succès":["Le succès appartient à ceux qui osent.","Travaille dur et reste humble.","Les efforts d'aujourd'hui portent les fruits de demain.","Atteindre ses buts demande courage et patience.","Chaque victoire commence par un premier pas.","La réussite sourit à ceux qui n'abandonnent jamais.","Croire en soi est la clé du succès.","Le succès inspire ceux qui viennent après.","Le succès est une question de constance.","Rien n’est impossible pour qui persévère."],
-"Sagesse":["Écouter avant de parler est un signe de sagesse.","La patience est une vertu précieuse.","La sagesse se cultive avec le temps.","Apprendre de chaque expérience rend sage.","Agir avec discernement est la clé.","Comprendre les autres enrichit l'esprit.","Les erreurs d'hier forgent la sagesse de demain.","Savoir attendre est un art.","La connaissance combinée à l'expérience mène à la sagesse.","La réflexion précède les bonnes décisions."],
-"Rêves":["N'abandonne jamais tes rêves.","Rêver grand ouvre des portes.","Chaque rêve mérite qu'on se batte pour lui.","Les rêves sont la lumière de l'esprit.","Ose rêver, ose agir.","Les rêves transforment la réalité.","Croire en ses rêves rend fort.","Rêver permet de grandir.","Les rêves sont le carburant de la vie.","Un rêve partagé devient plus fort."],
-"École":["Apprendre, c'est grandir chaque jour.","Chaque erreur est une leçon déguisée.","La curiosité est le début de la sagesse.","Étudier ouvre des portes vers l'avenir.","L'école construit le chemin de demain.","Apprendre enrichit l'esprit et le cœur.","Chaque connaissance acquise est un trésor.","L'éducation est un cadeau précieux.","Les leçons d'aujourd'hui sont les succès de demain.","Apprendre rend libre et confiant."],
-"Aléatoire":["La vie est pleine de surprises.","Chaque jour est une nouvelle aventure.","Fais ce que tu aimes et aime ce que tu fais.","Un sourire peut changer une journée.","Rien n’est permanent sauf le changement.","Sois toi-même, tous les autres sont déjà pris.","La simplicité est la clé du bonheur.","Chaque instant est précieux.","Apprends à te connaître toi-même.","Crée ta propre légende."]
+const wordsByTheme={
+"Amour":["cœur","passion","amour","sourire","étoile","rêve","ensemble","embrasser","joie","tendresse"],
+"Amitié":["ami","rire","partager","secret","épauler","confiance","soutien","joie","souvenir","ensemble"],
+"Motivation":["réussite","effort","courage","force","objectif","persévérance","progresser","défi","rêve","victoire"],
+"Humour":["rire","blague","sourire","folie","drôle","marrant","gag","humour","amusant","situation"],
+"Vie":["vie","chemin","moment","liberté","aventure","découverte","jour","expérience","instants","souvenir"],
+"Succès":["succès","objectif","victoire","challenge","réussir","passion","ambition","détermination","progrès","triomphe"],
+"Sagesse":["sagesse","connaissance","leçon","réflexion","expérience","vie","conseil","patience","réussite","esprit"],
+"Rêves":["rêve","imagination","espérance","avenir","idée","voler","imaginer","fantaisie","possibilité","ciel"],
+"École":["école","apprendre","prof","devoir","révision","réussite","classe","connaissance","livre","note"],
+"Sport":["sport","énergie","victoire","équipe","entraîneur","challenge","buts","force","sprint","entrainement"],
+"Musique":["musique","chant","instrument","rythme","battement","mélodie","son","harmonie","danse","voix"],
+"Voyage":["voyage","aventure","découverte","destination","carte","plan","explorer","mer","montagne","route"],
+"Technologie":["technologie","ordinateur","code","innovation","appareil","robot","réseau","IA","futur","connexion"]
 };
 
-const card=document.getElementById('card');
-const frontFace=card.querySelector('.face.front');
-const backFace=card.querySelector('.face.back');
-const genBtn=document.getElementById('genBtn');
-const surpriseBtn=document.getElementById('surpriseBtn');
-const downloadBtn=document.getElementById('downloadBtn');
-const themeSelect=document.getElementById('themeSelect');
-const uploadEl=document.getElementById('uploadImage');
-const historyEl=document.getElementById('history');
-
 let uploadedDataUrl=null;
-uploadEl.addEventListener('change',e=>{
-  const f=e.target.files[0];if(!f)return;
+
+function generateQuote(){
+  let theme=document.getElementById('themeSelect').value;
+  if(!theme) theme=Object.keys(wordsByTheme)[Math.floor(Math.random()*Object.keys(wordsByTheme).length)];
+  const words=wordsByTheme[theme];
+  const count=3+Math.floor(Math.random()*3); 
+  let shuffled=words.sort(()=>0.5-Math.random());
+  let quote=shuffled.slice(0,count).join(" ");
+  const orientation=document.getElementById('orientationSelect').value;
+  const card=document.getElementById('card');
+  const imgUrl=uploadedDataUrl?uploadedDataUrl:`https://source.unsplash.com/${orientation==='portrait'?'500x800':'800x500'}/?${theme},nature&${Date.now()}`;
+  card.querySelector('img').src=imgUrl;
+  card.classList.toggle('portrait',orientation==='portrait');
+  card.querySelector('.theme').textContent=theme;
+  card.querySelector('.quote').textContent=quote;
+}
+
+document.getElementById('genBtn').addEventListener('click',generateQuote);
+
+document.getElementById('surpriseBtn').addEventListener('click',()=>{
+  const themes=Object.keys(wordsByTheme);
+  const randomTheme=themes[Math.floor(Math.random()*themes.length)];
+  document.getElementById('themeSelect').value=randomTheme;
+  generateQuote();
+});
+
+document.getElementById('uploadImage').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
   const reader=new FileReader();
-  reader.onload=ev=>{uploadedDataUrl=ev.target.result;backFace.querySelector('img').src=uploadedDataUrl;};
+  reader.onload=ev=>{uploadedDataUrl=ev.target.result; document.getElementById('card').querySelector('img').src=uploadedDataUrl;};
   reader.readAsDataURL(f);
 });
 
-function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  html2canvas(document.getElementById('card'),{scale:2,useCORS:true,allowTaint:true}).then(canvas=>{
+    const link=document.createElement('a');
+    link.download='citation-nth.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  });
+});
 
-function typeText(el,text,speed=28){el.innerHTML="";let i=0;function step(){if(i<text.length){el.innerHTML+=text.charAt(i);i++;setTimeout(step,speed);}}step();}
+document.getElementById('toggleThemeBtn').addEventListener('click',()=>document.body.classList.toggle('dark'));
 
-function addHistory(text){const p=document.createElement('p');p.textContent=text;historyEl.prepend(p);while(historyEl.children.length>60)historyEl.removeChild(historyEl.lastChild);}
-
-function unsplashUrlFor(theme){const keywords={Amour:"couple,romantic,heart,flowers",Amitié:"friends,laugh,smile",Motivation:"sunrise,goal,climb",Humour:"funny,smile,comedy",Vie:"landscape,nature,life",Succès:"trophy,achievement,cityscape",Sagesse:"books,library,calm",Rêves:"stars,moon,dream",École:"school,books,study",Aléatoire:"random,abstract"};const kw=keywords[theme]||"landscape,nature";return`https://source.unsplash.com/800x500/?${encodeURIComponent(kw)}&${Date.now()}`;}
-
-function generateQuote(){
-  let theme=themeSelect.value;if(!theme){alert("Sélectionne un thème.");return;}
-  if(theme==="Aléatoire"){const keys=Object.keys(citations);theme=keys[Math.floor(Math.random()*keys.length)];}
-  const arr=citations[theme]||["Citation inspirante ✨"];
-  const text=rand(arr);
-
-  const colors=["#ff6f61","#6fe3ff","#ffeb6f","#7fff6f","#e36fff"];
-  const titleColor=colors[Math.floor(Math.random()*colors.length)];
-
-  const useUploaded=!!uploadedDataUrl;
-  const imgUrl=useUploaded?uploadedDataUrl:unsplashUrlFor(theme);
-
-  const willFlipToBack=!card.classList.contains('flipped');
-  const targetFace=willFlipToBack?backFace:frontFace;
-  const imgEl=targetFace.querySelector('img');
-  if(!useUploaded){imgEl.crossOrigin="anonymous";imgEl.src=imgUrl;}else{imgEl.removeAttribute('crossOrigin');imgEl.src=uploadedDataUrl;}
-
-  targetFace.querySelector('.theme').textContent=theme;
-  targetFace.querySelector('.theme').style.color=titleColor;
-  typeText(targetFace.querySelector('.quote'),text,24);
-
-  card.classList.toggle('flipped');
-  addHistory(`${theme} — ${text}`);
-}
-
-function generateRandomQuote(){themeSelect.value="Aléatoire";generateQuote();}
-
-function downloadQuote(){
-  const visibleFace=card.classList.contains('flipped')?backFace:frontFace;
-  const prevTrans=visibleFace.style.transition;visibleFace.style.transition='none';
-  setTimeout(()=>{
-    html2canvas(visibleFace,{scale:2,useCORS:true,allowTaint:false}).then(canvas=>{
-      const link=document.createElement('a');link.download='citation-nth.png';link.href=canvas.toDataURL('image/png');link.click();
-      visibleFace.style.transition=prevTrans||'';
-    }).catch(err=>{console.error(err);alert("Impossible de générer l'image.");visibleFace.style.transition=prevTrans||'';});
-  },150);
-}
-
-genBtn.addEventListener('click',generateQuote);
-surpriseBtn.addEventListener('click',generateRandomQuote);
-downloadBtn.addEventListener('click',downloadQuote);
-
-(function applyAutoTheme(){const hr=new Date().getHours();if(hr>=19||hr<6){document.body.style.background="linear-gradient(135deg,#232526,#414345)";}})();
+const cardEl=document.getElementById('card');
+cardEl.addEventListener('mousemove',e=>{
+  const rect=cardEl.getBoundingClientRect();
+  const x=(e.clientX-rect.left)/(rect.width)-0.5;
+  const y=(e.clientY-rect.top)/(rect.height)-0.5;
+  cardEl.style.transform=`rotateY(${x*20}deg) rotateX(${-y*20}deg)`;
+});
+cardEl.addEventListener('mouseleave',()=>{cardEl.style.transform='rotateY(0deg) rotateX(0deg)';});
 </script>
 </body>
 </html>
