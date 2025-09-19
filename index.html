@@ -1,206 +1,256 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>📰 Mon Journal</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; }
-body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg,#f5f7fa,#c3cfe2); color:#333; line-height:1.6;}
-header{position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); display:flex; flex-direction:column; align-items:center; padding:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-header h1{font-size:2em; margin-bottom:10px;}
-header .controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
-select, button{padding:8px 12px; border:none; border-radius:8px; cursor:pointer; font-size:1em; transition:0.3s;}
-select{background:rgba(255,255,255,0.7);}
-button{background:#222; color:#fff;}
-button:hover{background:#444; transform:scale(1.05);}
-#visitorCounter{margin-top:10px; font-size:1em;}
-#articles{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; padding:20px;}
-.article{background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.1); transition:transform 0.3s;}
-.article:hover{transform:translateY(-8px); box-shadow:0 15px 40px rgba(0,0,0,0.25);}
-.article img{width:100%; height:180px; object-fit:cover;}
-.article .text{padding:15px;}
-.article h2{margin-bottom:10px;}
-.article p{margin-bottom:10px;}
-.article small{color:#555; font-size:0.85em;}
-.theme-badge{display:inline-block; background:#ff6b6b; color:#fff; padding:3px 8px; border-radius:12px; font-size:0.75em; margin-bottom:5px; text-transform:uppercase;}
-footer{text-align:center; padding:15px; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); color:#444; margin-top:20px;}
-#adminPanel{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(5px); display:flex; justify-content:center; align-items:center; z-index:1000;}
-#adminContent{background:#fff; padding:30px; border-radius:15px; width:90%; max-width:500px; max-height:90%; overflow-y:auto;}
-#adminContent h2{margin-bottom:15px; text-align:center;}
-#adminContent input, #adminContent textarea, #adminContent select, #adminContent button{width:100%; margin:10px 0; padding:10px; border-radius:8px; border:1px solid #ccc;}
-#adminContent button{background:#222;color:#fff;}
-#adminContent button:hover{background:#444; transform:scale(1.05);}
-.articleItem{border:1px solid #ccc;padding:10px;margin-bottom:10px;border-radius:10px;background:white; display:flex; flex-direction:column; gap:5px;}
-.articleItem img{width:100%; height:150px; object-fit:cover; border-radius:6px;}
-.closeAdmin{background:red; margin-bottom:10px;}
-@media(max-width:600px){
-  header h1{font-size:1.6em;}
-  .article img{height:150px;}
-  #articles{grid-template-columns:1fr;}
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Générateur de Citations</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    }
+
+    select, button {
+      padding: 12px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    select {
+      background: #fff;
+      color: #333;
+    }
+
+    button {
+      background: #ff6f61;
+      color: #fff;
+    }
+
+    button:hover {
+      background: #ff3b2e;
+      transform: scale(1.05);
+    }
+
+    .card {
+      width: 400px;
+      height: 250px;
+      perspective: 1000px;
+      margin-top: 20px;
+    }
+
+    .face {
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      position: absolute;
+      backface-visibility: hidden;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .face img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .face p, .face .theme {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+    }
+
+    .face p {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .face .theme {
+      font-weight: bold;
+      font-size: 22px;
+    }
+
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 16px;
+      opacity: 0.7;
+      z-index: 2;
+    }
+
+    .inner-card {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .card.flipped .inner-card {
+      transform: rotateY(180deg);
+    }
+
+    .front, .back {
+      background: rgba(0,0,0,0.4);
+    }
+
+    .front { transform: rotateY(0deg); }
+    .back { transform: rotateY(180deg); }
+  </style>
 </head>
 <body>
+  <h1>✨ Générateur de Citations ✨</h1>
 
-<header>
-<h1>📰 Mon Journal</h1>
-<div class="controls">
-<select id="sort"><option value="date">📅 Trier par date</option><option value="popularity">⭐ Trier par popularité</option></select>
-<select id="filterTheme"><option value="all">Tous les thèmes</option></select>
-<button onclick="toggleAdmin()">Page Admin</button>
-</div>
-<div id="visitorCounter">Visites totales : 0</div>
-</header>
+  <select id="themeSelect">
+    <option value="">-- Choisis un thème --</option>
+    <option value="Amour">❤️ Amour</option>
+    <option value="Amitié">🤝 Amitié</option>
+    <option value="École">📚 École</option>
+    <option value="Motivation">🔥 Motivation</option>
+    <option value="Humour">😂 Humour</option>
+    <option value="Vie">🌍 Vie</option>
+    <option value="Famille">👨‍👩‍👧‍👦 Famille</option>
+    <option value="Succès">🏆 Succès</option>
+    <option value="Courage">🦁 Courage</option>
+    <option value="Sagesse">🧠 Sagesse</option>
+  </select>
 
-<main id="articles"></main>
-<footer>✨ Propulsé par SheetDB ✨</footer>
+  <div>
+    <button onclick="generateQuote()">🎲 Générer</button>
+    <button onclick="downloadQuote()">📥 Télécharger</button>
+  </div>
 
-<div id="adminPanel">
-<div id="adminContent">
-<button class="closeAdmin" onclick="toggleAdmin()">Fermer X</button>
-<h2>Connexion Admin</h2>
-<div id="loginForm">
-<input type="password" id="password" placeholder="Mot de passe">
-<button onclick="checkPassword()">Se connecter</button>
-</div>
-<div id="adminPanelContent" style="display:none;">
-<h2>Ajouter / Modifier Article</h2>
-<input type="text" id="title" placeholder="Titre">
-<textarea id="content" placeholder="Contenu"></textarea>
-<input type="text" id="image" placeholder="URL image (optionnel)">
-<input type="number" id="popularity" placeholder="Popularité">
-<input type="date" id="date">
-<input type="text" id="theme" placeholder="Thème">
-<button onclick="addArticle()">Ajouter Article</button>
-<h2>Articles existants</h2>
-<div id="articlesList"></div>
-</div>
-</div>
-</div>
+  <div class="card" id="card">
+    <div class="inner-card">
+      <div class="face front">
+        <img src="" alt="">
+        <div class="theme"></div>
+        <p></p>
+        <div class="watermark">nth</div>
+      </div>
+      <div class="face back">
+        <img src="" alt="">
+        <div class="theme"></div>
+        <p></p>
+        <div class="watermark">nth</div>
+      </div>
+    </div>
+  </div>
 
-<script>
-const API_URL="https://sheetdb.io/api/v1/ki97uz4ffxzca";
-const ADMIN_PASS="Marius2013.";
+  <script>
+    // Citations fixes par thème
+    const citations={
+      "Amour":["L'amour est la clé de la vie.","Aimer, c'est donner sans rien attendre.","Un cœur sincère vaut mieux que mille promesses."],
+      "Amitié":["Un ami, c'est quelqu'un qui sait tout de toi et qui t'aime quand même.","Les amis sont la famille que l'on choisit.","L'amitié double les joies et réduit de moitié les peines."],
+      "École":["Apprendre, c'est grandir.","Chaque erreur est une leçon déguisée.","La curiosité est le début de la sagesse."],
+      "Motivation":["Ne rêve pas ta vie, vis tes rêves.","Le succès n’est pas final, l’échec n’est pas fatal.","Croire en soi est le premier secret du succès."],
+      "Humour":["Je suis en forme… mais forme de quoi exactement ?","Rire, c’est bon pour la santé.","La vie est courte… alors souris tant que tu as encore des dents !"],
+      "Vie":["Vis chaque jour comme si c'était le dernier.","Profite des petits moments.","Rien n'arrive sans raison."],
+      "Famille":["La famille est tout.","Aime et protège les tiens.","Les liens familiaux sont précieux."],
+      "Succès":["Travaille en silence, laisse ton succès parler.","Rien n’est impossible.","Le succès appartient à ceux qui osent."],
+      "Courage":["Le courage, c’est de continuer malgré la peur.","Ose sortir de ta zone de confort.","Affronte tes peurs pour grandir."],
+      "Sagesse":["Écoute plus que tu ne parles.","Apprends de chaque expérience.","La patience est la clé de la sagesse."]
+    };
 
-// VISITOR COUNTER
-async function updateVisitorCounter(){
-  const res = await fetch(`https://api.countapi.xyz/hit/mon_journal_site_123/visites`);
-  const data = await res.json();
-  document.getElementById("visitorCounter").textContent="Visites totales : "+data.value;
-}
-updateVisitorCounter();
+    // Générateur automatique
+    const genererCitations={
+      "Amour":{debuts:["L'amour","Être aimé","Tomber amoureux","Partager un sourire"],milieux:[" est comme une lumière"," est le plus beau cadeau"," illumine la vie"],fins:[" qui ne s'éteint jamais."," qu’on n’oublie jamais."," malgré la distance."]},
+      "Amitié":{debuts:["Un ami","L’amitié","Un vrai compagnon"],milieux:[" est une étoile"," est un trésor"," brille dans l’ombre"],fins:[" qui éclaire nos nuits."," que rien ne peut briser."," sans fin."]},
+      "École":{debuts:["Apprendre","Étudier","L’école"],milieux:[" ouvre des portes"," construit l’avenir"," est une richesse"],fins:[" que rien ne peut refermer."," pour demain."," pour toute une vie."]},
+      "Motivation":{debuts:["Croire en soi","Persévérer","Ne jamais abandonner"],milieux:[" construit des victoires"," forge le caractère"," brise les limites"],fins:[" même quand tout est sombre."," malgré les échecs."," pour inspirer les autres."]},
+      "Humour":{debuts:["Le rire","Un sourire","Une blague"],milieux:[" réchauffe le cœur"," rend la vie légère"," guérit les peines"],fins:[" mieux qu’un médicament."," qu’on n’oublie pas."," à partager sans modération."]},
+      "Vie":{debuts:["La vie","Chaque instant","Un jour"],milieux:[" est un cadeau"," est une aventure"," est une leçon"],fins:[" à savourer pleinement."," qu’on écrit soi-même."," sans retour en arrière."]},
+      "Famille":{debuts:["La famille","Un foyer","Un parent"],milieux:[" est une force"," unit les cœurs"," donne un refuge"],fins:[" malgré tout."," pour toujours."," à chaque étape de la vie."]},
+      "Succès":{debuts:["Le succès","Réussir","Un rêve accompli"],milieux:[" demande des efforts"," ne vient pas seul"," se construit chaque jour"],fins:[" mais en vaut la peine."," après de longs combats."," qui inspire les autres."]},
+      "Courage":{debuts:["Le courage","Oser","Se relever"],milieux:[" fait grandir"," ouvre des portes"," illumine le chemin"],fins:[" même dans l’obscurité."," chaque jour un peu plus."," sans jamais reculer."]},
+      "Sagesse":{debuts:["La sagesse","Écouter","Apprendre"],milieux:[" vient du temps"," naît de l’expérience"," éclaire les choix"],fins:[" de toute une vie."," qu’on transmet."," sans jamais juger."]}
+    };
 
-// ADMIN PANEL
-function toggleAdmin(){
-  const panel=document.getElementById("adminPanel");
-  panel.style.display = panel.style.display==="flex"?"none":"flex";
-}
+    function creerCitation(theme){
+      if(!genererCitations[theme]) return null;
+      const data=genererCitations[theme];
+      const d=data.debuts[Math.floor(Math.random()*data.debuts.length)];
+      const m=data.milieux[Math.floor(Math.random()*data.milieux.length)];
+      const f=data.fins[Math.floor(Math.random()*data.fins.length)];
+      return d+m+f;
+    }
 
-function checkPassword(){
-  const pass=document.getElementById("password").value;
-  if(pass===ADMIN_PASS){
-    document.getElementById("loginForm").style.display="none";
-    document.getElementById("adminPanelContent").style.display="block";
-    fetchArticles();
-  } else alert("Mot de passe incorrect");
-}
+    function typeText(element,text,speed=40){
+      element.innerHTML="";
+      let i=0;
+      function typing(){
+        if(i<text.length){
+          element.innerHTML+=text.charAt(i);
+          i++;
+          setTimeout(typing,speed);
+        }
+      }
+      typing();
+    }
 
-// FETCH ARTICLES
-async function fetchArticles(){
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    displayArticles(data);
-    populateThemes(data);
-    displayAdminArticles(data);
-  } catch(err){
-    console.error("Erreur lors du chargement des articles :", err);
-  }
-}
+    function generateQuote(){
+      const theme=document.getElementById("themeSelect").value;
+      if(!theme || !citations[theme]) return alert("Sélectionne un thème !");
+      let text;
+      if(Math.random()>0.5){
+        const list=citations[theme];
+        text=list[Math.floor(Math.random()*list.length)];
+      }else{
+        text=creerCitation(theme) || "Citation inspirante 🌟";
+      }
+      const imgUrl=`https://picsum.photos/400/250?random=${Math.floor(Math.random()*1000)}`;
+      const card=document.getElementById("card");
+      const front=card.querySelector(".front");
+      const back=card.querySelector(".back");
+      if(!card.classList.contains("flipped")){
+        back.querySelector("img").src=imgUrl;
+        back.querySelector(".theme").textContent=theme;
+        typeText(back.querySelector("p"),text);
+      }else{
+        front.querySelector("img").src=imgUrl;
+        front.querySelector(".theme").textContent=theme;
+        typeText(front.querySelector("p"),text);
+      }
+      card.classList.toggle("flipped");
+    }
 
-// DISPLAY ARTICLES
-function displayArticles(articles){
-  const container=document.getElementById("articles");
-  container.innerHTML="";
-  const filter=document.getElementById("filterTheme").value;
-  let filtered = articles;
-  if(filter!=="all") filtered = articles.filter(a=>a.theme.toLowerCase()===filter.toLowerCase());
-  const sort=document.getElementById("sort").value;
-  if(sort==="popularity") filtered.sort((a,b)=>b.popularity-a.popularity);
-  else filtered.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  filtered.forEach(a=>{
-    const div=document.createElement("div");
-    div.className="article";
-    let imgHtml = a.image ? `<img src="${a.image}" alt="">` : "";
-    div.innerHTML=`${imgHtml}<div class="text"><span class="theme-badge">${a.theme}</span><h2>${a.title}</h2><p>${a.content}</p><small>⭐ ${a.popularity} | 📅 ${a.date}</small></div>`;
-    container.appendChild(div);
-  });
-}
-
-// POPULATE THEME FILTER
-function populateThemes(articles){
-  const themeSelect=document.getElementById("filterTheme");
-  const themes=[...new Set(articles.map(a=>a.theme))];
-  themeSelect.innerHTML=`<option value="all">Tous les thèmes</option>`+themes.map(t=>`<option value="${t}">${t}</option>`).join("");
-}
-
-// ADD ARTICLE
-async function addArticle(){
-  const title=document.getElementById("title").value;
-  const content=document.getElementById("content").value;
-  const image=document.getElementById("image").value;
-  const popularity=document.getElementById("popularity").value;
-  const date=document.getElementById("date").value;
-  const theme=document.getElementById("theme").value;
-
-  const newArticle = {data:{title,content,image,popularity,date,theme}};
-  try {
-    await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(newArticle)});
-    alert("Article ajouté !");
-    fetchArticles();
-  } catch(err){console.error("Erreur ajout article :", err);}
-}
-
-// DISPLAY ADMIN LIST
-function displayAdminArticles(articles){
-  const list=document.getElementById("articlesList");
-  list.innerHTML="";
-  articles.forEach(a=>{
-    const div=document.createElement("div");
-    div.className="articleItem";
-    div.innerHTML=`<strong>${a.title}</strong>
-      <button onclick="editArticle('${a.id}')">Modifier</button>
-      <button onclick="deleteArticle('${a.id}')">Supprimer</button>`;
-    list.appendChild(div);
-  });
-}
-
-// EDIT ARTICLE
-async function editArticle(id){
-  const title=prompt("Nouveau titre :");
-  const content=prompt("Nouveau contenu :");
-  if(!title || !content) return;
-  const updated={data:{title,content}};
-  try {
-    await fetch(`${API_URL}/id/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)});
-    alert("Article modifié !");
-    fetchArticles();
-  } catch(err){console.error("Erreur mise à jour :", err);}
-}
-
-// DELETE ARTICLE
-async function deleteArticle(id){
-  if(!confirm("Voulez-vous vraiment supprimer cet article ?")) return;
-  try {
-    await fetch(`${API_URL}/id/${id}`,{method:"DELETE"});
-    alert("Article supprimé !");
-    fetchArticles();
-  } catch(err){console.error("Erreur suppression :", err);}
-}
-
-// EVENT LISTENERS
-document.getElementById("sort").addEventListener("change",()=>fetchArticles());
-document.getElementById("filterTheme").addEventListener("change",()=>fetchArticles());
-</script>
+    function downloadQuote(){
+      const card=document.getElementById("card");
+      const visibleFace=card.classList.contains("flipped")
+        ? card.querySelector(".back")
+        : card.querySelector(".front");
+      html2canvas(visibleFace,{scale:2}).then(canvas=>{
+        const link=document.createElement("a");
+        link.download="citation-nth.png";
+        link.href=canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+  </script>
 </body>
 </html>
