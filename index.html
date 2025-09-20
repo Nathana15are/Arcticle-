@@ -2,156 +2,167 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur de CV Moderne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pong Ultra Neon Arcade</title>
 <style>
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #f4f4f8;
-  margin: 0;
-  padding: 0;
-  color: #222;
-}
-.container { max-width: 1200px; margin: 30px auto; padding: 20px; }
-h1 { text-align: center; margin-bottom: 20px; color: #007bff; }
-.form-preview { display: flex; gap: 40px; flex-wrap: wrap; }
-form { flex: 1; min-width: 300px; background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-form h2 { margin-top: 20px; color: #007bff; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
-form input, form textarea { width: 100%; padding: 10px; margin-top: 8px; border-radius: 8px; border: 1px solid #ccc; resize: vertical; }
-form textarea { min-height: 60px; }
-button { margin-top: 20px; padding: 12px 20px; background: #007bff; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
-button:hover { background: #0056b3; }
-.cv-preview { flex: 1; min-width: 350px; background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-height: 90vh; overflow-y: auto; }
-.cv-preview h2 { font-size: 24px; margin-bottom: 5px; }
-.cv-preview h3 { font-size: 20px; margin: 5px 0; color: #007bff; }
-.cv-preview p { margin: 3px 0; line-height: 1.4; }
-.cv-section { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-.cv-preview .skills span { display: inline-block; background: #007bff; color: #fff; padding: 5px 10px; margin: 3px; border-radius: 12px; font-size: 14px; }
-.cv-preview a { color: #007bff; text-decoration: none; }
-.cv-preview a:hover { text-decoration: underline; }
-
-/* Responsive mobile */
-@media (max-width: 900px) {
-  .form-preview { flex-direction: column; }
-  form, .cv-preview { width: 100%; }
-}
-
-/* ===== Styles Modèles ===== */
-.model-1 { background: #fff; color: #222; }
-.model-2 { background: #fef7f0; color: #333; }
-.model-2 h3 { color: #ff6600; }
-.model-2 .skills span { background: #ff6600; }
-.model-3 { background: #eef7ff; color: #222; }
-.model-3 h3 { color: #0066cc; }
-.model-3 .skills span { background: #0066cc; }
-
+body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif;}
+#menu,#game{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+#menu button{padding:15px 30px;margin:15px;font-size:24px;border:none;border-radius:10px;background:#0ff;color:#000;cursor:pointer;transition:0.2s;}
+#menu button:hover{background:#0cc;}
+canvas{display:block;}
+#scoreTable{position:absolute;top:10px;left:10px;color:#0ff;font-size:18px;}
+#optionsButton{position:absolute;top:10px;right:10px;padding:10px 20px;background:#0ff;color:#000;border:none;border-radius:8px;cursor:pointer;z-index:10;}
+#optionsMenu{position:absolute;top:50px;right:10px;background:rgba(0,0,0,0.85);padding:15px;border-radius:10px;display:none;flex-direction:column;gap:10px;z-index:10;}
+#optionsMenu label, #optionsMenu select, #optionsMenu input{color:#fff;}
 </style>
 </head>
 <body>
-
-<div class="container">
-<h1>Générateur de CV Moderne</h1>
-<div class="form-preview">
-<form id="cvForm">
-<h2>Informations personnelles</h2>
-<input type="text" id="name" placeholder="Nom complet">
-<input type="text" id="job" placeholder="Poste souhaité">
-<input type="email" id="email" placeholder="Email">
-<input type="text" id="phone" placeholder="Téléphone">
-<input type="text" id="location" placeholder="Ville / Pays">
-<input type="url" id="linkedin" placeholder="LinkedIn">
-<input type="url" id="github" placeholder="GitHub">
-<input type="url" id="portfolio" placeholder="Portfolio / Site web">
-
-<h2>Résumé</h2>
-<textarea id="summary" placeholder="Résumé de carrière / phrase d'accroche"></textarea>
-
-<h2>Expériences</h2>
-<textarea id="experience" placeholder="Ex: Stage chez XYZ, missions, réalisations"></textarea>
-
-<h2>Formation</h2>
-<textarea id="education" placeholder="Diplômes, écoles, dates"></textarea>
-
-<h2>Compétences</h2>
-<textarea id="skills" placeholder="Séparer par des virgules: HTML, CSS, JS..."></textarea>
-
-<h2>Projets / Portfolio</h2>
-<textarea id="projects" placeholder="Ex: site web, design, vidéo..."></textarea>
-
-<h2>Certifications / Badges</h2>
-<textarea id="certifications" placeholder="Nom et lien éventuel"></textarea>
-
-<h2>Choisir le modèle</h2>
-<select id="modelSelect">
-<option value="model-1">Modèle 1 - Classique</option>
-<option value="model-2">Modèle 2 - Orange</option>
-<option value="model-3">Modèle 3 - Bleu</option>
-</select>
-
-<button type="button" id="generateBtn">Générer le CV</button>
-</form>
-
-<div id="cvPreview" class="cv-preview model-1"></div>
-<button id="downloadBtn" style="display:none;">Télécharger en PDF</button>
-
+<div id="menu">
+  <h1>Pong Ultra Neon Arcade</h1>
+  <p>Choisis ton mode :</p>
+  <button onclick="startGame('solo')">Solo</button>
+  <button onclick="startGame('2players')">2 Joueurs</button>
 </div>
+<canvas id="pong" style="display:none;"></canvas>
+<div id="scoreTable"></div>
+<button id="optionsButton">Options</button>
+<div id="optionsMenu">
+  <label><input type="checkbox" id="musicToggle" checked> Musique</label>
+  <label>Couleur Player 1: <input type="color" id="player1Color" value="#0fffff"></label>
+  <label>Couleur Player 2: <input type="color" id="player2Color" value="#ff00ff"></label>
+  <label>Vitesse balle: <input type="range" id="ballSpeedSlider" min="3" max="15" value="5"></label>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-const generateBtn = document.getElementById('generateBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-const cvPreview = document.getElementById('cvPreview');
-const modelSelect = document.getElementById('modelSelect');
+const menu=document.getElementById('menu');
+const canvas=document.getElementById('pong');
+const ctx=canvas.getContext('2d');
+const scoreDiv=document.getElementById('scoreTable');
+const optionsButton=document.getElementById('optionsButton');
+const optionsMenu=document.getElementById('optionsMenu');
+const musicToggle=document.getElementById('musicToggle');
+const player1ColorInput=document.getElementById('player1Color');
+const player2ColorInput=document.getElementById('player2Color');
+const ballSpeedSlider=document.getElementById('ballSpeedSlider');
 
-generateBtn.addEventListener('click', () => {
-  cvPreview.innerHTML = "";
-  cvPreview.className = 'cv-preview ' + modelSelect.value; // appliquer le modèle
+let paddleWidth=12,paddleHeight=120,player1Y,player2Y,paddleSpeed=6;
+let ballSize=14,ballX=[],ballY=[],ballSpeedX=[],ballSpeedY=[],ballColor=[];
+let trail=[],player1Color="#0fffff",player2Color="#ff00ff";
+let player1Score=0,player2Score=0,keys={},powerUps=[],comboCount=0,ballGhost=false,particles=[];
+let mode='solo',bestScores=JSON.parse(localStorage.getItem('bestScores')||"[]");
 
-  const fields = [
-    {id: 'name', label:'', htmlTag: 'h2'},
-    {id: 'job', label:'', htmlTag: 'h3'},
-    {id: 'location', label:'', htmlTag: 'p'},
-    {id: 'email', label:'Email: ', htmlTag: 'p'},
-    {id: 'phone', label:'Téléphone: ', htmlTag: 'p'},
-    {id: 'linkedin', label:'LinkedIn: ', htmlTag: 'p', link:true},
-    {id: 'github', label:'GitHub: ', htmlTag: 'p', link:true},
-    {id: 'portfolio', label:'Portfolio: ', htmlTag: 'p', link:true},
-    {id: 'summary', label:'Résumé', htmlTag: 'p'},
-    {id: 'experience', label:'Expériences', htmlTag: 'p'},
-    {id: 'education', label:'Formation', htmlTag: 'p'},
-    {id: 'skills', label:'Compétences', htmlTag: 'p', skills:true},
-    {id: 'projects', label:'Projets / Portfolio', htmlTag: 'p'},
-    {id: 'certifications', label:'Certifications / Badges', htmlTag: 'p'}
-  ];
+// Audio context pour sons dynamiques
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+let music=new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"); music.loop=true; music.volume=0.1;
 
-  fields.forEach(field => {
-    const value = document.getElementById(field.id).value.trim();
-    if(value){
-      const div = document.createElement('div');
-      div.classList.add('cv-section');
+// Génération de beep dynamique
+function playBeep(speed, combo){
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.type='sine';
+    osc.frequency.value=300 + speed*50 + combo*20; // plus rapide/combo, plus aigu
+    gainNode.gain.value=Math.min(0.5,0.1+combo*0.05);
+    osc.start();
+    osc.stop(audioCtx.currentTime+0.05);
+}
 
-      if(field.skills){
-        const skillHTML = value.split(',').map(s=>`<span>${s.trim()}</span>`).join(' ');
-        div.innerHTML = `<h3>${field.label}</h3><div class="skills">${skillHTML}</div>`;
-      } else if(field.link){
-        div.innerHTML = `<h3>${field.label}</h3><p><a href="${value}" target="_blank">${value}</a></p>`;
-      } else if(field.label){
-        div.innerHTML = `<h3>${field.label}</h3><${field.htmlTag}>${value}</${field.htmlTag}>`;
-      } else {
-        div.innerHTML = `<${field.htmlTag}>${value}</${field.htmlTag}>`;
-      }
+// Menu -> jeu
+function startGame(selectedMode){
+    mode=selectedMode;
+    menu.style.display='none';
+    canvas.style.display='block';
+    optionsButton.style.display='block';
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    player1Y=player2Y=canvas.height/2-paddleHeight/2;
+    resetBall();
+    updateScoreTable();
+    if(musicToggle.checked) music.play();
+}
 
-      cvPreview.appendChild(div);
-    }
-  });
+// Options toggle
+optionsButton.onclick=()=>{optionsMenu.style.display=optionsMenu.style.display==='flex'?'none':'flex';}
+musicToggle.onchange=()=>{musicToggle.checked?music.play():music.pause();}
+player1ColorInput.oninput=e=>player1Color=e.target.value;
+player2ColorInput.oninput=e=>player2Color=e.target.value;
 
-  downloadBtn.style.display = cvPreview.innerHTML ? "inline-block" : "none";
+// Clavier
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+
+// Swipe mobile
+let touchStartY=null;
+canvas.addEventListener("touchstart",e=>{touchStartY=e.touches[0].clientY;});
+canvas.addEventListener("touchmove",e=>{
+    if(!touchStartY) return;
+    let touchY=e.touches[0].clientY;
+    let diff=touchY-touchStartY;
+    touchStartY=touchY;
+    if(mode==='solo') player1Y+=diff;
+    else{let touchX=e.touches[0].clientX;if(touchX<canvas.width/2) player1Y+=diff; else player2Y+=diff;}
+    player1Y=Math.max(0,Math.min(canvas.height-paddleHeight,player1Y));
+    player2Y=Math.max(0,Math.min(canvas.height-paddleHeight,player2Y));
+    e.preventDefault();
+},{passive:false});
+
+// Dessin
+function draw(){
+    ctx.fillStyle="#000"; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Paddles gradient dynamique
+    let gradient1=ctx.createLinearGradient(0,player1Y,0,player1Y+paddleHeight);
+    gradient1.addColorStop(0,player1Color); gradient1.addColorStop(1,"#0f0");
+    ctx.fillStyle=gradient1; ctx.shadowColor=player1Color; ctx.shadowBlur=20; ctx.fillRect(10,player1Y,paddleWidth,paddleHeight);
+
+    let gradient2=ctx.createLinearGradient(canvas.width-22,player2Y,canvas.width-22,player2Y+paddleHeight);
+    gradient2.addColorStop(0,player2Color); gradient2.addColorStop(1,"#ff0");
+    ctx.fillStyle=gradient2; ctx.shadowColor=player2Color; ctx.shadowBlur=20; ctx.fillRect(canvas.width-22,player2Y,paddleWidth,paddleHeight);
+
+    // Balles et trail
+    trail.forEach(t=>{ctx.fillStyle=t.color; ctx.fillRect(t.x,t.y,t.size,t.size); t.life--;});
+    trail=trail.filter(t=>t.life>0);
+
+    ballX.forEach((bx,i)=>{
+        trail.push({x:bx,y:ballY[i],size:ballSize,color:ballColor[i],life:10});
+        let g=ctx.createRadialGradient(bx+ballSize/2,ballY[i]+ballSize/2,1,bx+ballSize/2,ballY[i]+ballSize/2,ballSize);
+        g.addColorStop(0,ballColor[i]); g.addColorStop(1,"#000");
+        ctx.fillStyle=g; ctx.fillRect(bx,ballY[i],ballSize,ballSize);
+    });
+
+    // Score et combo
+    ctx.fillStyle="#0ff"; ctx.font="40px Arial"; ctx.fillText(player1Score,canvas.width/4,50);
+    ctx.fillStyle="#f0f"; ctx.fillText(player2Score,3*canvas.width/4,50);
+    if(comboCount>1){ ctx.fillStyle="#ff0"; ctx.font="30px Arial"; ctx.fillText(`Combo x${comboCount}!`,canvas.width/2-80,100);}
+
+    // Particles
+    particles.forEach((p,i)=>{ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size,p.size); p.x+=p.vx; p.y+=p.vy; p.life--; if(p.life<=0) particles.splice(i,1);});
+}
+
+// Partie update, collisions, power-ups (identique à Ultra Neon)
+function spawnParticles(x,y,color){for(let i=0;i<12;i++){particles.push({x,y,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,size:4,color,color,life:25});}}
+function spawnPowerUp(){const x=Math.random()*(canvas.width-200)+100;const y=Math.random()*(canvas.height-50);const color=["#0f0","#ff0","#f0f","#0ff"][Math.floor(Math.random()*4)];const type=["speed","bigPaddle","multiBall","ghost"][Math.floor(Math.random()*4)];powerUps.push({x,y,color,type});}
+function checkPowerUpCollision(){ballX.forEach((bx,bi)=>{powerUps.forEach((p,pi)=>{if(bx+ballSize>p.x && bx<p.x+powerUpSize && ballY[bi]+ballSize>p.y && ballY[bi]<p.y+powerUpSize){applyPowerUp(p.type);powerUps.splice(pi,1);comboCount++;spawnParticles(bx,ballY[bi],p.color); playBeep(Math.abs(ballSpeedX[bi]), comboCount);}});});}
+function applyPowerUp(type){let speed=parseFloat(ballSpeedSlider.value);if(type==="speed"){ballSpeedX=ballSpeedX.map(s=>Math.sign(s)*speed);ballSpeedY=ballSpeedY.map(s=>Math.sign(s)*speed);} else if(type==="bigPaddle"){paddleHeight=Math.min(paddleHeight+40,canvas.height/1.5);} else if(type==="ghost"){ballGhost=true;setTimeout(()=>ballGhost=false,3000);} else if(type==="multiBall"){let n=ballX.length;for(let i=0;i<n;i++){ballX.push(ballX[i]);ballY.push(ballY[i]);ballSpeedX.push(-ballSpeedX[i]);ballSpeedY.push(ballSpeedY[i]);ballColor.push(ballColor[i]==="#ff0"?"#0ff":"#ff0");}}}
+function update(){if(mode==='solo'){if(keys["w"] && player1Y>0) player1Y-=paddleSpeed;if(keys["s"] && player1Y<canvas.height-paddleHeight) player1Y+=paddleSpeed;if(player2Y+paddleHeight/2<ballY[0]) player2Y+=paddleSpeed/2; else player2Y-=paddleSpeed/2;} else{if(keys["w"] && player1Y>0) player1Y-=paddleSpeed;if(keys["s"] && player1Y<canvas.height-paddleHeight) player1Y+=paddleSpeed;if(keys["ArrowUp"] && player2Y>0) player2Y-=paddleSpeed;if(keys["ArrowDown"] && player2Y<canvas.height-paddleHeight) player2Y+=paddleSpeed;}
+ballX.forEach((bx,i)=>{
+    ballX[i]+=ballSpeedX[i]; ballY[i]+=ballSpeedY[i];
+    if(ballY[i]<=0 || ballY[i]+ballSize>=canvas.height){ballSpeedY[i]*=-1;spawnParticles(bx,ballY[i],ballColor[i]); playBeep(Math.abs(ballSpeedX[i]), comboCount);}
+    if(checkPaddleCollision(i)){ballSpeedX[i]*=-1.1;spawnParticles(bx,ballY[i],ballColor[i]); playBeep(Math.abs(ballSpeedX[i]), comboCount);}
+    if(ballX[i]<0){player2Score++;resetBall(); playBeep(5,1);}
+    if(ballX[i]+ballSize>canvas.width){player1Score++;resetBall(); playBeep(5,1);}
 });
+checkPowerUpCollision();
+if(Math.random()<0.005 && powerUps.length<3) spawnPowerUp();
+}
+function checkPaddleCollision(i){return (ballX[i]<=22 && ballY[i]+ballSize>=player1Y && ballY[i]<=player1Y+paddleHeight)||(ballX[i]+ballSize>=canvas.width-22 && ballY[i]+ballSize>=player2Y && ballY[i]<=player2Y+paddleHeight);}
+function resetBall(){let speed=parseFloat(ballSpeedSlider.value);ballX=[canvas.width/2-ballSize/2];ballY=[canvas.height/2-ballSize/2];ballSpeedX=[speed*(Math.random()>0.5?1:-1)];ballSpeedY=[speed*(Math.random()>0.5?1:-1)];ballColor=["#ff0"];comboCount=0;powerUps=[];paddleHeight=120;updateBestScores();}
+function updateBestScores(){let maxScore=Math.max(player1Score,player2Score);bestScores.push(maxScore);bestScores.sort((a,b)=>b-a);bestScores=bestScores.slice(0,5);localStorage.setItem('bestScores',JSON.stringify(bestScores));updateScoreTable();}
+function updateScoreTable(){scoreDiv.innerHTML="Meilleurs Scores :<br>"+bestScores.join("<br>");}
 
-downloadBtn.addEventListener('click', () => {
-  html2pdf().from(cvPreview).set({margin:0.5, filename:`CV-${document.getElementById('name').value || 'MonCV'}.pdf`, html2canvas:{scale:2}}).save();
-});
+function gameLoop(){update();draw();requestAnimationFrame(gameLoop);}
+gameLoop();
 </script>
 </body>
 </html>
