@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Pong Ultra Neon Arcade</title>
+<title>Pong Ultra Neon Ping-Pong 3D</title>
 <style>
 body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:Arial,sans-serif;}
 #menu,#game{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;}
@@ -18,7 +18,7 @@ canvas{display:block;}
 </head>
 <body>
 <div id="menu">
-  <h1>Pong Ultra Neon Arcade</h1>
+  <h1>Pong Ultra Neon Ping-Pong 3D</h1>
   <p>Choisis ton mode :</p>
   <button onclick="startGame('solo')">Solo</button>
   <button onclick="startGame('2players')">2 Joueurs</button>
@@ -54,18 +54,14 @@ let mode='solo',bestScores=JSON.parse(localStorage.getItem('bestScores')||"[]");
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 let music=new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"); music.loop=true; music.volume=0.1;
-
-// Génération de beep dynamique
 function playBeep(speed, combo){
     const osc = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
     osc.type='sine';
-    osc.frequency.value=300 + speed*50 + combo*20; // plus rapide/combo, plus aigu
+    osc.frequency.value=300 + speed*50 + combo*20;
     gainNode.gain.value=Math.min(0.5,0.1+combo*0.05);
-    osc.start();
-    osc.stop(audioCtx.currentTime+0.05);
+    osc.start(); osc.stop(audioCtx.currentTime+0.05);
 }
 
 // Menu -> jeu
@@ -107,24 +103,41 @@ canvas.addEventListener("touchmove",e=>{
     e.preventDefault();
 },{passive:false});
 
-// Dessin
+// Dessin table + paddles + ball + ombres
 function draw(){
-    ctx.fillStyle="#000"; ctx.fillRect(0,0,canvas.width,canvas.height);
-
+    // Table de ping-pong
+    ctx.fillStyle="#006400"; // vert foncé
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle="#fff"; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(canvas.width/2,0); ctx.lineTo(canvas.width/2,canvas.height); ctx.stroke(); // ligne centrale
+    ctx.strokeStyle="#fff"; ctx.lineWidth=2; ctx.strokeRect(0,0,canvas.width,canvas.height); // bordures
+    // Filet
+    for(let y=0;y<canvas.height;y+=10){ctx.fillStyle="#fff"; ctx.fillRect(canvas.width/2-2,y,4,5);}
+    
+    // Ombres paddles
+    ctx.fillStyle="rgba(0,0,0,0.3)";
+    ctx.fillRect(12,player1Y+5,paddleWidth,paddleHeight);
+    ctx.fillRect(canvas.width-24,player2Y+5,paddleWidth,paddleHeight);
+    
     // Paddles gradient dynamique
     let gradient1=ctx.createLinearGradient(0,player1Y,0,player1Y+paddleHeight);
     gradient1.addColorStop(0,player1Color); gradient1.addColorStop(1,"#0f0");
     ctx.fillStyle=gradient1; ctx.shadowColor=player1Color; ctx.shadowBlur=20; ctx.fillRect(10,player1Y,paddleWidth,paddleHeight);
-
+    
     let gradient2=ctx.createLinearGradient(canvas.width-22,player2Y,canvas.width-22,player2Y+paddleHeight);
     gradient2.addColorStop(0,player2Color); gradient2.addColorStop(1,"#ff0");
     ctx.fillStyle=gradient2; ctx.shadowColor=player2Color; ctx.shadowBlur=20; ctx.fillRect(canvas.width-22,player2Y,paddleWidth,paddleHeight);
 
-    // Balles et trail
+    // Balles et ombres
     trail.forEach(t=>{ctx.fillStyle=t.color; ctx.fillRect(t.x,t.y,t.size,t.size); t.life--;});
     trail=trail.filter(t=>t.life>0);
-
     ballX.forEach((bx,i)=>{
+        // Ombre balle
+        ctx.fillStyle="rgba(0,0,0,0.3)";
+        ctx.beginPath();
+        ctx.ellipse(bx+ballSize/2,ballY[i]+ballSize,ballSize/2,4,0,0,2*Math.PI);
+        ctx.fill();
+        // Balle Neon
         trail.push({x:bx,y:ballY[i],size:ballSize,color:ballColor[i],life:10});
         let g=ctx.createRadialGradient(bx+ballSize/2,ballY[i]+ballSize/2,1,bx+ballSize/2,ballY[i]+ballSize/2,ballSize);
         g.addColorStop(0,ballColor[i]); g.addColorStop(1,"#000");
@@ -140,22 +153,13 @@ function draw(){
     particles.forEach((p,i)=>{ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size,p.size); p.x+=p.vx; p.y+=p.vy; p.life--; if(p.life<=0) particles.splice(i,1);});
 }
 
-// Partie update, collisions, power-ups (identique à Ultra Neon)
+// … Update, collisions, power-ups, sons dynamiques comme avant
 function spawnParticles(x,y,color){for(let i=0;i<12;i++){particles.push({x,y,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,size:4,color,color,life:25});}}
 function spawnPowerUp(){const x=Math.random()*(canvas.width-200)+100;const y=Math.random()*(canvas.height-50);const color=["#0f0","#ff0","#f0f","#0ff"][Math.floor(Math.random()*4)];const type=["speed","bigPaddle","multiBall","ghost"][Math.floor(Math.random()*4)];powerUps.push({x,y,color,type});}
-function checkPowerUpCollision(){ballX.forEach((bx,bi)=>{powerUps.forEach((p,pi)=>{if(bx+ballSize>p.x && bx<p.x+powerUpSize && ballY[bi]+ballSize>p.y && ballY[bi]<p.y+powerUpSize){applyPowerUp(p.type);powerUps.splice(pi,1);comboCount++;spawnParticles(bx,ballY[bi],p.color); playBeep(Math.abs(ballSpeedX[bi]), comboCount);}});});}
+function checkPowerUpCollision(){ballX.forEach((bx,bi)=>{powerUps.forEach((p,pi)=>{if(bx+ballSize>p.x && bx<p.x+15 && ballY[bi]+ballSize>p.y && ballY[bi]<p.y+15){applyPowerUp(p.type);powerUps.splice(pi,1);comboCount++;spawnParticles(bx,ballY[bi],p.color); playBeep(Math.abs(ballSpeedX[bi]), comboCount);}});});}
 function applyPowerUp(type){let speed=parseFloat(ballSpeedSlider.value);if(type==="speed"){ballSpeedX=ballSpeedX.map(s=>Math.sign(s)*speed);ballSpeedY=ballSpeedY.map(s=>Math.sign(s)*speed);} else if(type==="bigPaddle"){paddleHeight=Math.min(paddleHeight+40,canvas.height/1.5);} else if(type==="ghost"){ballGhost=true;setTimeout(()=>ballGhost=false,3000);} else if(type==="multiBall"){let n=ballX.length;for(let i=0;i<n;i++){ballX.push(ballX[i]);ballY.push(ballY[i]);ballSpeedX.push(-ballSpeedX[i]);ballSpeedY.push(ballSpeedY[i]);ballColor.push(ballColor[i]==="#ff0"?"#0ff":"#ff0");}}}
 function update(){if(mode==='solo'){if(keys["w"] && player1Y>0) player1Y-=paddleSpeed;if(keys["s"] && player1Y<canvas.height-paddleHeight) player1Y+=paddleSpeed;if(player2Y+paddleHeight/2<ballY[0]) player2Y+=paddleSpeed/2; else player2Y-=paddleSpeed/2;} else{if(keys["w"] && player1Y>0) player1Y-=paddleSpeed;if(keys["s"] && player1Y<canvas.height-paddleHeight) player1Y+=paddleSpeed;if(keys["ArrowUp"] && player2Y>0) player2Y-=paddleSpeed;if(keys["ArrowDown"] && player2Y<canvas.height-paddleHeight) player2Y+=paddleSpeed;}
-ballX.forEach((bx,i)=>{
-    ballX[i]+=ballSpeedX[i]; ballY[i]+=ballSpeedY[i];
-    if(ballY[i]<=0 || ballY[i]+ballSize>=canvas.height){ballSpeedY[i]*=-1;spawnParticles(bx,ballY[i],ballColor[i]); playBeep(Math.abs(ballSpeedX[i]), comboCount);}
-    if(checkPaddleCollision(i)){ballSpeedX[i]*=-1.1;spawnParticles(bx,ballY[i],ballColor[i]); playBeep(Math.abs(ballSpeedX[i]), comboCount);}
-    if(ballX[i]<0){player2Score++;resetBall(); playBeep(5,1);}
-    if(ballX[i]+ballSize>canvas.width){player1Score++;resetBall(); playBeep(5,1);}
-});
-checkPowerUpCollision();
-if(Math.random()<0.005 && powerUps.length<3) spawnPowerUp();
-}
+ballX.forEach((bx,i)=>{ballX[i]+=ballSpeedX[i]; ballY[i]+=ballSpeedY[i]; if(ballY[i]<=0 || ballY[i]+ballSize>=canvas.height){ballSpeedY[i]*=-1;spawnParticles(bx,ballY[i],ballColor[i]); playBeep(Math.abs(ballSpeedX[i]), comboCount);} if(checkPaddleCollision(i)){ballSpeedX[i]*=-1.1;spawnParticles(bx,ballY[i],ballColor[i]); playBeep(Math.abs(ballSpeedX[i]), comboCount);} if(ballX[i]<0){player2Score++;resetBall(); playBeep(5,1);} if(ballX[i]+ballSize>canvas.width){player1Score++;resetBall(); playBeep(5,1);}}); checkPowerUpCollision(); if(Math.random()<0.005 && powerUps.length<3) spawnPowerUp();}
 function checkPaddleCollision(i){return (ballX[i]<=22 && ballY[i]+ballSize>=player1Y && ballY[i]<=player1Y+paddleHeight)||(ballX[i]+ballSize>=canvas.width-22 && ballY[i]+ballSize>=player2Y && ballY[i]<=player2Y+paddleHeight);}
 function resetBall(){let speed=parseFloat(ballSpeedSlider.value);ballX=[canvas.width/2-ballSize/2];ballY=[canvas.height/2-ballSize/2];ballSpeedX=[speed*(Math.random()>0.5?1:-1)];ballSpeedY=[speed*(Math.random()>0.5?1:-1)];ballColor=["#ff0"];comboCount=0;powerUps=[];paddleHeight=120;updateBestScores();}
 function updateBestScores(){let maxScore=Math.max(player1Score,player2Score);bestScores.push(maxScore);bestScores.sort((a,b)=>b-a);bestScores=bestScores.slice(0,5);localStorage.setItem('bestScores',JSON.stringify(bestScores));updateScoreTable();}
