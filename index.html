@@ -33,14 +33,14 @@ textarea { resize:none; height:80px; }
 
 <div class="container" id="loginContainer">
     <h2>Connexion</h2>
-    <button onclick="typeConnexion('admin')">Admin</button>
-    <button onclick="typeConnexion('user')">Utilisateur</button>
+    <button type="button" onclick="typeConnexion('admin')">Admin</button>
+    <button type="button" onclick="typeConnexion('user')">Utilisateur</button>
 </div>
 
 <div class="container" id="formLogin" style="display:none;">
     <h2 id="loginTitle"></h2>
     <input type="password" id="password" placeholder="Mot de passe">
-    <button onclick="connexion()">Se connecter</button>
+    <button type="button" onclick="connexion()">Se connecter</button>
 </div>
 
 <div class="container" id="appContainer" style="display:none;">
@@ -50,10 +50,10 @@ textarea { resize:none; height:80px; }
             <option value="">Choisir un utilisateur</option>
         </select>
         <textarea id="texteRemarque" placeholder="Écris la remarque ici"></textarea>
-        <button onclick="ajouterRemarque()">Ajouter Remarque</button>
+        <button type="button" onclick="ajouterRemarque()">Ajouter Remarque</button>
     </div>
     <div id="remarquesList"></div>
-    <button style="background:#e84118;" onclick="deconnexion()">Se Déconnecter</button>
+    <button type="button" style="background:#e84118;" onclick="deconnexion()">Se Déconnecter</button>
 </div>
 
 <script>
@@ -125,8 +125,8 @@ function afficherRemarques(){
             div.className='remarque' + (item.Validé==='true'? ' validé':'');
             div.innerHTML = `<strong>${item.NomCible}</strong>: ${item.Texte}` +
                 (currentUser==='Moi'?`<div class="actions">
-                <button onclick="validerRemarque(${index})">${item.Validé==='true'?'Annuler':'Valider'}</button>
-                <button class="delete" onclick="supprimerRemarque(${index})">Supprimer</button>
+                <button type="button" onclick="validerRemarque(${index})">${item.Validé==='true'?'Annuler':'Valider'}</button>
+                <button type="button" class="delete" onclick="supprimerRemarque(${index})">Supprimer</button>
                 </div>`:'');
             list.appendChild(div);
         }
