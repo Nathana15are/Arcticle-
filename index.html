@@ -33,14 +33,14 @@ textarea { resize:none; height:80px; }
 
 <div class="container" id="loginContainer">
     <h2>Connexion</h2>
-    <button type="button" onclick="typeConnexion('admin')">Admin</button>
-    <button type="button" onclick="typeConnexion('user')">Utilisateur</button>
+    <button type="button" id="btnAdmin">Admin</button>
+    <button type="button" id="btnUser">Utilisateur</button>
 </div>
 
 <div class="container" id="formLogin" style="display:none;">
     <h2 id="loginTitle"></h2>
     <input type="password" id="password" placeholder="Mot de passe">
-    <button type="button" onclick="connexion()">Se connecter</button>
+    <button type="button" id="btnConnexion">Se connecter</button>
 </div>
 
 <div class="container" id="appContainer" style="display:none;">
@@ -50,10 +50,10 @@ textarea { resize:none; height:80px; }
             <option value="">Choisir un utilisateur</option>
         </select>
         <textarea id="texteRemarque" placeholder="Écris la remarque ici"></textarea>
-        <button type="button" onclick="ajouterRemarque()">Ajouter Remarque</button>
+        <button type="button" id="btnAjouter">Ajouter Remarque</button>
     </div>
     <div id="remarquesList"></div>
-    <button type="button" style="background:#e84118;" onclick="deconnexion()">Se Déconnecter</button>
+    <button type="button" style="background:#e84118;" id="btnDeconnexion">Se Déconnecter</button>
 </div>
 
 <script>
@@ -65,6 +65,7 @@ let remarques = [];
 const URL_UTILISATEURS = "https://sheetdb.io/api/v1/9f486m3qgm63c";
 const URL_REMARQUES = "https://sheetdb.io/api/v1/jiqnkf4kvninf";
 
+// Fonction pour choisir le type de connexion
 function typeConnexion(type){
     userType = type;
     document.getElementById('loginContainer').style.display='none';
@@ -72,6 +73,7 @@ function typeConnexion(type){
     document.getElementById('loginTitle').innerText = type==='admin' ? 'Connexion Admin' : 'Connexion Utilisateur';
 }
 
+// Charger utilisateurs et remarques
 async function chargerDonnees(){
     const respUsers = await fetch(URL_UTILISATEURS);
     utilisateurs = await respUsers.json();
@@ -90,6 +92,7 @@ async function chargerDonnees(){
     }
 }
 
+// Fonction de connexion
 async function connexion(){
     await chargerDonnees();
     const mdp = document.getElementById('password').value.trim();
@@ -116,6 +119,7 @@ async function connexion(){
     }
 }
 
+// Afficher les remarques
 function afficherRemarques(){
     const list = document.getElementById('remarquesList');
     list.innerHTML='';
@@ -133,6 +137,7 @@ function afficherRemarques(){
     });
 }
 
+// Ajouter une remarque
 async function ajouterRemarque(){
     const nomC = document.getElementById('userSelect').value;
     const texte = document.getElementById('texteRemarque').value.trim();
@@ -149,6 +154,7 @@ async function ajouterRemarque(){
     }
 }
 
+// Valider / Annuler une remarque
 async function validerRemarque(index){
     const item = remarques[index];
     item.Validé = item.Validé==='true'?false:true;
@@ -161,6 +167,7 @@ async function validerRemarque(index){
     afficherRemarques();
 }
 
+// Supprimer une remarque
 async function supprimerRemarque(index){
     const item = remarques[index];
     if(confirm('Supprimer cette remarque ?')){
@@ -170,6 +177,7 @@ async function supprimerRemarque(index){
     }
 }
 
+// Déconnexion
 function deconnexion(){
     currentUser=null;
     document.getElementById('appContainer').style.display='none';
@@ -177,6 +185,15 @@ function deconnexion(){
     document.getElementById('loginContainer').style.display='block';
     document.getElementById('password').value='';
 }
+
+// Attacher les événements après que le DOM soit chargé
+document.addEventListener("DOMContentLoaded", function(){
+    document.getElementById("btnConnexion").addEventListener("click", connexion);
+    document.getElementById("btnAdmin").addEventListener("click", function(){ typeConnexion('admin'); });
+    document.getElementById("btnUser").addEventListener("click", function(){ typeConnexion('user'); });
+    document.getElementById("btnAjouter").addEventListener("click", ajouterRemarque);
+    document.getElementById("btnDeconnexion").addEventListener("click", deconnexion);
+});
 </script>
 
 </body>
