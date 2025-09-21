@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Remarques (SheetDB)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remarques SheetDB</title>
 <style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto; background:#f5f6fa;margin:0;padding:12px}
-  .card{max-width:720px;margin:18px auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-  h2{text-align:center;margin:0 0 14px}
-  input,select,textarea,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #e2e6ef;box-sizing:border-box}
-  button{background:#3bbf69;color:#fff;border:none;font-weight:700;cursor:pointer}
-  button[disabled]{opacity:.6;cursor:not-allowed}
-  .row{display:flex;gap:8px}
-  .row>button{flex:1}
-  .remarque{padding:12px;margin:10px 0;border-radius:8px;background:#f1f4f8;word-break:break-word}
-  .valid{background:#e6fffb;border-left:4px solid #00c7b7}
-  .hint{font-size:.9rem;color:#666}
-  @media(max-width:540px){.card{padding:14px}}
+body{font-family:system-ui,sans-serif;background:#f5f6fa;margin:0;padding:12px}
+.card{max-width:720px;margin:18px auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+h2{text-align:center;margin:0 0 14px}
+input,select,textarea,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #e2e6ef;box-sizing:border-box}
+button{background:#3bbf69;color:#fff;border:none;font-weight:700;cursor:pointer}
+button[disabled]{opacity:.6;cursor:not-allowed}
+.row{display:flex;gap:8px}
+.row>button{flex:1}
+.remarque{padding:12px;margin:10px 0;border-radius:8px;background:#f1f4f8;word-break:break-word}
+.valid{background:#e6fffb;border-left:4px solid #00c7b7}
+.hint{font-size:.9rem;color:#666}
+@media(max-width:540px){.card{padding:14px}}
 </style>
 </head>
 <body>
@@ -27,7 +27,7 @@
     <button type="button" id="btnAdmin">Connexion Admin</button>
     <button type="button" id="btnUser">Connexion Utilisateur</button>
   </div>
-  <p class="hint">Utilise Admin pour ajouter des remarques dans le sheet ; les utilisateurs lisent leurs remarques.</p>
+  <p class="hint">Admin ajoute des remarques ; utilisateur voit ses remarques.</p>
 </div>
 
 <div class="card" id="formCard" style="display:none">
@@ -72,8 +72,8 @@ const utilisateurs = [
 ];
 /* ==================== */
 
-let currentUser = null;     // "Admin" ou Nom
-let currentRole = null;     // "admin" ou "user"
+let currentUser = null;
+let currentRole = null;
 
 /* --- helpers DOM --- */
 const loginCard = document.getElementById('loginCard');
@@ -134,7 +134,6 @@ function logout(){
 
 /* ====== Connexion ====== */
 async function connexion(){
-  // bouton désactivé pendant l'opération
   btnConnexion.disabled = true;
   try{
     const mdp = password.value.trim();
@@ -154,7 +153,7 @@ async function connexion(){
     alert('Mot de passe incorrect.');
   } catch(err){
     console.error(err);
-    alert('Erreur pendant la connexion (voir console).');
+    alert('Erreur pendant la connexion.');
   } finally {
     btnConnexion.disabled = false;
     password.value = '';
@@ -169,34 +168,31 @@ async function loadRemarks(){
     const res = await fetch(sheetURL);
     if(!res.ok) throw new Error('fetch failed: ' + res.status);
     const json = await res.json();
-
-    // SheetDB peut retourner soit un tableau soit { data: [...] }
     const rows = Array.isArray(json) ? json : (json.data || []);
     if(rows.length === 0){
       statusEl.textContent = 'Aucune remarque trouvée.';
       return;
     }
 
-    // Afficher uniquement les remarques pertinentes
     const filtered = rows.filter(r => currentUser === 'Admin' || (r.User && r.User === currentUser));
     if(filtered.length === 0){
       statusEl.textContent = 'Aucune remarque pour cet utilisateur.';
     } else {
       statusEl.textContent = `Affichage ${filtered.length} remarque(s).`;
-      filtered.forEach((r, idx) => {
+      filtered.forEach(r => {
         const d = document.createElement('div');
-        d.className = 'remarque' + ((r.Validé === 'true' || r.Validé === true) ? ' valid' : '');
-        // sanitize briefly
-        const user = escapeHtml(r.User || r.Nom || 'Inconnu');
-        const texte= escapeHtml(r.Texte || r.text || '');
-        d.innerHTML = `<strong>${user}</strong>: ${texte}`;
+        d.className = 'remarque' + ((r.Validé === 'Oui') ? ' valid' : '');
+        const user = escapeHtml(r.User || 'Inconnu');
+        const texte= escapeHtml(r.Texte || '');
+        const adminNom = escapeHtml(r.NomCible || '');
+        d.innerHTML = `<strong>${user}</strong> (${adminNom}): ${texte}`;
         listEl.appendChild(d);
       });
     }
   } catch(err){
     console.error(err);
-    statusEl.textContent = 'Erreur de chargement (voir console).';
-    alert('Erreur en chargeant les remarques. Ouvre la console pour les détails.');
+    statusEl.textContent = 'Erreur de chargement des remarques.';
+    alert('Erreur en chargeant les remarques.');
   }
 }
 
@@ -211,33 +207,25 @@ async function addRemark(){
   btnAdd.disabled = true;
   statusEl.textContent = 'Envoi de la remarque...';
   try {
-    // SheetDB attend souvent { data: [ {col1: val1, ...} ] }
-    const payload = { data: [ { User: nom, NomCible: nom, Texte: texte, Validé: "false" } ] };
+    const payload = { data: [ { User: nom, NomCible: currentUser, Texte: texte, Validé: "Oui" } ] };
     const res = await fetch(sheetURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if(!res.ok){
-      const txt = await res.text();
-      console.error('POST error', res.status, txt);
-      throw new Error('Erreur serveur lors de l\'ajout: ' + res.status);
-    }
+    if(!res.ok) throw new Error('Erreur serveur: ' + res.status);
     statusEl.textContent = 'Remarque ajoutée.';
     texteArea.value = '';
     await loadRemarks();
   } catch(err){
     console.error(err);
-    statusEl.textContent = 'Erreur à l\'ajout (voir console).';
-    alert('Erreur en ajoutant la remarque. Ouvre la console pour les détails.');
-  } finally {
-    btnAdd.disabled = false;
-  }
+    statusEl.textContent = 'Erreur à l\'ajout.';
+    alert('Erreur en ajoutant la remarque.');
+  } finally { btnAdd.disabled=false; }
 }
 
-/* ====== utilitaires ====== */
+/* ====== helpers ====== */
 function populateUserSelect(){
-  // Remplit la liste si vide (use utilisateurs constants)
   userSelect.innerHTML = '<option value="">Choisir un utilisateur</option>';
   utilisateurs.forEach(u => {
     const opt = document.createElement('option');
@@ -247,11 +235,6 @@ function populateUserSelect(){
   });
 }
 function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* Au chargement on prépare la liste mais on n'appelle pas fetch avant connexion */
-window.addEventListener('DOMContentLoaded', () => {
-  populateUserSelect();
-});
 </script>
 
 </body>
