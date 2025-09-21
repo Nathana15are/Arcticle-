@@ -5,23 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mes Remarques</title>
 <style>
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f5f6fa; margin:0; padding:20px; }
-.container { max-width:600px; margin:40px auto; background:#fff; padding:25px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-h2 { text-align:center; margin-bottom:20px; color:#2f3640; }
-input, select, button, textarea { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #dcdde1; box-sizing:border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f5f6fa; margin:0; padding:10px; }
+.container { max-width:600px; margin:20px auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+h2 { text-align:center; margin-bottom:20px; color:#2f3640; font-size:1.5em; }
+input, select, button, textarea { width:100%; padding:14px; margin:8px 0; border-radius:8px; border:1px solid #dcdde1; box-sizing:border-box; font-size:1em; }
 button { background:#4cd137; color:white; border:none; cursor:pointer; font-weight:bold; transition:0.3s; }
 button:hover { background:#44bd32; }
-.remarque { padding:12px; margin-bottom:12px; background:#f1f2f6; border-radius:8px; position:relative; }
+.remarque { padding:12px; margin-bottom:12px; background:#f1f2f6; border-radius:8px; position:relative; word-break:break-word; }
 .validé { background-color:#dff9fb; border-left:4px solid #00cec9; }
-.actions { position:absolute; top:10px; right:10px; }
-.actions button { margin-left:5px; padding:5px 10px; font-size:0.85em; }
-.actions button.delete { background:#e84118; }
+.actions { position:absolute; top:10px; right:10px; display:flex; flex-wrap:wrap; gap:5px; }
+.actions button { padding:6px 10px; font-size:0.85em; border-radius:6px; }
+.actions button.delete { background:#e84118; color:white; border:none; }
 .actions button.delete:hover { background:#c23616; }
 .actions button:hover { opacity:0.8; }
-#loginContainer button { width:48%; margin-right:2%; margin-left:0; }
+#loginContainer button { width:48%; margin-right:2%; margin-left:0; padding:14px; }
 #loginContainer button:last-child { margin-right:0; }
 textarea { resize:none; height:80px; }
-@media(max-width:640px){ .container{ margin:20px; } }
+@media(max-width:640px){
+    .container{ margin:10px; padding:15px; }
+    h2{ font-size:1.3em; }
+    input, select, button, textarea{ font-size:1em; padding:12px; }
+    .actions { position:static; margin-top:8px; }
+}
 </style>
 </head>
 <body>
@@ -62,8 +67,8 @@ const URL_REMARQUES = "https://sheetdb.io/api/v1/jiqnkf4kvninf";
 
 function typeConnexion(type){
     userType = type;
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('formLogin').style.display = 'block';
+    document.getElementById('loginContainer').style.display='none';
+    document.getElementById('formLogin').style.display='block';
     document.getElementById('loginTitle').innerText = type==='admin' ? 'Connexion Admin' : 'Connexion Utilisateur';
 }
 
@@ -73,7 +78,6 @@ async function chargerDonnees(){
     const respRem = await fetch(URL_REMARQUES);
     remarques = await respRem.json();
 
-    // Remplir la liste déroulante pour l'admin
     if(userType==='admin'){
         const select = document.getElementById('userSelect');
         select.innerHTML = '<option value="">Choisir un utilisateur</option>';
