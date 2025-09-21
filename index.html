@@ -1,173 +1,256 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mes Remarques</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Remarques (SheetDB)</title>
 <style>
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f5f6fa; margin:0; padding:10px; }
-.container { max-width:600px; margin:20px auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-h2 { text-align:center; margin-bottom:20px; color:#2f3640; font-size:1.5em; }
-input, select, button, textarea { width:100%; padding:14px; margin:8px 0; border-radius:8px; border:1px solid #dcdde1; box-sizing:border-box; font-size:1em; }
-button { background:#4cd137; color:white; border:none; cursor:pointer; font-weight:bold; transition:0.3s; }
-button:hover { background:#44bd32; }
-.remarque { padding:12px; margin-bottom:12px; background:#f1f2f6; border-radius:8px; word-break:break-word; }
-.validé { background-color:#dff9fb; border-left:4px solid #00cec9; }
-#loginContainer button { width:48%; margin-right:2%; padding:14px; }
-#loginContainer button:last-child { margin-right:0; }
-textarea { resize:none; height:80px; }
-@media(max-width:640px){
-    .container{ margin:10px; padding:15px; }
-    h2{ font-size:1.3em; }
-    input, select, button, textarea{ font-size:1em; padding:12px; }
-}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto; background:#f5f6fa;margin:0;padding:12px}
+  .card{max-width:720px;margin:18px auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+  h2{text-align:center;margin:0 0 14px}
+  input,select,textarea,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #e2e6ef;box-sizing:border-box}
+  button{background:#3bbf69;color:#fff;border:none;font-weight:700;cursor:pointer}
+  button[disabled]{opacity:.6;cursor:not-allowed}
+  .row{display:flex;gap:8px}
+  .row>button{flex:1}
+  .remarque{padding:12px;margin:10px 0;border-radius:8px;background:#f1f4f8;word-break:break-word}
+  .valid{background:#e6fffb;border-left:4px solid #00c7b7}
+  .hint{font-size:.9rem;color:#666}
+  @media(max-width:540px){.card{padding:14px}}
 </style>
 </head>
 <body>
 
-<div class="container" id="loginContainer">
-    <h2>Connexion</h2>
-    <button type="button" id="btnAdmin">Admin</button>
-    <button type="button" id="btnUser">Utilisateur</button>
+<div class="card" id="loginCard">
+  <h2>Connexion</h2>
+  <div class="row">
+    <button type="button" id="btnAdmin">Connexion Admin</button>
+    <button type="button" id="btnUser">Connexion Utilisateur</button>
+  </div>
+  <p class="hint">Utilise Admin pour ajouter des remarques dans le sheet ; les utilisateurs lisent leurs remarques.</p>
 </div>
 
-<div class="container" id="formLogin" style="display:none;">
-    <h2 id="loginTitle"></h2>
-    <input type="password" id="password" placeholder="Mot de passe">
+<div class="card" id="formCard" style="display:none">
+  <h2 id="titleForm">Connexion</h2>
+  <input id="password" type="password" placeholder="Mot de passe" />
+  <div class="row">
     <button type="button" id="btnConnexion">Se connecter</button>
+    <button type="button" id="btnBack">Retour</button>
+  </div>
 </div>
 
-<div class="container" id="appContainer" style="display:none;">
-    <h2>Remarques</h2>
-    <div id="adminSection" style="display:none;">
-        <select id="userSelect">
-            <option value="">Choisir un utilisateur</option>
-        </select>
-        <textarea id="texteRemarque" placeholder="Écris la remarque ici"></textarea>
-        <button type="button" id="btnAjouter">Ajouter Remarque</button>
+<div class="card" id="appCard" style="display:none">
+  <h2>Remarques</h2>
+
+  <div id="adminPanel" style="display:none">
+    <select id="userSelect"><option value="">Choisir un utilisateur</option></select>
+    <textarea id="texte" placeholder="Écris la remarque ici"></textarea>
+    <div class="row">
+      <button type="button" id="btnAdd">Ajouter remarque</button>
+      <button type="button" id="btnRefresh">Rafraîchir</button>
     </div>
-    <div id="remarquesList"></div>
-    <button type="button" style="background:#e84118;" id="btnDeconnexion">Se Déconnecter</button>
+  </div>
+
+  <div id="status" class="hint">Chargement en attente...</div>
+  <div id="list"></div>
+
+  <div style="margin-top:12px" class="row">
+    <button type="button" id="btnLogout" style="background:#e24b3b">Se déconnecter</button>
+  </div>
 </div>
 
 <script>
-// Utilisateurs et mots de passe
-const utilisateurs = [
-    {Nom:"Hamza", MotDePasse:"Hamza1"},
-    {Nom:"Maya", MotDePasse:"Maya2"},
-    {Nom:"Noah", MotDePasse:"Noah3"},
-    {Nom:"Swan", MotDePasse:"Swan4"},
-    {Nom:"Matheo", MotDePasse:"Matheo5"}
-];
-
-const adminMdp = "Marius2013.";
+/* ====== CONFIG ====== */
 const sheetURL = "https://sheetdb.io/api/v1/jiqnkf4kvninf";
+const adminPassword = "Marius2013.";
+const utilisateurs = [
+  {Nom:"Hamza", MotDePasse:"Hamza1"},
+  {Nom:"Maya", MotDePasse:"Maya2"},
+  {Nom:"Noah", MotDePasse:"Noah3"},
+  {Nom:"Swan", MotDePasse:"Swan4"},
+  {Nom:"Matheo", MotDePasse:"Matheo5"}
+];
+/* ==================== */
 
-let userType = null;
-let currentUser = null;
+let currentUser = null;     // "Admin" ou Nom
+let currentRole = null;     // "admin" ou "user"
 
-// Sélecteurs
-const loginContainer = document.getElementById("loginContainer");
-const formLogin = document.getElementById("formLogin");
-const appContainer = document.getElementById("appContainer");
-const loginTitle = document.getElementById("loginTitle");
-const passwordInput = document.getElementById("password");
-const remarquesList = document.getElementById("remarquesList");
+/* --- helpers DOM --- */
+const loginCard = document.getElementById('loginCard');
+const formCard  = document.getElementById('formCard');
+const appCard   = document.getElementById('appCard');
+const titleForm = document.getElementById('titleForm');
+const password  = document.getElementById('password');
+const userSelect= document.getElementById('userSelect');
+const texteArea = document.getElementById('texte');
+const listEl    = document.getElementById('list');
+const statusEl  = document.getElementById('status');
+const btnAdd    = document.getElementById('btnAdd');
+const btnRefresh= document.getElementById('btnRefresh');
+const btnConnexion = document.getElementById('btnConnexion');
 
-// Choix connexion
-document.getElementById("btnAdmin").addEventListener("click", () => {
-    userType = "admin";
-    loginContainer.style.display="none";
-    formLogin.style.display="block";
-    loginTitle.innerText = "Connexion Admin";
-});
-document.getElementById("btnUser").addEventListener("click", () => {
-    userType = "user";
-    loginContainer.style.display="none";
-    formLogin.style.display="block";
-    loginTitle.innerText = "Connexion Utilisateur";
-});
+/* --- events --- */
+document.getElementById('btnAdmin').addEventListener('click', ()=> openForm('admin'));
+document.getElementById('btnUser').addEventListener('click', ()=> openForm('user'));
+document.getElementById('btnBack').addEventListener('click', ()=> { formCard.style.display='none'; loginCard.style.display='block'; password.value=''; });
+document.getElementById('btnLogout').addEventListener('click', logout);
+document.getElementById('btnRefresh').addEventListener('click', loadRemarks);
+btnAdd.addEventListener('click', addRemark);
+btnConnexion.addEventListener('click', connexion);
 
-// Connexion
-document.getElementById("btnConnexion").addEventListener("click", async () => {
-    const mdp = passwordInput.value.trim();
-    if(userType==="admin" && mdp===adminMdp){
-        currentUser="Admin";
-        formLogin.style.display="none";
-        appContainer.style.display="block";
-        document.getElementById("adminSection").style.display="block";
-        remplirListeUtilisateurs();
-        chargerRemarques();
-    } else if(userType==="user"){
-        const user = utilisateurs.find(u => u.MotDePasse===mdp);
-        if(user){
-            currentUser=user.Nom;
-            formLogin.style.display="none";
-            appContainer.style.display="block";
-            document.getElementById("adminSection").style.display="none";
-            chargerRemarques();
-        } else {
-            alert("Mot de passe incorrect !");
-        }
-    } else {
-        alert("Mot de passe incorrect !");
-    }
-});
-
-// Remplir liste utilisateurs pour admin
-function remplirListeUtilisateurs(){
-    const select = document.getElementById("userSelect");
-    select.innerHTML = '<option value="">Choisir un utilisateur</option>';
-    utilisateurs.forEach(u=>{
-        const option = document.createElement("option");
-        option.value = u.Nom;
-        option.textContent = u.Nom;
-        select.appendChild(option);
-    });
+/* --- UI helpers --- */
+function openForm(role){
+  currentRole = role;
+  loginCard.style.display='none';
+  formCard.style.display='block';
+  titleForm.textContent = role === 'admin' ? 'Connexion Admin' : 'Connexion Utilisateur';
+  password.focus();
 }
 
-// Ajouter remarque
-document.getElementById("btnAjouter").addEventListener("click", async () => {
-    const userSelect = document.getElementById("userSelect").value;
-    const texte = document.getElementById("texteRemarque").value.trim();
-    if(!userSelect || !texte){
-        alert("Choisis un utilisateur et écris une remarque");
+function showAppAsAdmin(){
+  formCard.style.display='none';
+  appCard.style.display='block';
+  document.getElementById('adminPanel').style.display='block';
+  populateUserSelect();
+  loadRemarks();
+}
+function showAppAsUser(){
+  formCard.style.display='none';
+  appCard.style.display='block';
+  document.getElementById('adminPanel').style.display='none';
+  loadRemarks();
+}
+
+function logout(){
+  currentUser = null;
+  currentRole = null;
+  appCard.style.display='none';
+  formCard.style.display='none';
+  loginCard.style.display='block';
+  password.value='';
+  listEl.innerHTML='';
+  statusEl.textContent = '';
+}
+
+/* ====== Connexion ====== */
+async function connexion(){
+  // bouton désactivé pendant l'opération
+  btnConnexion.disabled = true;
+  try{
+    const mdp = password.value.trim();
+    if(currentRole === 'admin' && mdp === adminPassword){
+      currentUser = 'Admin';
+      showAppAsAdmin();
+      return;
+    }
+    if(currentRole === 'user'){
+      const user = utilisateurs.find(u => u.MotDePasse === mdp);
+      if(user){
+        currentUser = user.Nom;
+        showAppAsUser();
         return;
+      }
     }
-    await fetch(sheetURL, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({User:userSelect, Texte:texte})
-    });
-    document.getElementById("texteRemarque").value="";
-    chargerRemarques();
-});
-
-// Charger remarques
-async function chargerRemarques(){
-    remarquesList.innerHTML="Chargement...";
-    const res = await fetch(sheetURL);
-    const data = await res.json();
-    remarquesList.innerHTML="";
-    data.forEach(item=>{
-        if(currentUser==="Admin" || item.User===currentUser){
-            const div=document.createElement("div");
-            div.className="remarque";
-            div.innerHTML=`<strong>${item.User}</strong>: ${item.Texte}`;
-            remarquesList.appendChild(div);
-        }
-    });
+    alert('Mot de passe incorrect.');
+  } catch(err){
+    console.error(err);
+    alert('Erreur pendant la connexion (voir console).');
+  } finally {
+    btnConnexion.disabled = false;
+    password.value = '';
+  }
 }
 
-// Déconnexion
-document.getElementById("btnDeconnexion").addEventListener("click", () => {
-    currentUser=null;
-    userType=null;
-    appContainer.style.display="none";
-    formLogin.style.display="none";
-    loginContainer.style.display="block";
-    passwordInput.value="";
-    remarquesList.innerHTML="";
+/* ====== Load / Render remarques ====== */
+async function loadRemarks(){
+  listEl.innerHTML = '';
+  statusEl.textContent = 'Chargement des remarques...';
+  try{
+    const res = await fetch(sheetURL);
+    if(!res.ok) throw new Error('fetch failed: ' + res.status);
+    const json = await res.json();
+
+    // SheetDB peut retourner soit un tableau soit { data: [...] }
+    const rows = Array.isArray(json) ? json : (json.data || []);
+    if(rows.length === 0){
+      statusEl.textContent = 'Aucune remarque trouvée.';
+      return;
+    }
+
+    // Afficher uniquement les remarques pertinentes
+    const filtered = rows.filter(r => currentUser === 'Admin' || (r.User && r.User === currentUser));
+    if(filtered.length === 0){
+      statusEl.textContent = 'Aucune remarque pour cet utilisateur.';
+    } else {
+      statusEl.textContent = `Affichage ${filtered.length} remarque(s).`;
+      filtered.forEach((r, idx) => {
+        const d = document.createElement('div');
+        d.className = 'remarque' + ((r.Validé === 'true' || r.Validé === true) ? ' valid' : '');
+        // sanitize briefly
+        const user = escapeHtml(r.User || r.Nom || 'Inconnu');
+        const texte= escapeHtml(r.Texte || r.text || '');
+        d.innerHTML = `<strong>${user}</strong>: ${texte}`;
+        listEl.appendChild(d);
+      });
+    }
+  } catch(err){
+    console.error(err);
+    statusEl.textContent = 'Erreur de chargement (voir console).';
+    alert('Erreur en chargeant les remarques. Ouvre la console pour les détails.');
+  }
+}
+
+/* ====== Ajouter remarque (Admin) ====== */
+async function addRemark(){
+  if(currentUser !== 'Admin'){ alert('Seulement admin peut ajouter.'); return; }
+  const nom = userSelect.value;
+  const texte = texteArea.value.trim();
+  if(!nom){ alert('Choisis un utilisateur.'); userSelect.focus(); return; }
+  if(!texte){ alert('Écris une remarque.'); texteArea.focus(); return; }
+
+  btnAdd.disabled = true;
+  statusEl.textContent = 'Envoi de la remarque...';
+  try {
+    // SheetDB attend souvent { data: [ {col1: val1, ...} ] }
+    const payload = { data: [ { User: nom, NomCible: nom, Texte: texte, Validé: "false" } ] };
+    const res = await fetch(sheetURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok){
+      const txt = await res.text();
+      console.error('POST error', res.status, txt);
+      throw new Error('Erreur serveur lors de l\'ajout: ' + res.status);
+    }
+    statusEl.textContent = 'Remarque ajoutée.';
+    texteArea.value = '';
+    await loadRemarks();
+  } catch(err){
+    console.error(err);
+    statusEl.textContent = 'Erreur à l\'ajout (voir console).';
+    alert('Erreur en ajoutant la remarque. Ouvre la console pour les détails.');
+  } finally {
+    btnAdd.disabled = false;
+  }
+}
+
+/* ====== utilitaires ====== */
+function populateUserSelect(){
+  // Remplit la liste si vide (use utilisateurs constants)
+  userSelect.innerHTML = '<option value="">Choisir un utilisateur</option>';
+  utilisateurs.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u.Nom;
+    opt.textContent = u.Nom;
+    userSelect.appendChild(opt);
+  });
+}
+function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Au chargement on prépare la liste mais on n'appelle pas fetch avant connexion */
+window.addEventListener('DOMContentLoaded', () => {
+  populateUserSelect();
 });
 </script>
 
