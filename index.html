@@ -61,7 +61,7 @@ button[disabled]{opacity:.6;cursor:not-allowed}
 
 <script>
 /* ====== CONFIG ====== */
-const sheetURL = "https://sheetdb.io/api/v1/jiqnkf4kvninf";
+const sheetURL = "https://sheetdb.io/api/v1/xifkqmsxri365";
 const adminPassword = "Marius2013.";
 const utilisateurs = [
   {Nom:"Hamza", MotDePasse:"Hamza1"},
@@ -192,7 +192,7 @@ async function loadRemarks(){
   } catch(err){
     console.error(err);
     statusEl.textContent = 'Erreur de chargement des remarques.';
-    alert('Erreur en chargeant les remarques.');
+    alert('Erreur en chargeant les remarques. Vérifie que l\'URL SheetDB est correcte et publique.');
   }
 }
 
