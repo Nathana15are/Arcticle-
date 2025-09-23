@@ -1,242 +1,215 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Remarques SheetDB</title>
-<style>
-body{font-family:system-ui,sans-serif;background:#f5f6fa;margin:0;padding:12px}
-.card{max-width:720px;margin:18px auto;background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-h2{text-align:center;margin:0 0 14px}
-input,select,textarea,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #e2e6ef;box-sizing:border-box}
-button{background:#3bbf69;color:#fff;border:none;font-weight:700;cursor:pointer}
-button[disabled]{opacity:.6;cursor:not-allowed}
-.row{display:flex;gap:8px}
-.row>button{flex:1}
-.remarque{padding:12px;margin:10px 0;border-radius:8px;background:#f1f4f8;word-break:break-word}
-.valid{background:#e6fffb;border-left:4px solid #00c7b7}
-.hint{font-size:.9rem;color:#666}
-@media(max-width:540px){.card{padding:14px}}
-</style>
+  <meta charset="UTF-8">
+  <title>Test Hypersensibilité</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f3f4f6;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #232f3e;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 { margin: 0; font-size: 28px; }
+    main { padding: 20px; max-width: 1000px; margin: auto; }
+    .intro { text-align: center; margin-bottom: 20px; font-size: 18px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #ddd;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .card b {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+    .btn {
+      display: block;
+      margin: 30px auto 15px auto;
+      padding: 14px 28px;
+      background: #ff9900;
+      color: #111;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover { background: #e68a00; }
+    #result {
+      display: none;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: fadeIn 0.5s;
+    }
+    #result h2 { margin-top: 0; }
+    .circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 10px solid #ddd;
+      border-top-color: #ff9900;
+      animation: spin 1.5s linear forwards;
+      margin: 20px auto;
+      position: relative;
+    }
+    .circle span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+    .share-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 22px;
+      background: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .share-btn:hover { background: #005fcc; }
+    @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+    @keyframes spin { from {transform: rotate(0deg);} to {transform: rotate(360deg);} }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #232f3e;
+      color: white;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>🧠 Test d’Hypersensibilité</h1>
+  </header>
+  <main>
+    <p class="intro">Répondez par <b>Oui</b> ou <b>Non</b> aux affirmations ci-dessous.<br>
+    Le test est indicatif et ne remplace pas un avis professionnel.</p>
 
-<div class="card" id="loginCard">
-  <h2>Connexion</h2>
-  <div class="row">
-    <button type="button" id="btnAdmin">Connexion Admin</button>
-    <button type="button" id="btnUser">Connexion Utilisateur</button>
-  </div>
-  <p class="hint">Admin ajoute des remarques ; utilisateur voit ses remarques.</p>
-</div>
+    <div class="grid" id="questions"></div>
 
-<div class="card" id="formCard" style="display:none">
-  <h2 id="titleForm">Connexion</h2>
-  <input id="password" type="password" placeholder="Mot de passe" />
-  <div class="row">
-    <button type="button" id="btnConnexion">Se connecter</button>
-    <button type="button" id="btnBack">Retour</button>
-  </div>
-</div>
+    <button class="btn" onclick="valider()">Valider</button>
 
-<div class="card" id="appCard" style="display:none">
-  <h2>Remarques</h2>
+    <div id="result"></div>
+  </main>
+  <footer>
+    © 2025 Test Hypersensibilité - Infos éducatives (non médicales)
+  </footer>
 
-  <div id="adminPanel" style="display:none">
-    <select id="userSelect"><option value="">Choisir un utilisateur</option></select>
-    <textarea id="texte" placeholder="Écris la remarque ici"></textarea>
-    <div class="row">
-      <button type="button" id="btnAdd">Ajouter remarque</button>
-      <button type="button" id="btnRefresh">Rafraîchir</button>
-    </div>
-  </div>
+  <script>
+    const questions = [
+      "Impulsif","Soucie du regard","Sensible","Non au contact physique","Mal à supporter des bruits",
+      "Ruminer le passé","Susceptible","Mal à supporter des odeurs","Émotif","Difficile alimentation",
+      "Naïf","Empathique","Compréhensible","Solitaire",
+      "Casanier","Observateur","Anxieux","Manque de confiance en soi","Réservé",
+      "Crie","Manque de confiance aux autres","Curieux","Fatigué","Créatif"
+    ];
 
-  <div id="status" class="hint">Chargement en attente...</div>
-  <div id="list"></div>
+    const grid = document.getElementById("questions");
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <b>${q}</b>
+        <label><input type="radio" name="q${i}" value="oui"> Oui</label>
+        <label><input type="radio" name="q${i}" value="non"> Non</label>
+      `;
+      grid.appendChild(div);
+    });
 
-  <div style="margin-top:12px" class="row">
-    <button type="button" id="btnLogout" style="background:#e24b3b">Se déconnecter</button>
-  </div>
-</div>
+    function valider() {
+      let score = 0;
+      questions.forEach((_, i) => {
+        const val = document.querySelector('input[name="q'+i+'"]:checked');
+        if (val && val.value === "oui") score++;
+      });
 
-<script>
-/* ====== CONFIG ====== */
-const sheetURL = "https://sheetdb.io/api/v1/xifkqmsxri365";
-const adminPassword = "Marius2013.";
-const utilisateurs = [
-  {Nom:"Hamza", MotDePasse:"Hamza1"},
-  {Nom:"Maya", MotDePasse:"Maya2"},
-  {Nom:"Noah", MotDePasse:"Noah3"},
-  {Nom:"Swan", MotDePasse:"Swan4"},
-  {Nom:"Blanche", MotDePasse:"Blanche6"},
-  {Nom:"Matheo", MotDePasse:"Matheo5"}
-];
-/* ==================== */
+      const res = document.getElementById("result");
+      res.style.display = "block";
 
-let currentUser = null;
-let currentRole = null;
+      // cercle visuel
+      res.innerHTML = `
+        <div class="circle"><span>${score}/24</span></div>
+      `;
 
-/* --- helpers DOM --- */
-const loginCard = document.getElementById('loginCard');
-const formCard  = document.getElementById('formCard');
-const appCard   = document.getElementById('appCard');
-const titleForm = document.getElementById('titleForm');
-const password  = document.getElementById('password');
-const userSelect= document.getElementById('userSelect');
-const texteArea = document.getElementById('texte');
-const listEl    = document.getElementById('list');
-const statusEl  = document.getElementById('status');
-const btnAdd    = document.getElementById('btnAdd');
-const btnRefresh= document.getElementById('btnRefresh');
-const btnConnexion = document.getElementById('btnConnexion');
+      let message = "";
+      if (score >= 22) {
+        message = "✅ Vous êtes probablement hypersensible";
+        res.innerHTML += `
+          <h2>${message}</h2>
+          <p>Vous avez répondu <b>${score}</b> fois "Oui".</p>
+          <p>L’hypersensibilité toucherait environ <b>15 à 20% de la population mondiale</b>.</p>
+          <h3>Caractéristiques fréquentes :</h3>
+          <ul>
+            <li>Sensibilité accrue aux bruits, odeurs, lumières.</li>
+            <li>Forte empathie et imagination créative.</li>
+            <li>Réactions émotionnelles intenses.</li>
+          </ul>
+        `;
+      } else {
+        message = "ℹ️ Vous n’êtes probablement pas hypersensible";
+        res.innerHTML += `
+          <h2>${message}</h2>
+          <p>Vous avez répondu <b>${score}</b> fois "Oui".</p>
+          <p>Cela ne veut pas dire que vous n’êtes pas sensible, mais que vous ne cochez pas la majorité des critères associés à l’hypersensibilité.</p>
+          <p>L’hypersensibilité concernerait environ <b>15 à 20% des personnes</b> dans le monde.</p>
+        `;
+      }
 
-/* --- events --- */
-document.getElementById('btnAdmin').addEventListener('click', ()=> openForm('admin'));
-document.getElementById('btnUser').addEventListener('click', ()=> openForm('user'));
-document.getElementById('btnBack').addEventListener('click', ()=> { formCard.style.display='none'; loginCard.style.display='block'; password.value=''; });
-document.getElementById('btnLogout').addEventListener('click', logout);
-document.getElementById('btnRefresh').addEventListener('click', loadRemarks);
-btnAdd.addEventListener('click', addRemark);
-btnConnexion.addEventListener('click', connexion);
-
-/* --- UI helpers --- */
-function openForm(role){
-  currentRole = role;
-  loginCard.style.display='none';
-  formCard.style.display='block';
-  titleForm.textContent = role === 'admin' ? 'Connexion Admin' : 'Connexion Utilisateur';
-  password.focus();
-}
-
-function showAppAsAdmin(){
-  formCard.style.display='none';
-  appCard.style.display='block';
-  document.getElementById('adminPanel').style.display='block';
-  populateUserSelect();
-  loadRemarks();
-}
-function showAppAsUser(){
-  formCard.style.display='none';
-  appCard.style.display='block';
-  document.getElementById('adminPanel').style.display='none';
-  loadRemarks();
-}
-
-function logout(){
-  currentUser = null;
-  currentRole = null;
-  appCard.style.display='none';
-  formCard.style.display='none';
-  loginCard.style.display='block';
-  password.value='';
-  listEl.innerHTML='';
-  statusEl.textContent = '';
-}
-
-/* ====== Connexion ====== */
-async function connexion(){
-  btnConnexion.disabled = true;
-  try{
-    const mdp = password.value.trim();
-    if(currentRole === 'admin' && mdp === adminPassword){
-      currentUser = 'Admin';
-      showAppAsAdmin();
-      return;
+      // bouton partager
+      res.innerHTML += `
+        <button class="share-btn" onclick="partager('${message}')">Partager mon résultat</button>
+      `;
     }
-    if(currentRole === 'user'){
-      const user = utilisateurs.find(u => u.MotDePasse === mdp);
-      if(user){
-        currentUser = user.Nom;
-        showAppAsUser();
-        return;
+
+    function partager(resultat) {
+      const url = "https://testhypersensibilite.netlify.com";
+      let text = "J’ai eu mon résultat à un test hypersensible qui a démontré que " +
+        (resultat.includes("probablement hypersensible") 
+          ? "je suis hypersensible" 
+          : "je ne suis pas hypersensible");
+      
+      if (navigator.share) {
+        navigator.share({
+          title: "Test Hypersensibilité",
+          text: text,
+          url: url
+        });
+      } else {
+        alert("Partagez ce texte :\n\n" + text + "\n\n" + url);
       }
     }
-    alert('Mot de passe incorrect.');
-  } catch(err){
-    console.error(err);
-    alert('Erreur pendant la connexion.');
-  } finally {
-    btnConnexion.disabled = false;
-    password.value = '';
-  }
-}
-
-/* ====== Load / Render remarques ====== */
-async function loadRemarks(){
-  listEl.innerHTML = '';
-  statusEl.textContent = 'Chargement des remarques...';
-  try{
-    const res = await fetch(sheetURL);
-    if(!res.ok) throw new Error('fetch failed: ' + res.status);
-    const json = await res.json();
-    const rows = Array.isArray(json) ? json : (json.data || []);
-    if(rows.length === 0){
-      statusEl.textContent = 'Aucune remarque trouvée.';
-      return;
-    }
-
-    const filtered = rows.filter(r => currentUser === 'Admin' || (r.User && r.User === currentUser));
-    if(filtered.length === 0){
-      statusEl.textContent = 'Aucune remarque pour cet utilisateur.';
-    } else {
-      statusEl.textContent = `Affichage ${filtered.length} remarque(s).`;
-      filtered.forEach(r => {
-        const d = document.createElement('div');
-        d.className = 'remarque' + ((r.Validé === 'Oui') ? ' valid' : '');
-        const user = escapeHtml(r.User || 'Inconnu');
-        const texte= escapeHtml(r.Texte || '');
-        const adminNom = escapeHtml(r.NomCible || '');
-        d.innerHTML = `<strong>${user}</strong> (${adminNom}): ${texte}`;
-        listEl.appendChild(d);
-      });
-    }
-  } catch(err){
-    console.error(err);
-    statusEl.textContent = 'Erreur de chargement des remarques.';
-    alert('Erreur en chargeant les remarques. Vérifie que l\'URL SheetDB est correcte et publique.');
-  }
-}
-
-/* ====== Ajouter remarque (Admin) ====== */
-async function addRemark(){
-  if(currentUser !== 'Admin'){ alert('Seulement admin peut ajouter.'); return; }
-  const nom = userSelect.value;
-  const texte = texteArea.value.trim();
-  if(!nom){ alert('Choisis un utilisateur.'); userSelect.focus(); return; }
-  if(!texte){ alert('Écris une remarque.'); texteArea.focus(); return; }
-
-  btnAdd.disabled = true;
-  statusEl.textContent = 'Envoi de la remarque...';
-  try {
-    const payload = { data: [ { User: nom, NomCible: currentUser, Texte: texte, Validé: "Oui" } ] };
-    const res = await fetch(sheetURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if(!res.ok) throw new Error('Erreur serveur: ' + res.status);
-    statusEl.textContent = 'Remarque ajoutée.';
-    texteArea.value = '';
-    await loadRemarks();
-  } catch(err){
-    console.error(err);
-    statusEl.textContent = 'Erreur à l\'ajout.';
-    alert('Erreur en ajoutant la remarque.');
-  } finally { btnAdd.disabled=false; }
-}
-
-/* ====== helpers ====== */
-function populateUserSelect(){
-  userSelect.innerHTML = '<option value="">Choisir un utilisateur</option>';
-  utilisateurs.forEach(u => {
-    const opt = document.createElement('option');
-    opt.value = u.Nom;
-    opt.textContent = u.Nom;
-    userSelect.appendChild(opt);
-  });
-}
-function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-</script>
-
+  </script>
 </body>
 </html>
