@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site Classique Extrême Visuel Ultime</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: Arial, sans-serif; line-height:1.6; background:#f4f4f4; color:#333; }
+header { background:#333; color:#fff; padding:20px; text-align:center; position:sticky; top:0; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);}
+nav ul { list-style:none; display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+nav a { color:#fff; text-decoration:none; font-weight:bold; }
+nav a:hover { text-decoration:underline; }
+main { max-width:1400px; margin:20px auto; }
+section { margin-bottom:40px; padding:20px; background:#fff; border-radius:8px; transition: all 0.5s ease; position:relative; overflow:hidden; }
+section:hover { transform: scale(1.05) rotate(2deg) translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.35); }
+h2 { margin-bottom:10px; }
+p { margin-bottom:10px; transition: color 0.5s ease, transform 0.5s ease; animation: pulse 4s infinite alternate; }
+@keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
+button { padding:10px 20px; background:#333; color:#fff; border:none; border-radius:5px; cursor:pointer; transition:0.3s; position:relative; z-index:2; }
+button:hover { background:#555; transform: scale(1.05); }
+footer { text-align:center; padding:20px; background:#333; color:#fff; }
+@keyframes gradientShift { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
+</style>
+</head>
+<body>
+
+<header>
+<h1>Mon Site Classique Extrême Visuel Ultime</h1>
+<nav>
+<ul>
+<li><a href="#section1">Début</a></li>
+<li><a href="#section500">Milieu</a></li>
+<li><a href="#section1000">Fin</a></li>
+</ul>
+</nav>
+</header>
+
+<main id="main-content">
+</main>
+
+<footer>
+<p>&copy; 2025 Mon Site Classique Extrême Visuel Ultime. Tous droits réservés.</p>
+</footer>
+
+<script>
+const colors = ['#e74c3c','#2ecc71','#3498db','#f1c40f','#9b59b6','#1abc9c','#e67e22','#8e44ad','#d35400','#16a085'];
+const images = [
+'https://picsum.photos/1200/300?random=1',
+'https://picsum.photos/1200/300?random=2',
+'https://picsum.photos/1200/300?random=3',
+'https://picsum.photos/1200/300?random=4',
+'https://picsum.photos/1200/300?random=5'
+];
+
+let sectionCount = 0;
+const batchSize = 50;
+
+function randomGradient(){const c1=colors[Math.floor(Math.random()*colors.length)]; const c2=colors[Math.floor(Math.random()*colors.length)]; return `linear-gradient(270deg, ${c1}, ${c2})`; }
+function randomImage(){ return images[Math.floor(Math.random()*images.length)]; }
+
+function changeColor(section){
+section.style.color = colors[Math.floor(Math.random()*colors.length)];
+section.style.background = Math.random()<0.2 ? `url('${randomImage()}') center/cover no-repeat` : randomGradient();
+section.style.backgroundSize = "400% 400%";
+section.style.animation = "gradientShift 3s ease infinite";
+}
+
+function createSections(n){
+const main = document.getElementById('main-content');
+for(let i=1;i<=n;i++){
+sectionCount++;
+const sec = document.createElement('section');
+sec.id = 'section'+sectionCount;
+sec.style.background = Math.random()<0.2 ? `url('${randomImage()}') center/cover no-repeat` : randomGradient();
+sec.style.backgroundSize = "400% 400%";
+sec.style.animation = "gradientShift 5s ease infinite";
+
+const h2 = document.createElement('h2');
+h2.textContent = 'Section '+sectionCount;
+sec.appendChild(h2);
+
+for(let j=1;j<=10;j++){
+const p = document.createElement('p');
+p.textContent = 'Paragraphe '+j+' de la section '+sectionCount+'. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin varius.';
+sec.appendChild(p);
+}
+
+const btn = document.createElement('button');
+btn.textContent = 'Changer la couleur de la section '+sectionCount;
+btn.onclick = ()=>changeColor(sec);
+sec.appendChild(btn);
+
+main.appendChild(sec);
+}
+}
+
+// créer les premières sections
+createSections(batchSize);
+
+// scroll infini : créer plus de sections quand proche du bas
+window.addEventListener('scroll', ()=>{
+if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 500){
+createSections(batchSize);
+}
+});
+
+// changer les couleurs du texte toutes les 1 seconde
+setInterval(()=>{
+const paragraphs = document.querySelectorAll('p');
+paragraphs.forEach(p=>{
+p.style.color = colors[Math.floor(Math.random()*colors.length)];
+});
+},1000);
+
+</script>
+
+</body>
+</html>
