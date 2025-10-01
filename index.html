@@ -3,39 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Idées pour améliorer le collège</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<title>Idées collège Broceliande</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;}
-body{background:linear-gradient(135deg,#74ebd5,#ACB6E5);color:#222;display:block;padding:15px;}
-header{background:#4e54c8;color:white;padding:20px;text-align:center;border-radius:8px;margin-bottom:20px;}
-.form-box{background:white;padding:15px;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);margin-bottom:20px;width:100%;}
-textarea{width:100%;height:100px;padding:10px;border:1px solid #ccc;border-radius:6px;resize:none;}
-.counter{text-align:right;font-size:12px;margin-top:4px;}
-.tags{margin:10px 0;display:flex;flex-wrap:wrap;}
-.tags span{display:inline-block;background:#e1e1e1;padding:6px 10px;margin:4px;border-radius:6px;cursor:pointer;font-size:12px;}
-button{margin:5px 0;padding:12px;border:none;border-radius:6px;cursor:pointer;transition:0.3s;width:100%;font-size:16px;}
-button:hover{transform:scale(1.03);}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+body{background:linear-gradient(135deg,#74ebd5,#ACB6E5);color:#222;padding:10px;}
+.form-box{background:white;padding:15px;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 5px rgba(0,0,0,0.2);}
+textarea{width:100%;height:80px;padding:8px;border-radius:5px;border:1px solid #ccc;resize:none;}
+.counter{text-align:right;font-size:12px;margin-top:3px;}
+.tags{display:flex;flex-wrap:wrap;margin:8px 0;}
+.tags span{margin:2px 4px;padding:5px 8px;background:#eee;border-radius:5px;font-size:12px;cursor:pointer;}
+button{width:100%;padding:10px;margin:4px 0;border:none;border-radius:6px;cursor:pointer;}
 .btn-primary{background:#4e54c8;color:white;}
-.btn-reset{background:#ccc;color:#000;}
+.btn-reset{background:#ccc;color:black;}
 .btn-micro{background:#ff9f43;color:white;}
-.table-admin{width:100%;border-collapse:collapse;margin-top:15px;font-size:14px;}
-.table-admin th,.table-admin td{border:1px solid #ddd;padding:6px;text-align:center;}
-.table-admin th{background:#4e54c8;color:white;font-size:14px;}
-.status-accepted{background:#c3f0c3;}
-.status-refused{background:#f0c3c3;}
-.toggle-dark{position:fixed;top:10px;right:10px;cursor:pointer;background:#222;color:white;padding:6px 10px;border-radius:6px;font-size:14px;}
-body.dark{background:#222;color:#eee;}
-body.dark .form-box{background:#333;color:#eee;}
-body.dark textarea{background:#555;color:white;}
-@media(max-width:600px){textarea{height:80px;} .tags span{font-size:11px;padding:5px 8px;} button{font-size:14px;}}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;}
+th,td{border:1px solid #ddd;padding:5px;text-align:center;}
+th{background:#4e54c8;color:white;}
+@media(max-width:600px){textarea{height:60px;} button{font-size:14px;} .tags span{font-size:11px;padding:4px 6px;}}
 </style>
 </head>
 <body>
-<button class="toggle-dark" onclick="document.body.classList.toggle('dark')">🌙 Mode sombre</button>
 
-<div id="accueil" class="form-box">
-<header><h1>💡 Vos idées pour améliorer le collège</h1></header>
+<div class="form-box">
+<h2>💡 Vos idées pour améliorer le collège</h2>
 <textarea id="idea" placeholder="Écris ton idée ici..."></textarea>
 <div class="counter" id="counter">0 / 200</div>
 <div class="tags">
@@ -44,131 +34,80 @@ body.dark textarea{background:#555;color:white;}
 <span>#Sortie</span><span>#Éco</span><span>#Technologie</span><span>#Arts</span>
 <span>#Jardin</span><span>#Événement</span><span>#Bien-être</span>
 </div>
-<input type="text" id="name" placeholder="Ton prénom (facultatif)"><br>
-<label><input type="checkbox" id="anonymous"> Envoyer anonymement</label><br>
+<input type="text" id="name" placeholder="Prénom (facultatif)"><br>
+<label><input type="checkbox" id="anonymous"> Envoyer anonymement</label>
 <button class="btn-primary" id="send-btn">Envoyer</button>
 <button class="btn-reset" id="reset-btn">Réinitialiser</button>
-<button class="btn-micro" id="dictate-btn">🎤 Dicter</button>
-<div class="confirmation" id="confirmation" style="display:none;margin-top:10px;background:#d4edda;color:#155724;padding:10px;border-radius:6px;">✅ Ton idée a bien été envoyée !</div>
+<div id="confirmation" style="display:none;margin-top:8px;padding:8px;background:#d4edda;color:#155724;border-radius:5px;">✅ Envoyé !</div>
 </div>
 
-<div id="accepted" class="form-box"><h2>✅ Idées acceptées</h2>
-<table class="table-admin" id="table-accepted"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table>
-</div>
+<div class="form-box"><h3>✅ Idées acceptées</h3><table id="table-accepted"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table></div>
+<div class="form-box"><h3>❌ Idées refusées</h3><table id="table-refused"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table></div>
 
-<div id="refused" class="form-box"><h2>❌ Idées refusées</h2>
-<table class="table-admin" id="table-refused"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table>
-</div>
-
-<div id="admin" class="form-box">
-<h2>⚙️ Admin (protégé)</h2>
+<div class="form-box">
+<h3>⚙️ Admin</h3>
 <input type="password" id="admin-pass" placeholder="Mot de passe">
-<button id="admin-login-btn">Se connecter</button>
+<button id="admin-login-btn" class="btn-primary">Se connecter</button>
 <div id="admin-panel" style="display:none">
-<table class="table-admin" id="table-admin">
-<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>
-</table>
+<table id="table-admin"><tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr></table>
 </div>
 </div>
 
 <script>
-const SHEETDB_URL="https://sheetdb.io/api/v1/vu7li5z94eqkt";
-const placeholders=["Installer plus de bancs dans la cour""Créer un club de musique","Organiser une journée sans cartable","Mettre des distributeurs de fruits"];
-let index=0;
-setInterval(()=>{document.getElementById("idea").placeholder=placeholders[index];index=(index+1)%placeholders.length;},4000);
-
+const SHEETDB="https://sheetdb.io/api/v1/vu7li5z94eqkt";
 const textarea=document.getElementById("idea");
-textarea.addEventListener("input",()=>{document.getElementById("counter").innerText=textarea.value.length+" / 200";});
+textarea.addEventListener("input",()=>document.getElementById("counter").innerText=textarea.value.length+" / 200");
 
 document.getElementById("reset-btn").addEventListener("click",()=>{textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;});
-
-document.getElementById("dictate-btn").addEventListener("click",()=>{
-  if('webkitSpeechRecognition' in window){
-    const recognition=new webkitSpeechRecognition();
-    recognition.lang="fr-FR";
-    recognition.onresult=function(event){textarea.value=event.results[0][0].transcript;document.getElementById("counter").innerText=textarea.value.length+" / 200";};
-    recognition.start();
-  }else{alert("Reconnaissance vocale non supportée.");}
-});
-
-document.querySelectorAll(".tags span").forEach(tag=>{tag.addEventListener("click",()=>{textarea.value+=" "+tag.innerText;document.getElementById("counter").innerText=textarea.value.length+" / 200";});});
-
 document.getElementById("send-btn").addEventListener("click",submitIdea);
 
-function submitIdea(){
-  const ideaVal=textarea.value.trim();
-  if(!ideaVal){alert("Merci d'écrire une idée"); return;}
+async function submitIdea(){
+  const text=textarea.value.trim();
+  if(!text){alert("Écris une idée");return;}
   const prenom=document.getElementById("anonymous").checked?"Anonyme":document.getElementById("name").value||"";
-  const data={data:{idee:ideaVal,prenom:prenom,statut:"En attente"}};
-  fetch(SHEETDB_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})
-  .then(()=>{textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;showConfirmation();loadTables();})
-  .catch(err=>{alert("Erreur lors de l'envoi"); console.error(err);});
-}
-
-function showConfirmation(){const c=document.getElementById("confirmation");c.style.display="block";setTimeout(()=>{c.style.display="none";},2000);}
-
-document.getElementById("admin-login-btn").addEventListener("click",()=>{
-  const pass=document.getElementById("admin-pass").value;
-  if(pass==="Marius2013"){document.getElementById("admin-panel").style.display="block";loadTables();}else{alert("Mot de passe incorrect");}
-});
-
-async function loadTables(){
-  const data=await fetch(SHEETDB_URL).then(r=>r.json());
-  const acceptedTable=document.getElementById("table-accepted");
-  acceptedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-  const refusedTable=document.getElementById("table-refused");
-  refusedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-  const adminTable=document.getElementById("table-admin");
-  adminTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
-
-  data.forEach(item=>{
-    // Acceptées / Refusées
-    const trAcc=document.createElement("tr");
-    const trRef=document.createElement("tr");
-    if(item.statut==="Acceptée"){trAcc.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`;acceptedTable.appendChild(trAcc);}
-    else if(item.statut==="Refusée"){trRef.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`;refusedTable.appendChild(trRef);}
-
-    // Admin
-    const trAdmin=document.createElement("tr");
-    trAdmin.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td>`;
-    const tdActions=document.createElement("td");
-
-    if(item.statut==="En attente"){
-      const btnAcc=document.createElement("button");
-      btnAcc.textContent="✅ Accepter";
-      btnAcc.className="btn-primary";
-      btnAcc.addEventListener("click",()=>changeStatus(item.id,"Acceptée"));
-
-      const btnRef=document.createElement("button");
-      btnRef.textContent="❌ Refuser";
-      btnRef.className="btn-reset";
-      btnRef.addEventListener("click",()=>changeStatus(item.id,"Refusée"));
-
-      tdActions.appendChild(btnAcc);
-      tdActions.appendChild(btnRef);
-    }
-
-    const btnDel=document.createElement("button");
-    btnDel.textContent="🗑️ Supprimer";
-    btnDel.className="btn-micro";
-    btnDel.addEventListener("click",()=>deleteIdea(item.id));
-
-    tdActions.appendChild(btnDel);
-    trAdmin.appendChild(tdActions);
-    adminTable.appendChild(trAdmin);
-  });
-}
-
-async function changeStatus(id,status){
-  await fetch(`${SHEETDB_URL}/id/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})});
+  await fetch(SHEETDB,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{idee:text,prenom:prenom,statut:"En attente"}})});
+  textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;
+  document.getElementById("confirmation").style.display="block";
+  setTimeout(()=>{document.getElementById("confirmation").style.display="none";},1500);
   loadTables();
 }
 
-async function deleteIdea(id){
-  if(confirm("Supprimer cette idée ?")){await fetch(`${SHEETDB_URL}/id/${id}`,{method:"DELETE"}); loadTables();}
+document.getElementById("admin-login-btn").addEventListener("click",()=>{
+  const pass=document.getElementById("admin-pass").value;
+  if(pass==="Marius2013"){document.getElementById("admin-panel").style.display="block";loadTables();}
+  else{alert("Mot de passe incorrect");}
+});
+
+async function loadTables(){
+  const data=await fetch(SHEETDB).then(r=>r.json());
+  const tAcc=document.getElementById("table-accepted");
+  const tRef=document.getElementById("table-refused");
+  const tAdmin=document.getElementById("table-admin");
+  tAcc.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
+  tRef.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
+  tAdmin.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
+
+  data.forEach(item=>{
+    if(item.statut==="Acceptée"){const r=document.createElement("tr");r.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`;tAcc.appendChild(r);}
+    else if(item.statut==="Refusée"){const r=document.createElement("tr");r.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`;tRef.appendChild(r);}
+
+    const rAdmin=document.createElement("tr");
+    rAdmin.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td>`;
+    const td=document.createElement("td");
+
+    if(item.statut==="En attente"){
+      const bAcc=document.createElement("button"); bAcc.textContent="✅ Accepter"; bAcc.className="btn-primary"; bAcc.onclick=()=>changeStatus(item.id,"Acceptée");
+      const bRef=document.createElement("button"); bRef.textContent="❌ Refuser"; bRef.className="btn-reset"; bRef.onclick=()=>changeStatus(item.id,"Refusée");
+      td.appendChild(bAcc); td.appendChild(bRef);
+    }
+
+    const bDel=document.createElement("button"); bDel.textContent="🗑️ Supprimer"; bDel.className="btn-micro"; bDel.onclick=()=>deleteIdea(item.id);
+    td.appendChild(bDel); rAdmin.appendChild(td); tAdmin.appendChild(rAdmin);
+  });
 }
 
-// Chargement initial
+async function changeStatus(id,status){await fetch(`${SHEETDB}/id/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})}); loadTables();}
+async function deleteIdea(id){if(confirm("Supprimer cette idée ?")){await fetch(`${SHEETDB}/id/${id}`,{method:"DELETE"}); loadTables();}}
 loadTables();
 </script>
 </body>
