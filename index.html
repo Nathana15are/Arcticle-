@@ -46,10 +46,9 @@ body.dark textarea{background:#555;color:white;}
 </div>
 <input type="text" id="name" placeholder="Ton prénom (facultatif)"><br>
 <label><input type="checkbox" id="anonymous"> Envoyer anonymement</label><br>
-<button class="btn-primary" onclick="submitIdea()">Envoyer</button>
-<button class="btn-reset" onclick="resetForm()">Réinitialiser</button>
-<button class="btn-micro" onclick="startDictation()">🎤 Dicter</button>
-<div class="progress-container"><div class="progress-bar" id="progress-bar" style="height:8px;width:0%;background:#4e54c8;border-radius:6px;"></div></div>
+<button class="btn-primary" id="send-btn">Envoyer</button>
+<button class="btn-reset" id="reset-btn">Réinitialiser</button>
+<button class="btn-micro" id="dictate-btn">🎤 Dicter</button>
 <div class="confirmation" id="confirmation" style="display:none;margin-top:10px;background:#d4edda;color:#155724;padding:10px;border-radius:6px;">✅ Ton idée a bien été envoyée !</div>
 </div>
 
@@ -64,7 +63,7 @@ body.dark textarea{background:#555;color:white;}
 <div id="admin" class="form-box">
 <h2>⚙️ Admin (protégé)</h2>
 <input type="password" id="admin-pass" placeholder="Mot de passe">
-<button onclick="checkAdminPass()">Se connecter</button>
+<button id="admin-login-btn">Se connecter</button>
 <div id="admin-panel" style="display:none">
 <table class="table-admin" id="table-admin">
 <tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>
@@ -74,18 +73,27 @@ body.dark textarea{background:#555;color:white;}
 
 <script>
 const SHEETDB_URL="https://sheetdb.io/api/v1/vu7li5z94eqkt";
-const placeholders=["Installer plus de bancs dans la cour","Mettre du WiFi dans le CDI","Créer un club de musique","Organiser une journée sans cartable","Mettre des distributeurs de fruits"];
+const placeholders=["Installer plus de bancs dans la cour""Créer un club de musique","Organiser une journée sans cartable","Mettre des distributeurs de fruits"];
 let index=0;
 setInterval(()=>{document.getElementById("idea").placeholder=placeholders[index];index=(index+1)%placeholders.length;},4000);
 
 const textarea=document.getElementById("idea");
 textarea.addEventListener("input",()=>{document.getElementById("counter").innerText=textarea.value.length+" / 200";});
 
-function resetForm(){textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;}
+document.getElementById("reset-btn").addEventListener("click",()=>{textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;});
 
-function startDictation(){if('webkitSpeechRecognition' in window){const recognition=new webkitSpeechRecognition();recognition.lang="fr-FR";recognition.onresult=function(event){textarea.value=event.results[0][0].transcript;document.getElementById("counter").innerText=textarea.value.length+" / 200";};recognition.start();}else{alert("Reconnaissance vocale non supportée.");}}
+document.getElementById("dictate-btn").addEventListener("click",()=>{
+  if('webkitSpeechRecognition' in window){
+    const recognition=new webkitSpeechRecognition();
+    recognition.lang="fr-FR";
+    recognition.onresult=function(event){textarea.value=event.results[0][0].transcript;document.getElementById("counter").innerText=textarea.value.length+" / 200";};
+    recognition.start();
+  }else{alert("Reconnaissance vocale non supportée.");}
+});
 
 document.querySelectorAll(".tags span").forEach(tag=>{tag.addEventListener("click",()=>{textarea.value+=" "+tag.innerText;document.getElementById("counter").innerText=textarea.value.length+" / 200";});});
+
+document.getElementById("send-btn").addEventListener("click",submitIdea);
 
 function submitIdea(){
   const ideaVal=textarea.value.trim();
@@ -93,36 +101,75 @@ function submitIdea(){
   const prenom=document.getElementById("anonymous").checked?"Anonyme":document.getElementById("name").value||"";
   const data={data:{idee:ideaVal,prenom:prenom,statut:"En attente"}};
   fetch(SHEETDB_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})
-  .then(()=>{resetForm();loadTables();showConfirmation();})
+  .then(()=>{textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;showConfirmation();loadTables();})
   .catch(err=>{alert("Erreur lors de l'envoi"); console.error(err);});
 }
 
-function showConfirmation(){const confirmation=document.getElementById("confirmation");confirmation.style.display="block";setTimeout(()=>{confirmation.style.display="none";},2000);}
+function showConfirmation(){const c=document.getElementById("confirmation");c.style.display="block";setTimeout(()=>{c.style.display="none";},2000);}
 
-function checkAdminPass(){const pass=document.getElementById("admin-pass").value;if(pass==="Marius2013"){document.getElementById("admin-panel").style.display="block";loadTables();}else{alert("Mot de passe incorrect");}}
+document.getElementById("admin-login-btn").addEventListener("click",()=>{
+  const pass=document.getElementById("admin-pass").value;
+  if(pass==="Marius2013"){document.getElementById("admin-panel").style.display="block";loadTables();}else{alert("Mot de passe incorrect");}
+});
 
-function loadTables(){
-  fetch(SHEETDB_URL).then(res=>res.json()).then(data=>{
-    const acceptedTable=document.getElementById("table-accepted"); acceptedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-    const refusedTable=document.getElementById("table-refused"); refusedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-    const adminTable=document.getElementById("table-admin"); adminTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
-    data.forEach(item=>{
-      const row=`<tr><td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td></tr>`;
-      if(item.statut==="Acceptée"){acceptedTable.innerHTML+=row;}
-      else if(item.statut==="Refusée"){refusedTable.innerHTML+=row;}
-      let actions="";
-      if(item.statut==="En attente"){actions=`<button onclick="changeStatus(${item.id},'Acceptée')">✅ Accepter</button><button onclick="changeStatus(${item.id},'Refusée')">❌ Refuser</button>`;}
-      actions+=`<button onclick="deleteIdea(${item.id})">🗑️ Supprimer</button>`;
-      adminTable.innerHTML+=`<tr><td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td><td>${actions}</td></tr>`;
-    });
+async function loadTables(){
+  const data=await fetch(SHEETDB_URL).then(r=>r.json());
+  const acceptedTable=document.getElementById("table-accepted");
+  acceptedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
+  const refusedTable=document.getElementById("table-refused");
+  refusedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
+  const adminTable=document.getElementById("table-admin");
+  adminTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
+
+  data.forEach(item=>{
+    // Acceptées / Refusées
+    const trAcc=document.createElement("tr");
+    const trRef=document.createElement("tr");
+    if(item.statut==="Acceptée"){trAcc.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`;acceptedTable.appendChild(trAcc);}
+    else if(item.statut==="Refusée"){trRef.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`;refusedTable.appendChild(trRef);}
+
+    // Admin
+    const trAdmin=document.createElement("tr");
+    trAdmin.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td>`;
+    const tdActions=document.createElement("td");
+
+    if(item.statut==="En attente"){
+      const btnAcc=document.createElement("button");
+      btnAcc.textContent="✅ Accepter";
+      btnAcc.className="btn-primary";
+      btnAcc.addEventListener("click",()=>changeStatus(item.id,"Acceptée"));
+
+      const btnRef=document.createElement("button");
+      btnRef.textContent="❌ Refuser";
+      btnRef.className="btn-reset";
+      btnRef.addEventListener("click",()=>changeStatus(item.id,"Refusée"));
+
+      tdActions.appendChild(btnAcc);
+      tdActions.appendChild(btnRef);
+    }
+
+    const btnDel=document.createElement("button");
+    btnDel.textContent="🗑️ Supprimer";
+    btnDel.className="btn-micro";
+    btnDel.addEventListener("click",()=>deleteIdea(item.id));
+
+    tdActions.appendChild(btnDel);
+    trAdmin.appendChild(tdActions);
+    adminTable.appendChild(trAdmin);
   });
 }
 
-function changeStatus(id,status){fetch(`${SHEETDB_URL}/id/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})}).then(()=>loadTables());}
+async function changeStatus(id,status){
+  await fetch(`${SHEETDB_URL}/id/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})});
+  loadTables();
+}
 
-function deleteIdea(id){if(confirm("Supprimer cette idée ?")){fetch(`${SHEETDB_URL}/id/${id}`,{method:"DELETE"}).then(()=>loadTables());}}
+async function deleteIdea(id){
+  if(confirm("Supprimer cette idée ?")){await fetch(`${SHEETDB_URL}/id/${id}`,{method:"DELETE"}); loadTables();}
+}
 
-setInterval(()=>{loadTables();},5000);
+// Chargement initial
+loadTables();
 </script>
 </body>
 </html>
