@@ -49,7 +49,7 @@ th{background:#4e54c8;color:white;}
 <input type="password" id="admin-pass" placeholder="Mot de passe">
 <button id="admin-login-btn" class="btn-primary">Se connecter</button>
 <div id="admin-panel" style="display:none">
-<table id="table-admin"><tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr></table>
+<table id="table-admin"><tr><th>Row</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr></table>
 </div>
 </div>
 
@@ -86,41 +86,41 @@ async function loadTables(){
   const tAdmin=document.getElementById("table-admin");
   tAcc.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
   tRef.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-  tAdmin.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
+  tAdmin.innerHTML="<tr><th>Row</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
 
-  data.forEach(item=>{
+  data.forEach((item,index)=>{
     const statut=item.statut ? item.statut.toLowerCase().trim() : "";
 
     // Acceptées / Refusées
-    if(statut==="acceptée"){ const r=document.createElement("tr"); r.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`; tAcc.appendChild(r);}
-    else if(statut==="refusée"){ const r=document.createElement("tr"); r.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td>`; tRef.appendChild(r);}
+    if(statut==="acceptée"){ const r=document.createElement("tr"); r.innerHTML=`<td>${index+1}</td><td>${item.idee}</td><td>${item.prenom}</td>`; tAcc.appendChild(r);}
+    else if(statut==="refusée"){ const r=document.createElement("tr"); r.innerHTML=`<td>${index+1}</td><td>${item.idee}</td><td>${item.prenom}</td>`; tRef.appendChild(r);}
 
     // Admin
     const rAdmin=document.createElement("tr");
-    rAdmin.innerHTML=`<td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td>`;
+    rAdmin.innerHTML=`<td>${index+1}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td>`;
     const td=document.createElement("td");
 
     if(statut==="en attente"){
       const bAcc=document.createElement("button"); bAcc.textContent="✅ Accepter"; bAcc.className="btn-primary";
-      bAcc.addEventListener("click",()=>changeStatus(String(item.id),"Acceptée"));
+      bAcc.addEventListener("click",()=>changeStatus(index+1,"Acceptée"));
       const bRef=document.createElement("button"); bRef.textContent="❌ Refuser"; bRef.className="btn-reset";
-      bRef.addEventListener("click",()=>changeStatus(String(item.id),"Refusée"));
+      bRef.addEventListener("click",()=>changeStatus(index+1,"Refusée"));
       td.appendChild(bAcc); td.appendChild(bRef);
     }
 
     const bDel=document.createElement("button"); bDel.textContent="🗑️ Supprimer"; bDel.className="btn-micro";
-    bDel.addEventListener("click",()=>deleteIdea(String(item.id)));
+    bDel.addEventListener("click",()=>deleteIdea(index+1));
     td.appendChild(bDel); rAdmin.appendChild(td); tAdmin.appendChild(rAdmin);
   });
 }
 
-async function changeStatus(id,status){
-  await fetch(`${SHEETDB}/id/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})});
+async function changeStatus(row,status){
+  await fetch(`${SHEETDB}/row/${row}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})});
   loadTables();
 }
 
-async function deleteIdea(id){
-  if(confirm("Supprimer cette idée ?")){await fetch(`${SHEETDB}/id/${id}`,{method:"DELETE"}); loadTables();}
+async function deleteIdea(row){
+  if(confirm("Supprimer cette idée ?")){await fetch(`${SHEETDB}/row/${row}`,{method:"DELETE"}); loadTables();}
 }
 
 loadTables();
