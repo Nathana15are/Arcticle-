@@ -2,119 +2,159 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Site Classique Extrême Visuel Ultime</title>
+<title>Idées pour améliorer le collège</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior: smooth; }
-body { font-family: Arial, sans-serif; line-height:1.6; background:#f4f4f4; color:#333; }
-header { background:#333; color:#fff; padding:20px; text-align:center; position:sticky; top:0; z-index:100; box-shadow:0 2px 5px rgba(0,0,0,0.3);}
-nav ul { list-style:none; display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
-nav a { color:#fff; text-decoration:none; font-weight:bold; }
-nav a:hover { text-decoration:underline; }
-main { max-width:1400px; margin:20px auto; }
-section { margin-bottom:40px; padding:20px; background:#fff; border-radius:8px; transition: all 0.5s ease; position:relative; overflow:hidden; }
-section:hover { transform: scale(1.05) rotate(2deg) translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.35); }
-h2 { margin-bottom:10px; }
-p { margin-bottom:10px; transition: color 0.5s ease, transform 0.5s ease; animation: pulse 4s infinite alternate; }
-@keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
-button { padding:10px 20px; background:#333; color:#fff; border:none; border-radius:5px; cursor:pointer; transition:0.3s; position:relative; z-index:2; }
-button:hover { background:#555; transform: scale(1.05); }
-footer { text-align:center; padding:20px; background:#333; color:#fff; }
-@keyframes gradientShift { 0% {background-position:0% 50%} 50% {background-position:100% 50%} 100% {background-position:0% 50%} }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;}
+html,body{height:100%;overflow:hidden;}
+body{background:linear-gradient(135deg,#74ebd5,#ACB6E5);color:#222;display:flex;}
+nav{width:220px;background:#2a2f4f;color:white;height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;align-items:center;padding-top:20px;}
+nav h2{margin-bottom:20px;}
+nav a{text-decoration:none;color:white;padding:12px;display:block;width:100%;text-align:center;border-radius:6px;margin:6px 0;transition:0.3s;}
+nav a:hover{background:#50577a;}
+.container{margin-left:240px;padding:20px;flex:1;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-y:auto;}
+header{background:#4e54c8;color:white;padding:20px;text-align:center;border-radius:8px;margin-bottom:20px;animation:bannerChange 10s infinite;}
+@keyframes bannerChange{0%{background:#4e54c8;}50%{background:#8f94fb;}100%{background:#4e54c8;}}
+.form-box{background:white;padding:20px;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);max-width:600px;width:100%;margin-bottom:20px;}
+textarea{width:100%;height:100px;padding:10px;border:1px solid #ccc;border-radius:6px;resize:none;}
+.counter{text-align:right;font-size:12px;margin-top:4px;}
+.tags{margin:10px 0;}
+.tags span{display:inline-block;background:#e1e1e1;padding:6px 10px;margin:4px;border-radius:6px;cursor:pointer;}
+button{margin:8px 4px;padding:10px 15px;border:none;border-radius:6px;cursor:pointer;transition:0.3s;}
+button:hover{transform:scale(1.05);}
+.btn-primary{background:#4e54c8;color:white;}
+.btn-reset{background:#ccc;}
+.btn-micro{background:#ff9f43;color:white;}
+.progress-container{width:100%;background:#eee;border-radius:6px;margin-top:10px;display:none;}
+.progress-bar{width:0%;height:8px;background:#4e54c8;border-radius:6px;}
+.confirmation{display:none;margin-top:15px;padding:10px;background:#d4edda;color:#155724;border-radius:6px;}
+body.dark{background:#222;color:#eee;}
+body.dark nav{background:#111;}
+body.dark .form-box{background:#333;color:#eee;}
+body.dark textarea{background:#555;color:white;}
+.toggle-dark{position:absolute;top:10px;right:10px;cursor:pointer;background:#222;color:white;padding:6px 10px;border-radius:6px;}
+.table-admin{width:100%;border-collapse:collapse;margin-top:20px;}
+.table-admin th,.table-admin td{border:1px solid #ddd;padding:8px;text-align:center;}
+.table-admin th{background:#4e54c8;color:white;}
+.status-accepted{background:#c3f0c3;}
+.status-refused{background:#f0c3c3;}
 </style>
 </head>
 <body>
-
-<header>
-<h1>Mon Site Classique Extrême Visuel Ultime</h1>
 <nav>
-<ul>
-<li><a href="#section1">Début</a></li>
-<li><a href="#section500">Milieu</a></li>
-<li><a href="#section1000">Fin</a></li>
-</ul>
+<h2>📘 Menu</h2>
+<a href="#accueil">🏠 Accueil</a>
+<a href="#accepted">✅ Acceptées</a>
+<a href="#refused">❌ Refusées</a>
+<a href="#admin">⚙️ Admin</a>
 </nav>
-</header>
 
-<main id="main-content">
-</main>
+<div class="container">
+<!-- Formulaire -->
+<div id="accueil" class="form-box">
+<header><h1>💡 Vos idées pour améliorer le collège</h1></header>
+<button class="toggle-dark">🌙 Mode sombre</button>
+<textarea id="idea" placeholder="Écris ton idée ici..."></textarea>
+<div class="counter" id="counter">0 / 200</div>
+<div class="tags">
+<span>#Cantine</span><span>#Sport</span><span>#Cours</span><span>#CDI</span>
+<span>#Musique</span><span>#Lecture</span><span>#Aménagement</span><span>#Club</span>
+<span>#Sortie</span><span>#Éco</span><span>#Technologie</span><span>#Arts</span>
+<span>#Jardin</span><span>#Événement</span><span>#Bien-être</span>
+</div>
+<input type="text" id="name" placeholder="Ton prénom (facultatif)"><br>
+<label><input type="checkbox" id="anonymous"> Envoyer anonymement</label><br>
+<button class="btn-primary" onclick="submitIdea()">Envoyer</button>
+<button class="btn-reset" onclick="resetForm()">Réinitialiser</button>
+<button class="btn-micro" onclick="startDictation()">🎤 Dicter</button>
+<div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+<div class="confirmation" id="confirmation">✅ Ton idée a bien été envoyée !</div>
+</div>
 
-<footer>
-<p>&copy; 2025 Mon Site Classique Extrême Visuel Ultime. Tous droits réservés.</p>
-</footer>
+<!-- Acceptées -->
+<div id="accepted" class="form-box"><h2>✅ Idées acceptées</h2>
+<table class="table-admin" id="table-accepted"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table>
+</div>
+
+<!-- Refusées -->
+<div id="refused" class="form-box"><h2>❌ Idées refusées</h2>
+<table class="table-admin" id="table-refused"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table>
+</div>
+
+<!-- Admin -->
+<div id="admin" class="form-box">
+<h2>⚙️ Admin (protégé)</h2>
+<input type="password" id="admin-pass" placeholder="Mot de passe"><button onclick="checkAdminPass()">Se connecter</button>
+<div id="admin-panel" style="display:none">
+<table class="table-admin" id="table-admin">
+<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>
+</table>
+</div>
+</div>
+</div>
 
 <script>
-const colors = ['#e74c3c','#2ecc71','#3498db','#f1c40f','#9b59b6','#1abc9c','#e67e22','#8e44ad','#d35400','#16a085'];
-const images = [
-'https://picsum.photos/1200/300?random=1',
-'https://picsum.photos/1200/300?random=2',
-'https://picsum.photos/1200/300?random=3',
-'https://picsum.photos/1200/300?random=4',
-'https://picsum.photos/1200/300?random=5'
-];
+const SHEETDB_URL="https://sheetdb.io/api/v1/vu7li5z94eqkt";
+const placeholders=["Installer plus de bancs dans la cour","Mettre du WiFi dans le CDI","Créer un club de musique","Organiser une journée sans cartable","Mettre des distributeurs de fruits"];
+let index=0;
+setInterval(()=>{document.getElementById("idea").placeholder=placeholders[index];index=(index+1)%placeholders.length;},4000);
 
-let sectionCount = 0;
-const batchSize = 50;
+const textarea=document.getElementById("idea");
+textarea.addEventListener("input",()=>{document.getElementById("counter").innerText=textarea.value.length+" / 200";});
+function resetForm(){textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;}
+document.querySelector(".toggle-dark").onclick=()=>{document.body.classList.toggle("dark");}
+document.querySelectorAll(".tags span").forEach(tag=>{tag.addEventListener("click",()=>{textarea.value+=" "+tag.innerText;document.getElementById("counter").innerText=textarea.value.length+" / 200";});});
 
-function randomGradient(){const c1=colors[Math.floor(Math.random()*colors.length)]; const c2=colors[Math.floor(Math.random()*colors.length)]; return `linear-gradient(270deg, ${c1}, ${c2})`; }
-function randomImage(){ return images[Math.floor(Math.random()*images.length)]; }
+function startDictation(){if('webkitSpeechRecognition' in window){const recognition=new webkitSpeechRecognition();recognition.lang="fr-FR";recognition.onresult=function(event){textarea.value=event.results[0][0].transcript;document.getElementById("counter").innerText=textarea.value.length+" / 200";};recognition.start();}else{alert("Reconnaissance vocale non supportée.");}}
 
-function changeColor(section){
-section.style.color = colors[Math.floor(Math.random()*colors.length)];
-section.style.background = Math.random()<0.2 ? `url('${randomImage()}') center/cover no-repeat` : randomGradient();
-section.style.backgroundSize = "400% 400%";
-section.style.animation = "gradientShift 3s ease infinite";
+function submitIdea(){
+  const ideaVal=textarea.value.trim();
+  if(!ideaVal){alert("Merci d'écrire une idée"); return;}
+  const prenom=document.getElementById("anonymous").checked?"Anonyme":document.getElementById("name").value||"";
+  const data={data:{idee:ideaVal,prenom:prenom,statut:"En attente"}};
+  const bar=document.getElementById("progress-bar"); const container=document.querySelector(".progress-container"); const confirmation=document.getElementById("confirmation");
+  container.style.display="block"; let progress=0;
+  let loading=setInterval(()=>{progress+=20;bar.style.width=progress+"%";if(progress>=100){clearInterval(loading);bar.style.width="0%";container.style.display="none";confirmation.style.display="block";setTimeout(()=>{confirmation.style.display="none";},2000);}},200);
+  fetch(SHEETDB_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})
+  .then(()=>{resetForm();loadTables();}).catch(err=>{alert("Erreur lors de l'envoi"); console.error(err);});
 }
 
-function createSections(n){
-const main = document.getElementById('main-content');
-for(let i=1;i<=n;i++){
-sectionCount++;
-const sec = document.createElement('section');
-sec.id = 'section'+sectionCount;
-sec.style.background = Math.random()<0.2 ? `url('${randomImage()}') center/cover no-repeat` : randomGradient();
-sec.style.backgroundSize = "400% 400%";
-sec.style.animation = "gradientShift 5s ease infinite";
+// Admin
+function checkAdminPass(){const pass=document.getElementById("admin-pass").value;if(pass==="Marius2013"){document.getElementById("admin-panel").style.display="block";loadTables();}else{alert("Mot de passe incorrect");}}
 
-const h2 = document.createElement('h2');
-h2.textContent = 'Section '+sectionCount;
-sec.appendChild(h2);
-
-for(let j=1;j<=10;j++){
-const p = document.createElement('p');
-p.textContent = 'Paragraphe '+j+' de la section '+sectionCount+'. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin varius.';
-sec.appendChild(p);
+function loadTables(){
+  fetch(SHEETDB_URL).then(res=>res.json()).then(data=>{
+    // Tables
+    const acceptedTable=document.getElementById("table-accepted"); acceptedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
+    const refusedTable=document.getElementById("table-refused"); refusedTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
+    const adminTable=document.getElementById("table-admin"); adminTable.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
+    data.forEach(item=>{
+      const row=`<tr><td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td></tr>`;
+      if(item.statut==="Acceptée"){acceptedTable.innerHTML+=row;}
+      else if(item.statut==="Refusée"){refusedTable.innerHTML+=row;}
+      // Admin
+      let actions="";
+      if(item.statut==="En attente"){
+        actions=`<button onclick="changeStatus(${item.id},'Acceptée')">✅</button><button onclick="changeStatus(${item.id},'Refusée')">❌</button>`;
+      }
+      actions+=` <button onclick="deleteIdea(${item.id})">🗑️</button>`;
+      adminTable.innerHTML+=`<tr><td>${item.id}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td><td>${actions}</td></tr>`;
+    });
+  });
 }
 
-const btn = document.createElement('button');
-btn.textContent = 'Changer la couleur de la section '+sectionCount;
-btn.onclick = ()=>changeColor(sec);
-sec.appendChild(btn);
-
-main.appendChild(sec);
-}
+function changeStatus(id,status){
+  fetch(`${SHEETDB_URL}/id/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})})
+  .then(()=>loadTables());
 }
 
-// créer les premières sections
-createSections(batchSize);
-
-// scroll infini : créer plus de sections quand proche du bas
-window.addEventListener('scroll', ()=>{
-if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 500){
-createSections(batchSize);
+function deleteIdea(id){
+  if(confirm("Supprimer cette idée ?")){fetch(`${SHEETDB_URL}/id/${id}`,{method:"DELETE"}).then(()=>loadTables());}
 }
-});
 
-// changer les couleurs du texte toutes les 1 seconde
-setInterval(()=>{
-const paragraphs = document.querySelectorAll('p');
-paragraphs.forEach(p=>{
-p.style.color = colors[Math.floor(Math.random()*colors.length)];
-});
-},1000);
+// Auto load tables every 5 sec
+setInterval(()=>{loadTables();},5000);
 
 </script>
-
 </body>
 </html>
