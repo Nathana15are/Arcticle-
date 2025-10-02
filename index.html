@@ -2,128 +2,309 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Idées collège Broceliande</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zone Discussion Moderne</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
-body{background:linear-gradient(135deg,#74ebd5,#ACB6E5);color:#222;padding:10px;}
-.form-box{background:white;padding:15px;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 5px rgba(0,0,0,0.2);}
-textarea{width:100%;height:80px;padding:8px;border-radius:5px;border:1px solid #ccc;resize:none;}
-.counter{text-align:right;font-size:12px;margin-top:3px;}
-.tags{display:flex;flex-wrap:wrap;margin:8px 0;}
-.tags span{margin:2px 4px;padding:5px 8px;background:#eee;border-radius:5px;font-size:12px;cursor:pointer;}
-button{width:100%;padding:10px;margin:4px 0;border:none;border-radius:6px;cursor:pointer;}
-.btn-primary{background:#4e54c8;color:white;}
-.btn-reset{background:#ccc;color:black;}
-.btn-micro{background:#ff9f43;color:white;}
-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;}
-th,td{border:1px solid #ddd;padding:5px;text-align:center;}
-th{background:#4e54c8;color:white;}
-@media(max-width:600px){textarea{height:60px;} button{font-size:14px;} .tags span{font-size:11px;padding:4px 6px;}}
+body {margin:0;font-family:'Segoe UI',sans-serif;background:#f6f8fa;color:#222;transition:background 0.3s,color 0.3s;}
+.dark body {background:#121212;color:#eee;}
+header{background:#0a66c2;color:white;padding:10px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;}
+header .logo{font-size:1.2em;}
+header .userBox{font-weight:normal;}
+.container{display:flex;height:calc(100vh - 50px);}
+.sidebar{width:300px;background:#fff;border-right:1px solid #ddd;overflow-y:auto;transition:background 0.3s;}
+.dark .sidebar{background:#1e1e1e;border-color:#333;}
+.chat{flex:1;display:flex;flex-direction:column;position:relative;}
+.discussion-item{padding:12px;border-bottom:1px solid #eee;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background 0.3s;border-radius:6px;margin:4px;}
+.discussion-item:hover{background:#f0f4f9;}
+.dark .discussion-item:hover{background:#2a2a2a;}
+.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
+.msg{padding:10px 14px;border-radius:18px;max-width:70%;word-wrap:break-word;transition:background 0.3s,color 0.3s;position:relative;display:flex;align-items:flex-end;gap:6px;}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,#0a66c2,#084d91);color:white;}
+.dark .msg.me{background:linear-gradient(135deg,#0051a3,#003a7a);}
+.msg.other{align-self:flex-start;background:#e9eef5;color:#222;}
+.dark .msg.other{background:#2b2b2b;color:#ddd;}
+.msg.admin{border:2px solid #ff9800;}
+.avatar{width:32px;height:32px;border-radius:50%;background:#ccc;display:inline-block;}
+.reactions{margin-top:4px;display:flex;gap:4px;font-size:14px;cursor:pointer;}
+.reactions span:hover{transform:scale(1.3);}
+footer{padding:12px;border-top:1px solid #ddd;display:flex;gap:8px;}
+input,textarea{padding:10px;border:1px solid #ccc;border-radius:12px;flex:1;outline:none;}
+button{padding:10px 16px;border:none;border-radius:12px;background:#0a66c2;color:white;cursor:pointer;transition:0.3s;}
+button:hover{background:#084d91;}
+.badge{background:#ff3b30;color:white;border-radius:50%;padding:2px 6px;font-size:12px;margin-left:6px;animation:badgePulse 1s ease infinite;}
+@keyframes badgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+#auth{padding:20px;background:white;border:1px solid #ddd;border-radius:8px;max-width:300px;margin:40px auto;transition:background 0.3s,color 0.3s;}
+.dark #auth{background:#1e1e1e;color:#eee;border-color:#333;}
+#leaderboard{padding:10px;background:#f0f4f9;border-top:1px solid #ddd;overflow-y:auto;height:150px;}
+.dark #leaderboard{background:#2a2a2a;border-color:#333;}
+#notifPopup{position:fixed;top:20px;right:20px;background:#0a66c2;color:white;padding:12px 16px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.2);display:none;z-index:1000;transition:all 0.3s;display:flex;align-items:center;gap:10px;}
+#notifAvatar{width:40px;height:40px;border-radius:50%;background:#ccc;flex-shrink:0;}
+#notifContent{line-height:1.2;}
 </style>
 </head>
 <body>
+<header>
+  <div class="logo">💬 Zone Discussion</div>
+  <div class="userBox" id="userBox">Non connecté</div>
+</header>
 
-<div class="form-box">
-<h2>💡 Vos idées pour améliorer le collège</h2>
-<textarea id="idea" placeholder="Écris ton idée ici..."></textarea>
-<div class="counter" id="counter">0 / 200</div>
-<div class="tags">
-<span>#Cantine</span><span>#Sport</span><span>#Cours</span><span>#CDI</span>
-<span>#Musique</span><span>#Lecture</span><span>#Aménagement</span><span>#Club</span>
-<span>#Sortie</span><span>#Éco</span><span>#Technologie</span><span>#Arts</span>
-<span>#Jardin</span><span>#Événement</span><span>#Bien-être</span>
-</div>
-<input type="text" id="name" placeholder="Prénom (facultatif)"><br>
-<label><input type="checkbox" id="anonymous"> Envoyer anonymement</label>
-<button class="btn-primary" id="send-btn">Envoyer</button>
-<button class="btn-reset" id="reset-btn">Réinitialiser</button>
-<div id="confirmation" style="display:none;margin-top:8px;padding:8px;background:#d4edda;color:#155724;border-radius:5px;">✅ Envoyé !</div>
+<div id="auth">
+  <h2>Connexion / Inscription</h2>
+  <input id="authUser" placeholder="Nom d'utilisateur"><br><br>
+  <input id="authPass" type="password" placeholder="Mot de passe"><br><br>
+  <button onclick="register()">S'inscrire</button>
+  <button onclick="login()">Se connecter</button>
+  <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
 </div>
 
-<div class="form-box"><h3>✅ Idées acceptées</h3><table id="table-accepted"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table></div>
-<div class="form-box"><h3>❌ Idées refusées</h3><table id="table-refused"><tr><th>ID</th><th>Idée</th><th>Prénom</th></tr></table></div>
-
-<div class="form-box">
-<h3>⚙️ Admin</h3>
-<input type="password" id="admin-pass" placeholder="Mot de passe">
-<button id="admin-login-btn" class="btn-primary">Se connecter</button>
-<div id="admin-panel" style="display:none">
-<table id="table-admin"><tr><th>Row</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr></table>
+<div class="container" id="app" style="display:none">
+  <aside class="sidebar">
+    <button onclick="newDiscussion()">+ Nouvelle discussion</button>
+    <div id="discussionList"></div>
+    <div id="leaderboard">
+      <h4>🏆 Leaderboard</h4>
+      <ul id="leaderboardList"></ul>
+    </div>
+  </aside>
+  <div class="chat">
+    <div class="messages" id="messages"></div>
+    <footer>
+      <input id="msgInput" placeholder="Écris un message..." />
+      <button onclick="sendMessage()">Envoyer</button>
+      <button onclick="sendAttachment()">📎</button>
+    </footer>
+  </div>
 </div>
+
+<!-- Notification popup -->
+<div id="notifPopup">
+  <div id="notifAvatar"></div>
+  <div id="notifContent"></div>
 </div>
 
 <script>
-const SHEETDB="https://sheetdb.io/api/v1/vu7li5z94eqkt";
-const textarea=document.getElementById("idea");
+// ---- VARIABLES ----
+const API = "https://sheetdb.io/api/v1/s43cfaldjn0y6";
+let currentUser=null;
+let currentDiscussion=null;
+let lastMessagesCount = 0;
+const emojis = ["👍","❤️","😂","😮","😢"];
+let unread={};
+const colorMap = {maya:"#ff6f61", blanche:"#61ffb0", nth:"#619aff"};
 
-textarea.addEventListener("input",()=>document.getElementById("counter").innerText=textarea.value.length+" / 200");
+// ---- DARK MODE ----
+function toggleDarkMode(){document.body.classList.toggle("dark");}
 
-document.getElementById("reset-btn").addEventListener("click",()=>{textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;});
-document.getElementById("send-btn").addEventListener("click",submitIdea);
-
-async function submitIdea(){
-  const text=textarea.value.trim();
-  if(!text){alert("Écris une idée");return;}
-  const prenom=document.getElementById("anonymous").checked?"Anonyme":document.getElementById("name").value||"";
-  await fetch(SHEETDB,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{idee:text,prenom:prenom,statut:"En attente"}})});
-  textarea.value="";document.getElementById("counter").innerText="0 / 200";document.getElementById("name").value="";document.getElementById("anonymous").checked=false;
-  document.getElementById("confirmation").style.display="block";
-  setTimeout(()=>{document.getElementById("confirmation").style.display="none";},1500);
-  loadTables();
+// ---- RANDOM COLOR ----
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i=0;i<6;i++){color += letters[Math.floor(Math.random()*16)];}
+    return color;
 }
 
-document.getElementById("admin-login-btn").addEventListener("click",()=>{
-  const pass=document.getElementById("admin-pass").value;
-  if(pass==="Marius2013"){document.getElementById("admin-panel").style.display="block";loadTables();}
-  else{alert("Mot de passe incorrect");}
-});
+// ---- INSCRIPTION ----
+function register(){
+  const u = document.getElementById("authUser").value.trim();
+  const p = document.getElementById("authPass").value.trim();
+  if(!u||!p) return alert("Champs requis");
+  const color = getRandomColor();
+  fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify([{username:u,password:p,points:0,level:1,badges:"",avatar_color:color}])
+  }).then(()=>alert("Inscription réussie, connecte-toi"));
+}
 
-async function loadTables(){
-  const data=await fetch(SHEETDB).then(r=>r.json());
-  const tAcc=document.getElementById("table-accepted");
-  const tRef=document.getElementById("table-refused");
-  const tAdmin=document.getElementById("table-admin");
-  tAcc.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-  tRef.innerHTML="<tr><th>ID</th><th>Idée</th><th>Prénom</th></tr>";
-  tAdmin.innerHTML="<tr><th>Row</th><th>Idée</th><th>Prénom</th><th>Statut</th><th>Actions</th></tr>";
-
-  data.forEach((item,index)=>{
-    const statut=item.statut ? item.statut.toLowerCase().trim() : "";
-
-    // Acceptées / Refusées
-    if(statut==="acceptée"){ const r=document.createElement("tr"); r.innerHTML=`<td>${index+1}</td><td>${item.idee}</td><td>${item.prenom}</td>`; tAcc.appendChild(r);}
-    else if(statut==="refusée"){ const r=document.createElement("tr"); r.innerHTML=`<td>${index+1}</td><td>${item.idee}</td><td>${item.prenom}</td>`; tRef.appendChild(r);}
-
-    // Admin
-    const rAdmin=document.createElement("tr");
-    rAdmin.innerHTML=`<td>${index+1}</td><td>${item.idee}</td><td>${item.prenom}</td><td>${item.statut}</td>`;
-    const td=document.createElement("td");
-
-    if(statut==="en attente"){
-      const bAcc=document.createElement("button"); bAcc.textContent="✅ Accepter"; bAcc.className="btn-primary";
-      bAcc.addEventListener("click",()=>changeStatus(index+1,"Acceptée"));
-      const bRef=document.createElement("button"); bRef.textContent="❌ Refuser"; bRef.className="btn-reset";
-      bRef.addEventListener("click",()=>changeStatus(index+1,"Refusée"));
-      td.appendChild(bAcc); td.appendChild(bRef);
-    }
-
-    const bDel=document.createElement("button"); bDel.textContent="🗑️ Supprimer"; bDel.className="btn-micro";
-    bDel.addEventListener("click",()=>deleteIdea(index+1));
-    td.appendChild(bDel); rAdmin.appendChild(td); tAdmin.appendChild(rAdmin);
+// ---- CONNEXION ----
+function login(){
+  const u = document.getElementById("authUser").value.trim();
+  const p = document.getElementById("authPass").value.trim();
+  if(["maya","blanche","nth"].includes(p)){
+    currentUser={name:p,isAdmin:true,avatarColor:colorMap[p.toLowerCase()] || "#ccc"};
+    startApp();
+    return;
+  }
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const found=rows.find(r=>r.username===u && r.password===p);
+    if(found){
+      currentUser={name:u,isAdmin:false,avatarColor:found.avatar_color||getRandomColor()};
+      startApp();
+    } else alert("Identifiants invalides");
   });
 }
 
-async function changeStatus(row,status){
-  await fetch(`${SHEETDB}/row/${row}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{statut:status}})});
-  loadTables();
+function startApp(){
+  document.getElementById("auth").style.display="none";
+  document.getElementById("app").style.display="flex";
+  document.getElementById("userBox").textContent="Connecté: "+currentUser.name+(currentUser.isAdmin?" (admin)":"");
+  loadDiscussions();
+  loadLeaderboard();
 }
 
-async function deleteIdea(row){
-  if(confirm("Supprimer cette idée ?")){await fetch(`${SHEETDB}/row/${row}`,{method:"DELETE"}); loadTables();}
+// ---- DISCUSSIONS ----
+function newDiscussion(){
+  if(!currentUser) return;
+  const title=prompt("Titre ?");
+  if(!title) return;
+  const id="d_"+Date.now();
+  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify([{discussion_id:id,user:currentUser.name,message:"[Nouvelle discussion] "+title,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,points:0,level:1,badges:"",reactions:"",attachment_url:"",avatar_color:currentUser.avatarColor}])
+  }).then(()=>loadDiscussions());
 }
 
-loadTables();
+function loadDiscussions(){
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const list=document.getElementById("discussionList");
+    list.innerHTML="";
+    let disc=[...new Set(rows.filter(r=>currentUser.isAdmin||r.user===currentUser.name).map(r=>r.discussion_id))];
+    disc.forEach(d=>{
+      const newMsgCount = unread[d]||0;
+      const div=document.createElement("div");
+      div.className="discussion-item";
+      div.innerHTML=`${d} ${newMsgCount>0?'<span class="badge">'+newMsgCount+'</span>':''}`;
+      div.onclick=()=>openDiscussion(d);
+      list.appendChild(div);
+    });
+  });
+}
+
+function openDiscussion(id){
+  currentDiscussion=id;
+  unread[id]=0;
+  refreshMessages();
+}
+
+// ---- NOTIFICATION ----
+function showNotification(user,message,discussion,avatarColor){
+    const popup = document.getElementById("notifPopup");
+    const avatar = document.getElementById("notifAvatar");
+    const content = document.getElementById("notifContent");
+    avatar.style.background = avatarColor || colorMap[user.toLowerCase()] || "#ccc";
+    content.innerHTML = `<strong>${user}</strong><br>${message}<br><em>Discussion: ${discussion}</em>`;
+    popup.style.display = "flex";
+    popup.style.opacity = "1";
+    setTimeout(()=>{
+        popup.style.opacity = "0";
+        setTimeout(()=>{popup.style.display="none";},300);
+    },4000);
+}
+
+// ---- MESSAGES ----
+function refreshMessages(){
+    if(!currentDiscussion) return;
+    fetch(API).then(r=>r.json()).then(rows=>{
+        const msgs=document.getElementById("messages");
+        const discMsgs = rows.filter(r=>r.discussion_id===currentDiscussion);
+        if(!currentUser.isAdmin){
+            const total = discMsgs.length;
+            const prev = lastMessagesCount;
+            if(total>prev){
+                unread[currentDiscussion]=(total-prev);
+                const newMsgs = discMsgs.slice(prev);
+                newMsgs.forEach(m=>{
+                    showNotification(m.user, m.message, m.discussion_id, m.avatar_color);
+                    playNotifSound();
+                });
+            }
+            lastMessagesCount = total;
+        }
+        msgs.innerHTML="";
+        discMsgs.forEach(m=>{
+            const div=document.createElement("div");
+            let cls="msg "+(m.user===currentUser.name?"me":"other");
+            if(m.is_admin==="true") cls+=" admin";
+            div.className=cls;
+            const avatarDiv = document.createElement("div"); avatarDiv.className="avatar";
+            avatarDiv.style.background = m.is_admin==="true"? "#ff9800" : (m.avatar_color || colorMap[m.user.toLowerCase()] || "#ccc");
+            div.appendChild(avatarDiv);
+            const content = document.createElement("div");
+            content.textContent = m.user+": "+m.message+(m.attachment_url?"\n📎 "+m.attachment_url:"");
+            div.appendChild(content);
+            const reactDiv=document.createElement("div"); reactDiv.className="reactions";
+            emojis.forEach(e=>{
+                const span=document.createElement("span"); span.textContent=e;
+                span.onclick=()=>addReaction(m.id,e);
+                reactDiv.appendChild(span);
+            });
+            div.appendChild(reactDiv);
+            msgs.appendChild(div);
+        });
+        msgs.scrollTop=msgs.scrollHeight;
+    });
+}
+
+// ---- ENVOI MESSAGES ----
+function sendMessage(){
+  if(!currentDiscussion) return;
+  const text=document.getElementById("msgInput").value;
+  if(!text) return;
+  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:text,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,points:1,level:1,badges:"",reactions:"",attachment_url:"",avatar_color:currentUser.avatarColor}])
+  }).then(()=>{document.getElementById("msgInput").value="";refreshMessages();updatePoints();});
+}
+
+function sendAttachment(){
+  const url = prompt("Colle le lien de l'image ou fichier :");
+  if(!url) return;
+  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:"[Fichier]",timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,points:1,level:1,badges:"",reactions:"",attachment_url:url,avatar_color:currentUser.avatarColor}])
+  }).then(()=>{refreshMessages();updatePoints();});
+}
+
+// ---- REACTIONS ----
+function addReaction(msgId,emoji){
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const msg = rows.find(r=>r.id==msgId);
+    if(!msg) return;
+    let reacts = msg.reactions?msg.reactions.split(","):[];
+    reacts.push(emoji);
+    fetch(API+"/"+msgId,{method:"PATCH",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({reactions:reacts.join(",")})
+    }).then(refreshMessages);
+  });
+}
+
+// ---- SON ----
+function playNotifSound(){const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");audio.play();}
+
+// ---- AUTO REFRESH ----
+setInterval(()=>{
+  if(currentDiscussion) refreshMessages();
+  else if(currentUser) loadDiscussions();
+  loadLeaderboard();
+},5000);
+
+// ---- GAMIFICATION ----
+function updatePoints(){
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const userMsgs = rows.filter(r=>r.user===currentUser.name);
+    const points = userMsgs.reduce((a,b)=>a+parseInt(b.points||0),0);
+    const level = Math.floor(points/10)+1;
+    fetch(API,{method:"PATCH",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({points:points,level:level})
+    });
+  });
+}
+
+// ---- LEADERBOARD ----
+function loadLeaderboard(){
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const users={};
+    rows.forEach(r=>{
+      if(!users[r.user]) users[r.user]={points:0,level:1};
+      users[r.user].points += parseInt(r.points||0);
+    });
+    const sorted=Object.entries(users).sort((a,b)=>b[1].points-a[1].points);
+    const list=document.getElementById("leaderboardList");
+    list.innerHTML="";
+    sorted.forEach(u=>{
+      const li=document.createElement("li");
+      li.textContent=`${u[0]} - ${u[1].points} pts`;
+      list.appendChild(li);
+    });
+  });
+}
 </script>
 </body>
 </html>
