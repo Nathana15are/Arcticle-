@@ -5,50 +5,59 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Zone Discussion Moderne</title>
 <style>
-body {margin:0;font-family:'Segoe UI',sans-serif;background:#f6f8fa;color:#222;transition:background 0.3s,color 0.3s;}
-.dark body {background:#121212;color:#eee;}
-header{background:#0a66c2;color:white;padding:10px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;}
-header .logo{font-size:1.2em;}
-header .userBox{font-weight:normal;}
-.container{display:flex;height:calc(100vh - 50px);}
-.sidebar{width:300px;background:#fff;border-right:1px solid #ddd;overflow-y:auto;transition:background 0.3s;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:#f6f8fa;color:#222;transition:0.3s;}
+.dark body{background:#121212;color:#eee;}
+header{background:#0a66c2;color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+header .logo{font-weight:bold;font-size:1.3em;}
+header .userBox{font-size:0.9em;display:flex;align-items:center;gap:8px;}
+#menuToggle{display:none;cursor:pointer;font-size:1.4em;}
+.container{display:flex;height:calc(100vh - 56px);}
+.sidebar{width:260px;background:#fff;border-right:1px solid #ddd;overflow-y:auto;transition:0.3s;padding:8px;}
 .dark .sidebar{background:#1e1e1e;border-color:#333;}
 .chat{flex:1;display:flex;flex-direction:column;position:relative;}
-.discussion-item{padding:12px;border-bottom:1px solid #eee;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background 0.3s;border-radius:6px;margin:4px;}
+.discussion-item{padding:10px 14px;border-radius:12px;margin:6px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:0.2s;box-shadow:0 1px 2px rgba(0,0,0,0.05);}
 .discussion-item:hover{background:#f0f4f9;}
 .dark .discussion-item:hover{background:#2a2a2a;}
-.messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
-.msg{padding:10px 14px;border-radius:18px;max-width:70%;word-wrap:break-word;transition:background 0.3s,color 0.3s;position:relative;display:flex;align-items:flex-end;gap:6px;}
+.messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
+.msg{padding:10px 14px;border-radius:18px;max-width:75%;display:flex;gap:8px;align-items:flex-end;transition:0.3s;position:relative;}
 .msg.me{align-self:flex-end;background:linear-gradient(135deg,#0a66c2,#084d91);color:white;}
 .dark .msg.me{background:linear-gradient(135deg,#0051a3,#003a7a);}
 .msg.other{align-self:flex-start;background:#e9eef5;color:#222;}
 .dark .msg.other{background:#2b2b2b;color:#ddd;}
 .msg.admin{border:2px solid #ff9800;}
-.avatar{width:32px;height:32px;border-radius:50%;background:#ccc;display:inline-block;}
-.reactions{margin-top:4px;display:flex;gap:4px;font-size:14px;cursor:pointer;}
-.reactions span:hover{transform:scale(1.3);}
-footer{padding:12px;border-top:1px solid #ddd;display:flex;gap:8px;}
-input,textarea{padding:10px;border:1px solid #ccc;border-radius:12px;flex:1;outline:none;}
-button{padding:10px 16px;border:none;border-radius:12px;background:#0a66c2;color:white;cursor:pointer;transition:0.3s;}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;justify-content:center;align-items:center;color:white;font-weight:bold;font-size:16px;flex-shrink:0;}
+.reactions{display:flex;gap:4px;font-size:14px;cursor:pointer;margin-top:2px;}
+footer{padding:8px;border-top:1px solid #ddd;display:flex;gap:6px;position:sticky;bottom:0;background:#fff;z-index:5;}
+.dark footer{background:#1e1e1e;border-color:#333;}
+input{flex:1;padding:10px 14px;border-radius:20px;border:1px solid #ccc;outline:none;}
+button{padding:8px 14px;border:none;border-radius:20px;background:#0a66c2;color:white;cursor:pointer;transition:0.3s;}
 button:hover{background:#084d91;}
-.badge{background:#ff3b30;color:white;border-radius:50%;padding:2px 6px;font-size:12px;margin-left:6px;animation:badgePulse 1s ease infinite;}
+.badge{background:#ff3b30;color:white;border-radius:50%;padding:2px 6px;font-size:12px;animation:badgePulse 1s ease infinite;}
 @keyframes badgePulse{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
-#auth{padding:20px;background:white;border:1px solid #ddd;border-radius:8px;max-width:300px;margin:40px auto;transition:background 0.3s,color 0.3s;}
-.dark #auth{background:#1e1e1e;color:#eee;border-color:#333;}
-#leaderboard{padding:10px;background:#f0f4f9;border-top:1px solid #ddd;overflow-y:auto;height:150px;}
-.dark #leaderboard{background:#2a2a2a;border-color:#333;}
-#notifPopup{position:fixed;top:20px;right:20px;background:#0a66c2;color:white;padding:12px 16px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.2);display:none;z-index:1000;transition:all 0.3s;display:flex;align-items:center;gap:10px;}
-#notifAvatar{width:40px;height:40px;border-radius:50%;background:#ccc;flex-shrink:0;}
-#notifContent{line-height:1.2;}
+#notifPopup{position:fixed;top:20px;right:20px;background:#0a66c2;color:white;padding:10px 16px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3);display:none;z-index:1000;transition:all 0.3s;display:flex;align-items:center;gap:10px;max-width:260px;}
+#notifAvatar{width:40px;height:40px;border-radius:50%;display:flex;justify-content:center;align-items:center;color:white;font-weight:bold;font-size:16px;}
+#notifContent{line-height:1.2;font-size:0.9em;}
+/* RESPONSIVE */
+@media(max-width:768px){
+  #menuToggle{display:block;}
+  .container{flex-direction:column;}
+  .sidebar{position:absolute;top:56px;left:-300px;height:calc(100vh - 56px);z-index:20;transition:0.3s;box-shadow:2px 0 12px rgba(0,0,0,0.2);}
+  .sidebar.show{left:0;}
+  .chat{flex:1;}
+}
 </style>
 </head>
 <body>
 <header>
   <div class="logo">💬 Zone Discussion</div>
-  <div class="userBox" id="userBox">Non connecté</div>
+  <div class="userBox">
+    <span id="userBox">Non connecté</span>
+    <span id="menuToggle" onclick="toggleSidebar()">☰</span>
+  </div>
 </header>
 
-<div id="auth">
+<div id="auth" style="padding:20px;max-width:320px;margin:40px auto;background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
   <h2>Connexion / Inscription</h2>
   <input id="authUser" placeholder="Nom d'utilisateur"><br><br>
   <input id="authPass" type="password" placeholder="Mot de passe"><br><br>
@@ -58,13 +67,9 @@ button:hover{background:#084d91;}
 </div>
 
 <div class="container" id="app" style="display:none">
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <button onclick="newDiscussion()">+ Nouvelle discussion</button>
     <div id="discussionList"></div>
-    <div id="leaderboard">
-      <h4>🏆 Leaderboard</h4>
-      <ul id="leaderboardList"></ul>
-    </div>
   </aside>
   <div class="chat">
     <div class="messages" id="messages"></div>
@@ -76,90 +81,83 @@ button:hover{background:#084d91;}
   </div>
 </div>
 
-<!-- Notification popup -->
 <div id="notifPopup">
   <div id="notifAvatar"></div>
   <div id="notifContent"></div>
 </div>
 
 <script>
-// ---- VARIABLES ----
+// ---------- VARIABLES ----------
 const API = "https://sheetdb.io/api/v1/s43cfaldjn0y6";
 let currentUser=null;
 let currentDiscussion=null;
-let lastMessagesCount = 0;
+let lastMessagesCount = {};
 const emojis = ["👍","❤️","😂","😮","😢"];
-let unread={};
 const colorMap = {maya:"#ff6f61", blanche:"#61ffb0", nth:"#619aff"};
 
-// ---- DARK MODE ----
+// ---------- DARK MODE ----------
 function toggleDarkMode(){document.body.classList.toggle("dark");}
 
-// ---- RANDOM COLOR ----
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i=0;i<6;i++){color += letters[Math.floor(Math.random()*16)];}
-    return color;
-}
+// ---------- SIDEBAR MOBILE ----------
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("show");}
 
-// ---- INSCRIPTION ----
+// ---------- UTILITAIRES ----------
+function getRandomColor(){const l='0123456789ABCDEF';let c='#';for(let i=0;i<6;i++){c+=l[Math.floor(Math.random()*16)];}return c;}
+function getInitials(name){return name.slice(0,2).toUpperCase();}
+
+// ---------- INSCRIPTION ----------
 function register(){
-  const u = document.getElementById("authUser").value.trim();
-  const p = document.getElementById("authPass").value.trim();
+  const u=document.getElementById("authUser").value.trim();
+  const p=document.getElementById("authPass").value.trim();
   if(!u||!p) return alert("Champs requis");
   const color = getRandomColor();
-  fetch(API,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify([{username:u,password:p,points:0,level:1,badges:"",avatar_color:color}])
+  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify([{username:u,password:p,avatar_color:color}])
   }).then(()=>alert("Inscription réussie, connecte-toi"));
 }
 
-// ---- CONNEXION ----
+// ---------- CONNEXION ----------
 function login(){
-  const u = document.getElementById("authUser").value.trim();
-  const p = document.getElementById("authPass").value.trim();
-  if(["maya","blanche","nth"].includes(p)){
-    currentUser={name:p,isAdmin:true,avatarColor:colorMap[p.toLowerCase()] || "#ccc"};
-    startApp();
-    return;
+  const u=document.getElementById("authUser").value.trim();
+  const p=document.getElementById("authPass").value.trim();
+  if(["maya","blanche","nth"].includes(p.toLowerCase())){
+    currentUser={name:p,isAdmin:true,avatarColor:colorMap[p.toLowerCase()]||"#ccc"};
+    startApp(); return;
   }
   fetch(API).then(r=>r.json()).then(rows=>{
     const found=rows.find(r=>r.username===u && r.password===p);
     if(found){
       currentUser={name:u,isAdmin:false,avatarColor:found.avatar_color||getRandomColor()};
       startApp();
-    } else alert("Identifiants invalides");
+    }else alert("Identifiants invalides");
   });
 }
 
+// ---------- START APP ----------
 function startApp(){
   document.getElementById("auth").style.display="none";
   document.getElementById("app").style.display="flex";
   document.getElementById("userBox").textContent="Connecté: "+currentUser.name+(currentUser.isAdmin?" (admin)":"");
   loadDiscussions();
-  loadLeaderboard();
+  setInterval(refreshMessages,4000);
 }
 
-// ---- DISCUSSIONS ----
+// ---------- DISCUSSIONS ----------
 function newDiscussion(){
-  if(!currentUser) return;
   const title=prompt("Titre ?");
   if(!title) return;
   const id="d_"+Date.now();
   fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:id,user:currentUser.name,message:"[Nouvelle discussion] "+title,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,points:0,level:1,badges:"",reactions:"",attachment_url:"",avatar_color:currentUser.avatarColor}])
+    body:JSON.stringify([{discussion_id:id,user:currentUser.name,message:"[Nouvelle discussion] "+title,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
   }).then(()=>loadDiscussions());
 }
 
 function loadDiscussions(){
   fetch(API).then(r=>r.json()).then(rows=>{
-    const list=document.getElementById("discussionList");
-    list.innerHTML="";
-    let disc=[...new Set(rows.filter(r=>currentUser.isAdmin||r.user===currentUser.name).map(r=>r.discussion_id))];
+    const list=document.getElementById("discussionList"); list.innerHTML="";
+    const disc=[...new Set(rows.map(r=>r.discussion_id))];
     disc.forEach(d=>{
-      const newMsgCount = unread[d]||0;
+      const newMsgCount = lastMessagesCount[d] || 0;
       const div=document.createElement("div");
       div.className="discussion-item";
       div.innerHTML=`${d} ${newMsgCount>0?'<span class="badge">'+newMsgCount+'</span>':''}`;
@@ -171,139 +169,50 @@ function loadDiscussions(){
 
 function openDiscussion(id){
   currentDiscussion=id;
-  unread[id]=0;
+  lastMessagesCount[id]=0;
   refreshMessages();
 }
 
-// ---- NOTIFICATION ----
-function showNotification(user,message,discussion,avatarColor){
-    const popup = document.getElementById("notifPopup");
-    const avatar = document.getElementById("notifAvatar");
-    const content = document.getElementById("notifContent");
-    avatar.style.background = avatarColor || colorMap[user.toLowerCase()] || "#ccc";
-    content.innerHTML = `<strong>${user}</strong><br>${message}<br><em>Discussion: ${discussion}</em>`;
-    popup.style.display = "flex";
-    popup.style.opacity = "1";
-    setTimeout(()=>{
-        popup.style.opacity = "0";
-        setTimeout(()=>{popup.style.display="none";},300);
-    },4000);
-}
-
-// ---- MESSAGES ----
+// ---------- MESSAGES ----------
 function refreshMessages(){
-    if(!currentDiscussion) return;
-    fetch(API).then(r=>r.json()).then(rows=>{
-        const msgs=document.getElementById("messages");
-        const discMsgs = rows.filter(r=>r.discussion_id===currentDiscussion);
-        if(!currentUser.isAdmin){
-            const total = discMsgs.length;
-            const prev = lastMessagesCount;
-            if(total>prev){
-                unread[currentDiscussion]=(total-prev);
-                const newMsgs = discMsgs.slice(prev);
-                newMsgs.forEach(m=>{
-                    showNotification(m.user, m.message, m.discussion_id, m.avatar_color);
-                    playNotifSound();
-                });
-            }
-            lastMessagesCount = total;
-        }
-        msgs.innerHTML="";
-        discMsgs.forEach(m=>{
-            const div=document.createElement("div");
-            let cls="msg "+(m.user===currentUser.name?"me":"other");
-            if(m.is_admin==="true") cls+=" admin";
-            div.className=cls;
-            const avatarDiv = document.createElement("div"); avatarDiv.className="avatar";
-            avatarDiv.style.background = m.is_admin==="true"? "#ff9800" : (m.avatar_color || colorMap[m.user.toLowerCase()] || "#ccc");
-            div.appendChild(avatarDiv);
-            const content = document.createElement("div");
-            content.textContent = m.user+": "+m.message+(m.attachment_url?"\n📎 "+m.attachment_url:"");
-            div.appendChild(content);
-            const reactDiv=document.createElement("div"); reactDiv.className="reactions";
-            emojis.forEach(e=>{
-                const span=document.createElement("span"); span.textContent=e;
-                span.onclick=()=>addReaction(m.id,e);
-                reactDiv.appendChild(span);
-            });
-            div.appendChild(reactDiv);
-            msgs.appendChild(div);
-        });
-        msgs.scrollTop=msgs.scrollHeight;
+  if(!currentDiscussion) return;
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const msgs=document.getElementById("messages");
+    const discMsgs = rows.filter(r=>r.discussion_id===currentDiscussion);
+    msgs.innerHTML="";
+    discMsgs.forEach(m=>{
+      const div=document.createElement("div");
+      let cls="msg "+(m.user===currentUser.name?"me":"other");
+      if(m.is_admin==="true") cls+=" admin";
+      div.className=cls;
+      const avatarDiv=document.createElement("div"); avatarDiv.className="avatar";
+      avatarDiv.style.background = m.is_admin==="true"? "#ff9800" : (m.avatar_color || "#ccc");
+      avatarDiv.textContent=getInitials(m.user);
+      div.appendChild(avatarDiv);
+      const content=document.createElement("div"); content.textContent=m.user+": "+m.message;
+      div.appendChild(content);
+      msgs.appendChild(div);
     });
+    msgs.scrollTop=msgs.scrollHeight;
+    lastMessagesCount[currentDiscussion]=discMsgs.length;
+  });
 }
 
-// ---- ENVOI MESSAGES ----
+// ---------- ENVOI ----------
 function sendMessage(){
-  if(!currentDiscussion) return;
   const text=document.getElementById("msgInput").value;
-  if(!text) return;
+  if(!text || !currentDiscussion) return;
   fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:text,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,points:1,level:1,badges:"",reactions:"",attachment_url:"",avatar_color:currentUser.avatarColor}])
-  }).then(()=>{document.getElementById("msgInput").value="";refreshMessages();updatePoints();});
+    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:text,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
+  }).then(()=>{document.getElementById("msgInput").value="";refreshMessages();});
 }
 
 function sendAttachment(){
-  const url = prompt("Colle le lien de l'image ou fichier :");
+  const url=prompt("Colle le lien de l'image ou fichier :");
   if(!url) return;
   fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:"[Fichier]",timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,points:1,level:1,badges:"",reactions:"",attachment_url:url,avatar_color:currentUser.avatarColor}])
-  }).then(()=>{refreshMessages();updatePoints();});
-}
-
-// ---- REACTIONS ----
-function addReaction(msgId,emoji){
-  fetch(API).then(r=>r.json()).then(rows=>{
-    const msg = rows.find(r=>r.id==msgId);
-    if(!msg) return;
-    let reacts = msg.reactions?msg.reactions.split(","):[];
-    reacts.push(emoji);
-    fetch(API+"/"+msgId,{method:"PATCH",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({reactions:reacts.join(",")})
-    }).then(refreshMessages);
-  });
-}
-
-// ---- SON ----
-function playNotifSound(){const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");audio.play();}
-
-// ---- AUTO REFRESH ----
-setInterval(()=>{
-  if(currentDiscussion) refreshMessages();
-  else if(currentUser) loadDiscussions();
-  loadLeaderboard();
-},5000);
-
-// ---- GAMIFICATION ----
-function updatePoints(){
-  fetch(API).then(r=>r.json()).then(rows=>{
-    const userMsgs = rows.filter(r=>r.user===currentUser.name);
-    const points = userMsgs.reduce((a,b)=>a+parseInt(b.points||0),0);
-    const level = Math.floor(points/10)+1;
-    fetch(API,{method:"PATCH",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({points:points,level:level})
-    });
-  });
-}
-
-// ---- LEADERBOARD ----
-function loadLeaderboard(){
-  fetch(API).then(r=>r.json()).then(rows=>{
-    const users={};
-    rows.forEach(r=>{
-      if(!users[r.user]) users[r.user]={points:0,level:1};
-      users[r.user].points += parseInt(r.points||0);
-    });
-    const sorted=Object.entries(users).sort((a,b)=>b[1].points-a[1].points);
-    const list=document.getElementById("leaderboardList");
-    list.innerHTML="";
-    sorted.forEach(u=>{
-      const li=document.createElement("li");
-      li.textContent=`${u[0]} - ${u[1].points} pts`;
-      list.appendChild(li);
-    });
-  });
+    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:"[Fichier]",timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor,attachment_url:url}])
+  }).then(refreshMessages);
 }
 </script>
 </body>
