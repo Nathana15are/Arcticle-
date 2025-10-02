@@ -2,235 +2,150 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zone Discussion Moderne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parle si ça va pas</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',sans-serif;background:#f6f8fa;color:#222;transition:0.3s;}
-.dark body{background:#121212;color:#eee;}
-header{background:#0a66c2;color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-header .logo{font-weight:bold;font-size:1.3em;}
-header .userBox{font-size:0.9em;display:flex;align-items:center;gap:8px;}
-#menuToggle{display:none;cursor:pointer;font-size:1.4em;}
-.container{display:flex;height:calc(100vh - 56px);}
-.sidebar{width:260px;background:#fff;border-right:1px solid #ddd;overflow-y:auto;transition:0.3s;padding:8px;}
-.dark .sidebar{background:#1e1e1e;border-color:#333;}
-.chat{flex:1;display:flex;flex-direction:column;position:relative;}
-.discussion-item{padding:10px 14px;border-radius:12px;margin:6px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:0.2s;box-shadow:0 1px 2px rgba(0,0,0,0.05);}
-.discussion-item:hover{background:#f0f4f9;}
-.dark .discussion-item:hover{background:#2a2a2a;}
-.messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
-.msg{padding:10px 14px;border-radius:18px;max-width:75%;display:flex;gap:8px;align-items:flex-end;position:relative;animation:slideIn 0.3s ease forwards;}
-.msg.me{align-self:flex-end;background:linear-gradient(135deg,#0a66c2,#084d91);color:white;}
-.dark .msg.me{background:linear-gradient(135deg,#0051a3,#003a7a);}
-.msg.other{align-self:flex-start;background:#e9eef5;color:#222;}
-.dark .msg.other{background:#2b2b2b;color:#ddd;}
-.msg.admin{border:2px solid #ff9800;}
-.avatar{width:40px;height:40px;border-radius:50%;display:flex;justify-content:center;align-items:center;color:white;font-weight:bold;font-size:16px;flex-shrink:0;}
-footer{padding:8px;border-top:1px solid #ddd;display:flex;gap:6px;position:sticky;bottom:0;background:#fff;z-index:5;}
-.dark footer{background:#1e1e1e;border-color:#333;}
-input{flex:1;padding:10px 14px;border-radius:20px;border:1px solid #ccc;outline:none;transition:0.3s;}
-input:focus{border-color:#0a66c2;box-shadow:0 0 10px rgba(10,102,194,0.6);}
-input.typing{animation:typingGlow 1s infinite alternate;}
-@keyframes typingGlow{0%{box-shadow:0 0 8px rgba(10,102,194,0.4);}100%{box-shadow:0 0 16px rgba(10,102,194,0.8);}}
-button{padding:8px 14px;border:none;border-radius:20px;background:#0a66c2;color:white;cursor:pointer;transition:0.3s;}
-button:hover{background:#084d91;}
-@keyframes slideIn{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
-@media(max-width:768px){
-  #menuToggle{display:block;}
-  .container{flex-direction:column;}
-  .sidebar{position:absolute;top:56px;left:-300px;height:calc(100vh - 56px);z-index:20;transition:0.3s;box-shadow:2px 0 12px rgba(0,0,0,0.2);}
-  .sidebar.show{left:0;}
-  .chat{flex:1;}
-}
+body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f9;}
+.container{width:90%;max-width:800px;margin:20px auto;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+h1,h2{color:#333;}
+form{display:flex;flex-direction:column;}
+label{margin-bottom:5px;font-weight:bold;}
+input,textarea{margin-bottom:15px;padding:10px;border:1px solid #ccc;border-radius:4px;font-size:16px;}
+button{padding:10px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;}
+button:hover{background:#45a049;}
+table{width:100%;border-collapse:collapse;margin-top:20px;}
+table,th,td{border:1px solid #ddd;}
+th,td{padding:10px;text-align:left;}
+th{background:#f2f2f2;}
+#adminPanel{display:none;}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">💬 Zone Discussion</div>
-  <div class="userBox">
-    <span id="userBox">Non connecté</span>
-    <span id="menuToggle" onclick="toggleSidebar()">☰</span>
-  </div>
-</header>
+<div class="container">
+  <h1>Parle si ça va pas</h1>
 
-<div id="auth" style="padding:20px;max-width:320px;margin:40px auto;background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-  <h2>Connexion / Inscription</h2>
-  <input id="authUser" placeholder="Nom d'utilisateur"><br><br>
-  <input id="authPass" type="password" placeholder="Mot de passe"><br><br>
-  <button onclick="register()">S'inscrire</button>
-  <button onclick="login()">Se connecter</button>
-  <button onclick="toggleDarkMode()">🌙 Mode Sombre</button>
+  <!-- Formulaire -->
+  <form id="messageForm">
+    <label for="nom">Ton prénom :</label>
+    <input type="text" id="nom" name="nom" placeholder="Optionnel">
+    <label for="message">Pourquoi tu te sens pas bien ?</label>
+    <textarea id="message" name="message" rows="4" required></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <hr style="margin:20px 0;">
+
+  <!-- Admin login -->
+  <div id="loginDiv">
+    <h2>Admin</h2>
+    <form id="loginForm">
+      <label for="password">Mot de passe :</label>
+      <input type="password" id="password" required>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <!-- Admin panel -->
+  <div id="adminPanel">
+    <h2>Messages reçus</h2>
+    <table id="messagesTable">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Message</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="exportBtn">Exporter en XLSX</button>
+  </div>
 </div>
 
-<div class="container" id="app" style="display:none">
-  <aside class="sidebar" id="sidebar">
-    <button onclick="newDiscussion()">+ Nouvelle discussion</button>
-    <button onclick="renameDiscussion()" id="renameBtn" style="margin-top:8px;display:none;">Renommer</button>
-    <div id="discussionList"></div>
-  </aside>
-  <div class="chat">
-    <div class="messages" id="messages"></div>
-    <footer>
-      <input id="msgInput" placeholder="Écris un message..." />
-      <button onclick="sendMessage()">Envoyer</button>
-      <button onclick="sendAttachment()">📎</button>
-    </footer>
-  </div>
-</div>
-
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script>
-const API="https://sheetdb.io/api/v1/s43cfaldjn0y6";
-let currentUser=null;
-let currentDiscussion=null;
-let discussions=[];
-let messagesPerPage=20;
-let messageOffset=0;
-const colorMap={maya:"#ff6f61",blanche:"#61ffb0",nth:"#619aff"};
+const SHEETDB_URL = 'https://sheetdb.io/api/v1/st6dvxdgmf2ic';
+const PASSWORD = 'Marius2013.';
 
-function toggleDarkMode(){document.body.classList.toggle("dark");}
-function toggleSidebar(){document.getElementById("sidebar").classList.toggle("show");}
-function getRandomColor(){const l='0123456789ABCDEF';let c='#';for(let i=0;i<6;i++){c+=l[Math.floor(Math.random()*16)];}return c;}
-function getInitials(name){return name.slice(0,2).toUpperCase();}
-
-const msgInput=document.getElementById("msgInput");
-msgInput.addEventListener("input",()=>{
-  msgInput.classList.add("typing");
-  clearTimeout(msgInput._typingTimeout);
-  msgInput._typingTimeout=setTimeout(()=>{msgInput.classList.remove("typing");},800);
+// Formulaire public
+const messageForm = document.getElementById('messageForm');
+messageForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const nom = document.getElementById('nom').value;
+  const message = document.getElementById('message').value;
+  const date = new Date().toLocaleString();
+  const data = {data:[{Nom:nom, Message:message, Date:date}]};
+  try{
+    const res = await fetch(SHEETDB_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+    if(res.ok){
+      alert('Merci, ton message a été envoyé.');
+      messageForm.reset();
+    }else{alert('Erreur lors de l\'envoi.');}
+  }catch(err){alert('Erreur réseau.');}
 });
 
-function register(){
-  const u=document.getElementById("authUser").value.trim();
-  const p=document.getElementById("authPass").value.trim();
-  if(!u||!p) return alert("Champs requis");
-  const color=getRandomColor();
-  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify([{username:u,password:p,avatar_color:color}])})
-  .then(()=>alert("Inscription réussie, connecte-toi"));
-}
-
-function login(){
-  const u=document.getElementById("authUser").value.trim();
-  const p=document.getElementById("authPass").value.trim();
-  if(["maya","blanche","nth"].includes(p.toLowerCase())){
-    currentUser={name:p,isAdmin:true,avatarColor:colorMap[p.toLowerCase()]||"#ccc"};
-    startApp(); return;
-  }
-  fetch(API).then(r=>r.json()).then(rows=>{
-    const found=rows.find(r=>r.username===u && r.password===p);
-    if(found){currentUser={name:u,isAdmin:false,avatarColor:found.avatar_color||getRandomColor()}; startApp();}
-    else alert("Identifiants invalides");
-  });
-}
-
-function startApp(){
-  document.getElementById("auth").style.display="none";
-  document.getElementById("app").style.display="flex";
-  document.getElementById("userBox").textContent="Connecté: "+currentUser.name+(currentUser.isAdmin?" (admin)":"");
-  document.getElementById("renameBtn").style.display=currentUser.isAdmin?"block":"none";
-  loadDiscussions();
-  setInterval(loadMessages,4000);
-}
-
-// DISCUSSIONS
-function newDiscussion(){
-  const title=prompt("Titre de la discussion ?");
-  if(!title) return;
-  const id="d_"+Date.now();
-  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:id,user:currentUser.name,message:"[Nouvelle discussion]",discussion_title:title,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
-  }).then(()=>loadDiscussions());
-}
-
-function renameDiscussion(){
-  if(!currentDiscussion || !currentUser.isAdmin) return;
-  const newTitle=prompt("Nouveau titre de la discussion ?");
-  if(!newTitle) return;
-  fetch(API).then(r=>r.json()).then(rows=>{
-    const msgsToUpdate=rows.filter(r=>r.discussion_id===currentDiscussion);
-    msgsToUpdate.forEach(msg=>{
-      fetch(API+'/'+msg.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({discussion_title:newTitle})});
-    });
-    loadDiscussions();
-  });
-}
-
-function loadDiscussions(){
-  fetch(API).then(r=>r.json()).then(rows=>{
-    const list=document.getElementById("discussionList"); list.innerHTML="";
-    const discIds=[...new Set(rows.map(r=>r.discussion_id))];
-    discussions=discIds.map(id=>{
-      const msg=rows.find(r=>r.discussion_id===id);
-      return {id:id,title:msg && msg.discussion_title? msg.discussion_title : msg.message};
-    });
-    discussions.forEach(d=>{
-      const div=document.createElement("div");
-      div.className="discussion-item";
-      div.textContent=d.title.length>25?d.title.slice(0,25)+"…":d.title;
-      div.style.cursor="pointer";
-      div.onclick=()=>openDiscussion(d.id);
-      list.appendChild(div);
-    });
-  });
-}
-
-function openDiscussion(id){
-  currentDiscussion = id;
-  messageOffset = 0;
-  document.getElementById("app").style.display="flex";
-  document.getElementById("auth").style.display="none";
-  loadMessages();
-  const msgs=document.getElementById("messages");
-  setTimeout(()=>{ msgs.scrollTop = msgs.scrollHeight; },100);
-}
-
-// MESSAGES AVEC SCROLL INFINI
-const msgs=document.getElementById("messages");
-msgs.addEventListener("scroll",()=>{
-  if(msgs.scrollTop===0){ messageOffset+=messagesPerPage; loadMessages();}
+// Admin login
+const loginForm = document.getElementById('loginForm');
+const adminPanel = document.getElementById('adminPanel');
+const loginDiv = document.getElementById('loginDiv');
+const messagesTable = document.getElementById('messagesTable').getElementsByTagName('tbody')[0];
+loginForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const pass = document.getElementById('password').value;
+  if(pass===PASSWORD){
+    loginDiv.style.display='none';
+    adminPanel.style.display='block';
+    loadMessages();
+  }else{alert('Mot de passe incorrect.');}
 });
 
-function loadMessages(){
-  if(!currentDiscussion) return;
-  fetch(API).then(r=>r.json()).then(rows=>{
-    let discMsgs=rows.filter(r=>r.discussion_id===currentDiscussion);
-    discMsgs=discMsgs.slice(-messagesPerPage-messageOffset,discMsgs.length-messageOffset);
-    msgs.innerHTML="";
-    discMsgs.forEach(m=>{
-      const div=document.createElement("div");
-      let cls="msg "+(m.user===currentUser.name?"me":"other");
-      if(m.is_admin==="true") cls+=" admin";
-      div.className=cls;
-      const avatarDiv=document.createElement("div"); avatarDiv.className="avatar";
-      avatarDiv.style.background=m.is_admin==="true"? "#ff9800" : (m.avatar_color || "#ccc");
-      avatarDiv.textContent=getInitials(m.user);
-      div.appendChild(avatarDiv);
-      const content=document.createElement("div"); content.textContent=m.user+": "+m.message;
-      div.appendChild(content);
-      div.style.animation="slideIn 0.3s ease forwards";
-      msgs.appendChild(div);
+// Charger messages depuis SheetDB
+async function loadMessages(){
+  try{
+    const res = await fetch(SHEETDB_URL);
+    const messages = await res.json();
+    messagesTable.innerHTML='';
+    messages.forEach((msg,idx)=>{
+      const row = messagesTable.insertRow();
+      row.insertCell(0).textContent=msg.Nom;
+      row.insertCell(1).textContent=msg.Message;
+      row.insertCell(2).textContent=msg.Date;
+      const delCell=row.insertCell(3);
+      const delBtn=document.createElement('button');
+      delBtn.textContent='Supprimer';
+      delBtn.onclick=()=>deleteMessage(msg.id);
+      delCell.appendChild(delBtn);
     });
-    msgs.scrollTop=msgs.scrollHeight;
-  });
+  }catch(err){alert('Erreur chargement messages.');}
 }
 
-// ENVOI MESSAGE
-function sendMessage(){
-  const text=document.getElementById("msgInput").value;
-  if(!text || !currentDiscussion) return;
-  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:text,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
-  }).then(()=>{document.getElementById("msgInput").value="";loadMessages();});
+// Supprimer un message
+async function deleteMessage(id){
+  if(!confirm('Supprimer ce message ?')) return;
+  try{
+    const res = await fetch(`${SHEETDB_URL}/${id}`, {method:'DELETE'});
+    if(res.ok){alert('Message supprimé.'); loadMessages();}
+    else alert('Erreur suppression.');
+  }catch(err){alert('Erreur réseau.');}
 }
 
-// ENVOI FICHIER / IMAGE
-function sendAttachment(){
-  const url=prompt("Colle le lien de l'image ou fichier :");
-  if(!url) return;
-  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:"[Fichier]",timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor,attachment_url:url}])
-  }).then(loadMessages);
-}
+// Export XLSX
+const exportBtn = document.getElementById('exportBtn');
+exportBtn.addEventListener('click', async ()=>{
+  try{
+    const res = await fetch(SHEETDB_URL);
+    const messages = await res.json();
+    const ws = XLSX.utils.json_to_sheet(messages.map(m=>({Nom:m.Nom,Message:m.Message,Date:m.Date})));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Messages');
+    XLSX.writeFile(wb,'messages_parle.xlsx');
+  }catch(err){alert('Erreur export.');}
+});
 </script>
 </body>
 </html>
