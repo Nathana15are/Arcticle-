@@ -66,6 +66,7 @@ button:hover{background:#084d91;}
 <div class="container" id="app" style="display:none">
   <aside class="sidebar" id="sidebar">
     <button onclick="newDiscussion()">+ Nouvelle discussion</button>
+    <button onclick="renameDiscussion()" id="renameBtn" style="margin-top:8px;display:none;">Renommer</button>
     <div id="discussionList"></div>
   </aside>
   <div class="chat">
@@ -79,21 +80,24 @@ button:hover{background:#084d91;}
 </div>
 
 <script>
-const API = "https://sheetdb.io/api/v1/s43cfaldjn0y6";
+const API="https://sheetdb.io/api/v1/s43cfaldjn0y6";
 let currentUser=null;
 let currentDiscussion=null;
-const colorMap = {maya:"#ff6f61", blanche:"#61ffb0", nth:"#619aff"};
+let discussions=[];
+let messagesPerPage=20;
+let messageOffset=0;
+const colorMap={maya:"#ff6f61",blanche:"#61ffb0",nth:"#619aff"};
 
 function toggleDarkMode(){document.body.classList.toggle("dark");}
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("show");}
 function getRandomColor(){const l='0123456789ABCDEF';let c='#';for(let i=0;i<6;i++){c+=l[Math.floor(Math.random()*16)];}return c;}
 function getInitials(name){return name.slice(0,2).toUpperCase();}
 
-const msgInput = document.getElementById("msgInput");
-msgInput.addEventListener("input", () => {
+const msgInput=document.getElementById("msgInput");
+msgInput.addEventListener("input",()=>{
   msgInput.classList.add("typing");
   clearTimeout(msgInput._typingTimeout);
-  msgInput._typingTimeout = setTimeout(() => { msgInput.classList.remove("typing"); }, 800);
+  msgInput._typingTimeout=setTimeout(()=>{msgInput.classList.remove("typing");},800);
 });
 
 function register(){
@@ -101,7 +105,7 @@ function register(){
   const p=document.getElementById("authPass").value.trim();
   if(!u||!p) return alert("Champs requis");
   const color=getRandomColor();
-  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify([{username:u,password:p,avatar_color:color}] )})
+  fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify([{username:u,password:p,avatar_color:color}])})
   .then(()=>alert("Inscription réussie, connecte-toi"));
 }
 
@@ -123,39 +127,69 @@ function startApp(){
   document.getElementById("auth").style.display="none";
   document.getElementById("app").style.display="flex";
   document.getElementById("userBox").textContent="Connecté: "+currentUser.name+(currentUser.isAdmin?" (admin)":"");
+  document.getElementById("renameBtn").style.display=currentUser.isAdmin?"block":"none";
   loadDiscussions();
-  setInterval(refreshMessages,4000);
+  setInterval(loadMessages,4000);
 }
 
+// DISCUSSIONS
 function newDiscussion(){
-  const title=prompt("Titre ?");
+  const title=prompt("Titre de la discussion ?");
   if(!title) return;
   const id="d_"+Date.now();
   fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify([{discussion_id:id,user:currentUser.name,message:"[Nouvelle discussion] "+title,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
+    body:JSON.stringify([{discussion_id:id,user:currentUser.name,message:"[Nouvelle discussion]",discussion_title:title,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
   }).then(()=>loadDiscussions());
+}
+
+function renameDiscussion(){
+  if(!currentDiscussion || !currentUser.isAdmin) return;
+  const newTitle=prompt("Nouveau titre de la discussion ?");
+  if(!newTitle) return;
+  fetch(API).then(r=>r.json()).then(rows=>{
+    const msgsToUpdate=rows.filter(r=>r.discussion_id===currentDiscussion);
+    msgsToUpdate.forEach(msg=>{
+      fetch(API+'/'+msg.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({discussion_title:newTitle})});
+    });
+    loadDiscussions();
+  });
 }
 
 function loadDiscussions(){
   fetch(API).then(r=>r.json()).then(rows=>{
     const list=document.getElementById("discussionList"); list.innerHTML="";
-    const disc=[...new Set(rows.map(r=>r.discussion_id))];
-    disc.forEach(d=>{
+    const discIds=[...new Set(rows.map(r=>r.discussion_id))];
+    discussions=discIds.map(id=>{
+      const msg=rows.find(r=>r.discussion_id===id);
+      return {id:id,title:msg && msg.discussion_title? msg.discussion_title : msg.message};
+    });
+    discussions.forEach(d=>{
       const div=document.createElement("div");
-      div.className="discussion-item"; div.textContent=d;
-      div.onclick=()=>openDiscussion(d);
+      div.className="discussion-item";
+      div.textContent=d.title.length>25?d.title.slice(0,25)+"…":d.title;
+      div.onclick=()=>openDiscussion(d.id);
       list.appendChild(div);
     });
   });
 }
 
-function openDiscussion(id){currentDiscussion=id; refreshMessages();}
+function openDiscussion(id){
+  currentDiscussion=id;
+  messageOffset=0;
+  loadMessages();
+}
 
-function refreshMessages(){
+// MESSAGES AVEC SCROLL INFINI
+const msgs=document.getElementById("messages");
+msgs.addEventListener("scroll",()=>{
+  if(msgs.scrollTop===0){ messageOffset+=messagesPerPage; loadMessages();}
+});
+
+function loadMessages(){
   if(!currentDiscussion) return;
   fetch(API).then(r=>r.json()).then(rows=>{
-    const msgs=document.getElementById("messages");
-    const discMsgs = rows.filter(r=>r.discussion_id===currentDiscussion);
+    let discMsgs=rows.filter(r=>r.discussion_id===currentDiscussion);
+    discMsgs=discMsgs.slice(-messagesPerPage-messageOffset,discMsgs.length-messageOffset);
     msgs.innerHTML="";
     discMsgs.forEach(m=>{
       const div=document.createElement("div");
@@ -163,9 +197,11 @@ function refreshMessages(){
       if(m.is_admin==="true") cls+=" admin";
       div.className=cls;
       const avatarDiv=document.createElement("div"); avatarDiv.className="avatar";
-      avatarDiv.style.background = m.is_admin==="true"? "#ff9800" : (m.avatar_color || "#ccc");
-      avatarDiv.textContent=getInitials(m.user); div.appendChild(avatarDiv);
-      const content=document.createElement("div"); content.textContent=m.user+": "+m.message; div.appendChild(content);
+      avatarDiv.style.background=m.is_admin==="true"? "#ff9800" : (m.avatar_color || "#ccc");
+      avatarDiv.textContent=getInitials(m.user);
+      div.appendChild(avatarDiv);
+      const content=document.createElement("div"); content.textContent=m.user+": "+m.message;
+      div.appendChild(content);
       div.style.animation="slideIn 0.3s ease forwards";
       msgs.appendChild(div);
     });
@@ -173,20 +209,22 @@ function refreshMessages(){
   });
 }
 
+// ENVOI MESSAGE
 function sendMessage(){
   const text=document.getElementById("msgInput").value;
   if(!text || !currentDiscussion) return;
   fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:text,timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor}])
-  }).then(()=>{document.getElementById("msgInput").value="";refreshMessages();});
+  }).then(()=>{document.getElementById("msgInput").value="";loadMessages();});
 }
 
+// ENVOI FICHIER / IMAGE
 function sendAttachment(){
   const url=prompt("Colle le lien de l'image ou fichier :");
   if(!url) return;
   fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify([{discussion_id:currentDiscussion,user:currentUser.name,message:"[Fichier]",timestamp:new Date().toISOString(),is_admin:currentUser.isAdmin,avatar_color:currentUser.avatarColor,attachment_url:url}])
-  }).then(refreshMessages);
+  }).then(loadMessages);
 }
 </script>
 </body>
