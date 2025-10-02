@@ -167,6 +167,7 @@ function loadDiscussions(){
       const div=document.createElement("div");
       div.className="discussion-item";
       div.textContent=d.title.length>25?d.title.slice(0,25)+"…":d.title;
+      div.style.cursor="pointer";
       div.onclick=()=>openDiscussion(d.id);
       list.appendChild(div);
     });
@@ -174,9 +175,13 @@ function loadDiscussions(){
 }
 
 function openDiscussion(id){
-  currentDiscussion=id;
-  messageOffset=0;
+  currentDiscussion = id;
+  messageOffset = 0;
+  document.getElementById("app").style.display="flex";
+  document.getElementById("auth").style.display="none";
   loadMessages();
+  const msgs=document.getElementById("messages");
+  setTimeout(()=>{ msgs.scrollTop = msgs.scrollHeight; },100);
 }
 
 // MESSAGES AVEC SCROLL INFINI
