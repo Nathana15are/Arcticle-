@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,8 +10,6 @@
   --card:#123018;
   --accent:#8b5cf6;
   --muted:#c0c0b0;
-  --danger:#ef4444;
-  --success:#16a34a;
   --glass: rgba(255,255,255,0.05);
   font-family: 'Segoe UI', Roboto, sans-serif;
 }
@@ -20,24 +17,34 @@
 body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8;}
 .app{min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; gap:20px;}
 .header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
-.logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow: 0 0 10px var(--accent);}
+.logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow: 0 0 15px var(--accent);}
 .subtitle{font-size:12px;color:var(--muted);}
 .container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
-.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 6px 18px rgba(0,0,0,0.5);}
+.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
+.panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
 .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
-.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:.2s; display:flex; flex-direction:column; gap:6px;}
-.card:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
+.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:6px; border:1px solid rgba(139,92,246,0.2);}
+.card:hover{transform:translateY(-6px) rotateZ(1deg); box-shadow:0 12px 28px rgba(139,92,246,0.8); border:1px solid var(--accent);}
 .card h3{font-size:16px;}
 .card p{font-size:12px;color:var(--muted);}
-.btn{padding:8px 12px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(139,92,246,0.5); color:inherit; cursor:pointer;}
+.btn{padding:8px 12px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(139,92,246,0.5); color:inherit; cursor:pointer; transition:0.3s;}
+.btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
 .btn.small{font-size:12px;padding:6px 10px;}
-.board{display:grid; gap:6px; margin-top:12px;}
-.cell{width:48px;height:48px;background:rgba(255,255,255,0.03); border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
-.piece{width:36px;height:36px;border-radius:50%;box-shadow: inset 0 -4px 6px rgba(0,0,0,0.4);}
-input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:inherit;}
-.question, .answer{margin:6px 0; padding:6px; border-radius:6px; background:rgba(255,255,255,0.05);}
+input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:inherit; transition:0.2s;}
+input:focus, textarea:focus{border-color:var(--accent); box-shadow:0 0 6px var(--accent);}
 .footer{text-align:center;color:var(--muted); font-size:12px;}
-@media(max-width:900px){.board{grid-template-columns: repeat(7,1fr);}}
+.admin-panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000; animation:fadeIn 0.3s;}
+.admin-content{background:var(--card); padding:20px; border-radius:12px; max-width:500px; width:90%; max-height:90%; overflow:auto; box-shadow:0 0 20px rgba(139,92,246,0.7);}
+.admin-content h3{color:var(--accent); text-align:center; text-shadow:0 0 6px var(--accent);}
+.admin-content label{display:block; margin-top:10px;}
+.admin-content input, .admin-content textarea{width:100%;}
+.close-btn{margin-top:10px;background:var(--accent); color:#fff; cursor:pointer; transition:0.3s;}
+.close-btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+@media(max-width:900px){
+  .grid{grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap:12px;}
+  .panel{padding:12px;}
+}
 </style>
 </head>
 <body>
@@ -51,19 +58,45 @@ input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px 
 
   <div class="container">
     <div class="panel">
-      <h2>Jeux & Quiz</h2>
+      <h2>🎮 Jeux & Quiz</h2>
       <div class="grid" id="gamesGrid"></div>
     </div>
 
     <div class="panel">
-      <h2>Actualités 📰</h2>
+      <h2>📰 Actualités</h2>
       <div id="newsGrid" class="grid"></div>
     </div>
-
-    <div id="gameArea" class="panel"></div>
   </div>
 
   <div class="footer">© 2025 Monkey Games — Thème Jungle Néon 🍌</div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-content" id="adminContent">
+    <h3>Admin Panel 🛠</h3>
+    <div id="loginSection">
+      <label>Mot de passe :</label>
+      <input type="password" id="adminPwd" placeholder="Entrez le mot de passe">
+      <button class="btn" id="loginBtn">Se connecter</button>
+    </div>
+    <div id="panelSection" style="display:none;">
+      <h4>Créer un Quiz</h4>
+      <label>Nom du Quiz :</label><input type="text" id="quizName">
+      <label>Question :</label><input type="text" id="quizQ">
+      <label>Réponse 1 :</label><input type="text" id="quizA1">
+      <label>Réponse 2 :</label><input type="text" id="quizA2">
+      <label>Réponse 3 :</label><input type="text" id="quizA3">
+      <label>Numéro de la bonne réponse (0,1,2) :</label><input type="number" id="quizCorrect" min="0" max="2">
+      <button class="btn" id="addQuizBtn">Ajouter Quiz</button>
+
+      <h4>Créer une Actualité</h4>
+      <label>Titre :</label><input type="text" id="newsTitle">
+      <label>Contenu :</label><textarea id="newsContent"></textarea>
+      <button class="btn" id="addNewsBtn">Ajouter Actualité</button>
+
+      <button class="btn close-btn" id="closeAdminBtn">Fermer</button>
+    </div>
+  </div>
 </div>
 
 <template id="cardTemplate">
@@ -76,18 +109,15 @@ input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px 
 <script>
 const SHEETDB_URL = "https://sheetdb.io/api/v1/lmifyr403m3ox";
 const ADMIN_PWD = "Marius2013.";
-let DATA = { games: [], quizzes: [], news: [] };
+let DATA = { quizzes: [], news: [] };
 
 // Fetch data
 async function fetchSheetDB(){
   try{
     const res = await fetch(SHEETDB_URL);
     const json = await res.json();
-    DATA.games = json.filter(x=>x.type==='game');
     DATA.quizzes = json.filter(x=>x.type==='quiz');
     DATA.news = json.filter(x=>x.type==='news');
-    document.getElementById('gamesGrid').innerHTML='';
-    renderGames();
     renderQuizzes();
     renderNews();
   }catch(e){console.error('Erreur SheetDB', e);}
@@ -95,25 +125,12 @@ async function fetchSheetDB(){
 
 async function postSheetDB(item){
   try{
-    const res = await fetch(SHEETDB_URL,{
+    await fetch(SHEETDB_URL,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify({data:item})
     });
-    return res.json();
   }catch(e){console.error('Erreur POST', e);}
-}
-
-// Render functions
-function renderGames(){
-  const grid = document.getElementById('gamesGrid');
-  DATA.games.forEach(g=>{
-    const t = document.getElementById('cardTemplate').content.cloneNode(true);
-    t.querySelector('h3').textContent = g.name;
-    t.querySelector('p').textContent = 'Jeu interactif';
-    t.querySelector('.card').onclick = ()=>{ if(g.name==='Morrison'){ renderMorpion(g); } };
-    grid.appendChild(t);
-  });
 }
 
 function renderNews(){
@@ -127,45 +144,53 @@ function renderNews(){
 }
 
 function renderQuizzes(){
-  const grid = document.getElementById('gamesGrid');
+  const grid = document.getElementById('gamesGrid'); grid.innerHTML='';
   DATA.quizzes.forEach(q=>{
     const t = document.getElementById('cardTemplate').content.cloneNode(true);
     t.querySelector('h3').textContent = q.name;
-    t.querySelector('p').textContent = 'Quiz interactif';
-    t.querySelector('.card').onclick = ()=>{ renderQuiz(q); };
+    t.querySelector('p').textContent = 'Quiz interactif 🐒';
     grid.appendChild(t);
   });
 }
 
-// Morpion (Morrison)
-function renderMorpion(game){
-  const area = document.getElementById('gameArea');
-  area.innerHTML='<h3>Morrison 🟡🔴</h3>';
-  const rows=6, cols=7;
-  const state = { board:Array(rows).fill(null).map(()=>Array(cols).fill(0)), turn:1, over:false, score:[0,0] };
-  const boardEl = document.createElement('div'); boardEl.className='board'; boardEl.style.gridTemplateColumns=`repeat(${cols},1fr)`;
-  const scoreEl = document.createElement('p'); scoreEl.textContent='Score Joueur 1: 0 | Joueur 2: 0'; area.appendChild(scoreEl);
-  const resetBtn = document.createElement('button'); resetBtn.className='btn small'; resetBtn.textContent='Réinitialiser'; resetBtn.onclick=()=>{state.board=Array(rows).fill(null).map(()=>Array(cols).fill(0)); state.over=false; draw(); scoreEl.textContent='Score Joueur 1: 0 | Joueur 2: 0';}; area.appendChild(resetBtn);
-  function draw(){
-    boardEl.innerHTML='';
-    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
-      const cell = document.createElement('div'); cell.className='cell';
-      const val = state.board[r][c];
-      if(val!==0){ const p=document.createElement('div'); p.className='piece'; p.style.background=val===1?'yellow':'#8b5cf6'; cell.appendChild(p);}
-      cell.onclick = ()=>{ if(state.over) return;
-        for(let rr=rows-1;rr>=0;rr--){if(state.board[rr][c]===0){state.board[rr][c]=state.turn;
-          if(checkWin(rr,c,state.turn)){state.over=true; alert('Joueur '+state.turn+' gagne !'); state.score[state.turn-1]++; scoreEl.textContent=`Score Joueur 1: ${state.score[0]} | Joueur 2: ${state.score[1]}`;}
-          state.turn=3-state.turn; draw(); return;}
-        }
-      };
-      boardEl.appendChild(cell);
-    }
-  }
-  function checkWin(r,c,p){ const dirs=[[0,1],[1,0],[1,1],[1,-1]]; for(const [dr,dc] of dirs){let count=1; for(let k=1;k<4;k++){const rr=r+dr*k,cc=c+dc*k;if(rr<0||rr>=rows||cc<0||cc>=cols)break;if(state.board[rr][cc]===p)count++;else break;} for(let k=1;k<4;k++){const rr=r-dr*k,cc=c-dc*k;if(rr<0||rr>=rows||cc<0||cc>=cols)break;if(state.board[rr][cc]===p)count++;else break;} if(count>=4) return true;} return false;}
-  area.appendChild(boardEl); draw();
-}
+// Admin panel
+const adminBtn = document.getElementById('adminBtn');
+const adminPanel = document.getElementById('adminPanel');
+const loginBtn = document.getElementById('loginBtn');
+const closeAdminBtn = document.getElementById('closeAdminBtn');
 
-// Fetch initial data
+adminBtn.onclick = ()=>{ adminPanel.style.display='flex'; };
+closeAdminBtn.onclick = ()=>{ adminPanel.style.display='none'; };
+
+loginBtn.onclick = ()=>{
+  const pwd = document.getElementById('adminPwd').value;
+  if(pwd===ADMIN_PWD){
+    document.getElementById('loginSection').style.display='none';
+    document.getElementById('panelSection').style.display='block';
+  }else{ alert('Mot de passe incorrect 🟥'); }
+};
+
+document.getElementById('addQuizBtn').onclick = async ()=>{
+  const name = document.getElementById('quizName').value;
+  const q = document.getElementById('quizQ').value;
+  const a1 = document.getElementById('quizA1').value;
+  const a2 = document.getElementById('quizA2').value;
+  const a3 = document.getElementById('quizA3').value;
+  const correct = parseInt(document.getElementById('quizCorrect').value);
+  if(!name||!q||!a1||!a2||!a3||isNaN(correct)){ return alert('Tous les champs sont requis'); }
+  const content = JSON.stringify([{q:q,a:[a1,a2,a3],correct:correct}]);
+  await postSheetDB({type:'quiz',name:name,content:content});
+  alert('Quiz ajouté ✅'); fetchSheetDB();
+};
+
+document.getElementById('addNewsBtn').onclick = async ()=>{
+  const name = document.getElementById('newsTitle').value;
+  const content = document.getElementById('newsContent').value;
+  if(!name||!content){ return alert('Tous les champs sont requis'); }
+  await postSheetDB({type:'news',name:name,content:content});
+  alert('Actualité ajoutée ✅'); fetchSheetDB();
+};
+
 fetchSheetDB();
 </script>
 </body>
