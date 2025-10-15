@@ -3,149 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Parle si ça va pas</title>
+<title>Monkey Games 🐵</title>
+<link rel="icon" href="data:,">
 <style>
-body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f9;}
-.container{width:90%;max-width:800px;margin:20px auto;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
-h1,h2{color:#333;}
-form{display:flex;flex-direction:column;}
-label{margin-bottom:5px;font-weight:bold;}
-input,textarea{margin-bottom:15px;padding:10px;border:1px solid #ccc;border-radius:4px;font-size:16px;}
-button{padding:10px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;}
-button:hover{background:#45a049;}
-table{width:100%;border-collapse:collapse;margin-top:20px;}
-table,th,td{border:1px solid #ddd;}
-th,td{padding:10px;text-align:left;}
-th{background:#f2f2f2;}
-#adminPanel{display:none;}
+:root{
+  --bg:#0a1e0f;
+  --card:#123018;
+  --accent:#f8d000;
+  --muted:#c0c0b0;
+  --danger:#ef4444;
+  --success:#16a34a;
+  --glass: rgba(255,255,255,0.05);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8;}
+.app{min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; gap:20px;}
+.header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
+.logo{font-size:24px;font-weight:bold; color:var(--accent);}
+.subtitle{font-size:12px;color:var(--muted);}
+.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
+.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 6px 18px rgba(0,0,0,0.5);}
+.grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
+.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:.2s; display:flex; flex-direction:column; gap:6px;}
+.card:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,0.5);}
+.card h3{font-size:16px;}
+.card p{font-size:12px;color:var(--muted);}
+.btn{padding:8px 12px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); color:inherit; cursor:pointer;}
+.btn.small{font-size:12px;padding:6px 10px;}
+.board{display:grid; gap:6px; margin-top:12px;}
+.cell{width:48px;height:48px;background:rgba(255,255,255,0.03); border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.piece{width:36px;height:36px;border-radius:50%;box-shadow: inset 0 -4px 6px rgba(0,0,0,0.4);}
+input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:inherit;}
+@media(max-width:900px){.board{grid-template-columns: repeat(7,1fr);}}
+.footer{text-align:center;color:var(--muted); font-size:12px;}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>Parle tout est anonyme</h1>
-
-  <!-- Formulaire -->
-  <form id="messageForm">
-    <label for="nom">Ton prénom :</label>
-    <input type="text" id="nom" name="nom" placeholder="Optionnel">
-    <label for="message">Pourquoi tu te sens pas bien ?</label>
-    <textarea id="message" name="message" rows="4" required></textarea>
-    <button type="submit">Envoyer</button>
-  </form>
-
-  <hr style="margin:20px 0;">
-
-  <!-- Admin login -->
-  <div id="loginDiv">
-    <h2>Admin</h2>
-    <form id="loginForm">
-      <label for="password">Mot de passe :</label>
-      <input type="password" id="password" required>
-      <button type="submit">Se connecter</button>
-    </form>
+<div class="app">
+  <div class="header">
+    <div><span class="logo">Monkey Games 🐵</span><div class="subtitle">Thème Jungle • SheetDB</div></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button id="adminBtn" class="btn small">Admin</button>
+    </div>
   </div>
 
-  <!-- Admin panel -->
-  <div id="adminPanel">
-    <h2>Messages reçus</h2>
-    <table id="messagesTable">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Message</th>
-          <th>Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <button id="exportBtn">Exporter en XLSX</button>
+  <div class="container">
+    <div class="panel">
+      <h2>Jeux & Quiz</h2>
+      <div class="grid" id="gamesGrid"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Actualités 📰</h2>
+      <div id="newsGrid" class="grid"></div>
+    </div>
+
+    <div id="gameArea" class="panel"></div>
   </div>
+
+  <div class="footer">© 2025 Monkey Games — Thème Singe 🍌</div>
 </div>
 
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<template id="cardTemplate">
+  <div class="card">
+    <h3></h3>
+    <p></p>
+  </div>
+</template>
+
 <script>
-const SHEETDB_URL = 'https://sheetdb.io/api/v1/st6dvxdgmf2ic';
-const PASSWORD = 'Marius2013.';
+// ======================
+// CONFIG SHEETDB
+// ======================
+const SHEETDB_URL = "https://sheetdb.io/api/v1/TON_ID_ICI"; // Remplace par ton vrai lien
+const ADMIN_PWD = "Marius2013.";
 
-// Formulaire public
-const messageForm = document.getElementById('messageForm');
-messageForm.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const nom = document.getElementById('nom').value;
-  const message = document.getElementById('message').value;
-  const date = new Date().toLocaleString();
-  const data = {data:[{Nom:nom, Message:message, Date:date}]};
-  try{
-    const res = await fetch(SHEETDB_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data)
-    });
-    if(res.ok){
-      alert('Merci, ton message a été envoyé.');
-      messageForm.reset();
-    }else{alert('Erreur lors de l\'envoi.');}
-  }catch(err){alert('Erreur réseau.');}
-});
+let DATA = { games: [], quizzes: [], news: [] };
 
-// Admin login
-const loginForm = document.getElementById('loginForm');
-const adminPanel = document.getElementById('adminPanel');
-const loginDiv = document.getElementById('loginDiv');
-const messagesTable = document.getElementById('messagesTable').getElementsByTagName('tbody')[0];
-loginForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const pass = document.getElementById('password').value;
-  if(pass===PASSWORD){
-    loginDiv.style.display='none';
-    adminPanel.style.display='block';
-    loadMessages();
-  }else{alert('Mot de passe incorrect.');}
-});
-
-// Charger messages depuis SheetDB
-async function loadMessages(){
+// ======================
+// UTILITIES
+// ======================
+async function fetchSheetDB(){
   try{
     const res = await fetch(SHEETDB_URL);
-    const messages = await res.json();
-    messagesTable.innerHTML='';
-    messages.forEach((msg,idx)=>{
-      const row = messagesTable.insertRow();
-      row.insertCell(0).textContent=msg.Nom;
-      row.insertCell(1).textContent=msg.Message;
-      row.insertCell(2).textContent=msg.Date;
-      const delCell=row.insertCell(3);
-      const delBtn=document.createElement('button');
-      delBtn.textContent='Supprimer';
-      delBtn.onclick=()=>deleteMessage(msg.id);
-      delCell.appendChild(delBtn);
+    const json = await res.json();
+    DATA.games = json.filter(x=>x.type==='game');
+    DATA.quizzes = json.filter(x=>x.type==='quiz');
+    DATA.news = json.filter(x=>x.type==='news');
+    document.getElementById('gamesGrid').innerHTML='';
+    renderGames();
+    renderQuizzes();
+    renderNews();
+  }catch(e){console.error('Erreur SheetDB', e);}
+}
+
+async function postSheetDB(item){
+  try{
+    const res = await fetch(SHEETDB_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({data:item})
     });
-  }catch(err){alert('Erreur chargement messages.');}
+    return res.json();
+  }catch(e){console.error('Erreur POST', e);}
 }
 
-// Supprimer un message
-async function deleteMessage(id){
-  if(!confirm('Supprimer ce message ?')) return;
+async function deleteSheetDB(id){
   try{
-    const res = await fetch(`${SHEETDB_URL}/${id}`, {method:'DELETE'});
-    if(res.ok){alert('Message supprimé.'); loadMessages();}
-    else alert('Erreur suppression.');
-  }catch(err){alert('Erreur réseau.');}
+    const res = await fetch(SHEETDB_URL+"/id/"+id,{method:"DELETE"});
+    return res.json();
+  }catch(e){console.error('Erreur DELETE', e);}
 }
 
-// Export XLSX
-const exportBtn = document.getElementById('exportBtn');
-exportBtn.addEventListener('click', async ()=>{
-  try{
-    const res = await fetch(SHEETDB_URL);
-    const messages = await res.json();
-    const ws = XLSX.utils.json_to_sheet(messages.map(m=>({Nom:m.Nom,Message:m.Message,Date:m.Date})));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'Messages');
-    XLSX.writeFile(wb,'messages_parle.xlsx');
-  }catch(err){alert('Erreur export.');}
-});
+// ======================
+// RENDER
+// ======================
+function renderGames(){
+  const grid = document.getElementById('gamesGrid');
+  DATA.games.forEach(g=>{
+    const t = document.getElementById('cardTemplate').content.cloneNode(true);
+    t.querySelector('h3').textContent = g.name;
+    t.querySelector('p').textContent = 'Jeu interactif';
+    t.querySelector('.card').onclick = ()=>{ if(g.name==='Morrison'){ renderMorpion(g); } };
+    grid.appendChild(t);
+  });
+}
+
+function renderNews(){
+  const grid = document.getElementById('newsGrid'); grid.innerHTML='';
+  DATA.news.forEach(n=>{
+    const t = document.getElementById('cardTemplate').content.cloneNode(true);
+    t.querySelector('h3').textContent = n.name;
+    t.querySelector('p').textContent = n.content;
+    grid.appendChild(t);
+  });
+}
+
+function renderQuizzes(){
+  const grid = document.getElementById('gamesGrid'); // même grille que les jeux
+  DATA.quizzes.forEach(q=>{
+    const t = document.getElementById('cardTemplate').content.cloneNode(true);
+    t.querySelector('h3').textContent = q.name;
+    t.querySelector('p').textContent = 'Quiz interactif';
+    t.querySelector('.card').onclick = ()=>{ renderQuiz(q); };
+    grid.appendChild(t);
+  });
+}
+
+// ======================
+// MORRISON (MORPION) amélioré
+// ======================
+function renderMorpion(game){
+  const area = document.getElementById('gameArea');
+  area.innerHTML='<h3>Morrison 🟡🔴</h3>';
+  const rows=6, cols=7;
+  const state = { board:Array(rows).fill(null).map(()=>Array(cols).fill(0)), turn:1, over:false, score:[0,0] };
+  const boardEl = document.createElement('div'); boardEl.className='board'; boardEl.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  const scoreEl = document.createElement('p'); scoreEl.textContent='Score Joueur 1: 0 | Joueur 2: 0'; area.appendChild(scoreEl);
+  const resetBtn = document.createElement('button'); resetBtn.className='btn small'; resetBtn.textContent='Réinitialiser'; resetBtn.onclick=()=>{state.board=Array(rows).fill(null).map(()=>Array(cols).fill(0)); state.over=false; draw(); scoreEl.textContent='Score Joueur 1: 0 | Joueur 2: 0';}; area.appendChild(resetBtn);
+
+  function draw(){
+    boardEl.innerHTML='';
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const cell = document.createElement('div'); cell.className='cell';
+      const val = state.board[r][c];
+      if(val!==0){ const p=document.createElement('div'); p.className='piece'; p.style.background=val===1?'yellow':'red'; cell.appendChild(p);}
+      cell.onclick = ()=>{
+        if(state.over) return;
+        for(let rr=rows-1;rr>=0;rr--){if(state.board[rr][c]===0){state.board[rr][c]=state.turn; if(checkWin(rr,c,state.turn)){state.over=true; alert('Joueur '+state.turn+' gagne !'); state.score[state.turn-1]++; scoreEl.textContent=`Score Joueur 1: ${state.score[0]} | Joueur 2: ${state.score[1]}`; } state.turn=3-state.turn; draw(); return;}}
+      };
+      boardEl.appendChild(cell);
+    }
+  }
+  function checkWin(r,c,p){ const dirs=[[0,1],[1,0],[1,1],[1,-1]]; for(const [dr,dc] of dirs){let count=1; for(let k=1;k<4;k++){const rr=r+dr*k,cc=c+dc*k;if(rr<0||rr>=rows||cc<0||cc>=cols)break;if(state.board[rr][cc]===p)count++;else break;} for(let k=1;k<4;k++){const rr=r-dr*k,cc=c-dc*k;if(rr<0||rr>=rows||cc<0||cc>=cols)break;if(state.board[rr][cc]===p)count++;else break;} if(count>=4) return true;} return false;}
+  area.appendChild(boardEl); draw();
+}
+
+// ======================
+// QUIZ
+// ======================
+function renderQuiz(q){
+  const area = document.getElementById('gameArea');
+  area.innerHTML = `<h3>${q.name}</h3>`;
+  let questions;
+  try { questions = JSON.parse(q.content); } catch(e){ area.innerHTML += '<p>Erreur quiz JSON</p>'; return; }
+  let index = 0, score = 0;
+  const qEl = document.createElement('div'); area.appendChild(qEl);
+  const renderQuestion = ()=>{
+    qEl.innerHTML='';
+    if(index >= questions.length){ area.innerHTML += `<p>Quiz terminé ! Score: ${score}/${questions.length}</p>`; return; }
+    const cur = questions[index];
+    const qText = document.createElement('p'); qText.textContent=cur.q; qEl.appendChild(qText);
+    cur.a.forEach((ans,i)=>{
+      const btn = document.createElement('button'); btn.className='btn small'; btn.textContent=ans;
+      btn.onclick = ()=>{ if(i===cur.correct) score++; index++; renderQuestion(); };
+      qEl.appendChild(btn);
+    });
+  };
+  renderQuestion();
+}
+
+// ======================
+// ADMIN PANEL
+// ======================
+document.getElementById('adminBtn').onclick=()=>{
+  const pwd = prompt('Mot de passe admin');
+  if(pwd===ADMIN_PWD){ showAdmin(); } else alert('Mot de passe incorrect');
+};
+
+function showAdmin(){
+  const area = document.getElementById('gameArea');
+  area.innerHTML='<h3>Admin Panel 🛠</h3><div id="adminContent"></div>';
+  const content = document.getElementById('adminContent');
+
+  // Ajouter jeu
+  const formGame = document.createElement('div');
+  formGame.innerHTML=`<h4>Ajouter jeu</h4>
+  <input type="text" id="gameName" placeholder="Nom du jeu">
+  <input type="text" id="gameMetadata" placeholder='Metadata JSON'>
+  <button class="btn small" id="addGameBtn">Ajouter</button>`;
+  content.appendChild(formGame);
+  document.getElementById('addGameBtn').onclick=async()=>{
+    const name = document.getElementById('gameName').value;
+    const meta = document.getElementById('gameMetadata').value;
+    if(!name) return alert('Nom requis');
+    let item={type:'game',name:name,metadata:meta};
+    await postSheetDB(item); alert('Jeu ajouté'); fetchSheetDB();
+  };
+
+  // Ajouter news
+  const formNews = document.createElement('div');
+  formNews.innerHTML=`<h4>Ajouter actualité</h4>
+  <input type="text" id="newsTitle" placeholder="Titre">
+  <textarea id="newsContent" placeholder="Contenu"></textarea>
+  <button class="btn small" id="addNewsBtn">Ajouter</button>`;
+  content.appendChild(formNews);
+  document.getElementById('addNewsBtn').onclick=async()=>{
+    const name = document.getElementById('newsTitle').value;
+    const contentText = document.getElementById('newsContent').value;
+    if(!name||!contentText) return alert('Tous les champs requis');
+    let item={type:'news',name:name,content:contentText};
+    await postSheetDB(item); alert('Actualité ajoutée'); fetchSheetDB();
+  };
+
+  // Ajouter quiz
+  const formQuiz = document.createElement('div');
+  formQuiz.innerHTML = `<h4>Ajouter Quiz</h4>
+  <input type="text" id="quizTitle" placeholder="Titre du quiz">
+  <textarea id="quizContent" placeholder='Questions JSON (ex: [{"q":"Question?","a":["Rep1","Rep2"],"correct":0}])'></textarea>
+  <button class="btn small" id="addQuizBtn">Ajouter Quiz</button>`;
+  content.appendChild(formQuiz);
+  document.getElementById('addQuizBtn').onclick = async () => {
+      const title = document.getElementById('quizTitle').value;
+      const content = document.getElementById('quizContent').value;
+      if (!title || !content) return alert('Tous les champs requis');
+      try { JSON.parse(content); } catch(e){ return alert('JSON invalide'); }
+      let item = { type:'quiz', name:title, content:content };
+      await postSheetDB(item); alert('Quiz ajouté'); fetchSheetDB();
+  };
+}
+
+// ======================
+// INITIAL LOAD
+// ======================
+fetchSheetDB();
 </script>
 </body>
 </html>
