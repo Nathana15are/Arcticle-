@@ -28,6 +28,7 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 .card p{font-size:12px;color:var(--muted);}
 .card.flash{animation:flashNeon 0.3s;}
 @keyframes flashNeon{0%{box-shadow:0 0 8px #8b5cf6; transform:scale(1.02);}50%{box-shadow:0 0 20px #8b5cf6; transform:scale(1.05);}100%{box-shadow:0 0 8px #8b5cf6; transform:scale(1);}}
+.answer-select{margin:8px 0; padding:8px; border-radius:6px; background:rgba(255,255,255,0.1); border:none; color:#fff;}
 .answer-btn{margin:8px 0; padding:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; transition:0.3s; display:block;}
 .answer-btn:hover{background:var(--accent); transform:scale(1.05);}
 .correct{background:green !important;}
@@ -148,23 +149,37 @@ function showQuiz(card,row){
   card.classList.add("flash");
   setTimeout(()=>card.classList.remove("flash"),300);
   if(card.querySelector(".answers")) return;
-  const answersContainer=document.createElement("div");
-  answersContainer.className="answers";
-  ["r1","r2","r3"].forEach(r=>{
+
+  const answersContainer = document.createElement("div");
+  answersContainer.className = "answers";
+
+  const select = document.createElement("select");
+  select.className = "answer-select";
+
+  ["r1","r2","r3"].forEach((r,i)=>{
     if(row[r]){
-      const btn=document.createElement("button");
-      btn.className="answer-btn";
-      btn.textContent=row[r];
-      btn.onclick=()=>checkAnswer(btn,row.bonne);
-      answersContainer.appendChild(btn);
+      const option = document.createElement("option");
+      option.value = row[r];
+      option.textContent = `${i+1}. ${row[r]}`;
+      select.appendChild(option);
     }
   });
-  card.appendChild(answersContainer);
-}
 
-function checkAnswer(btn,good){
-  if(btn.textContent===good) btn.classList.add("correct");
-  else btn.classList.add("wrong");
+  const checkBtn = document.createElement("button");
+  checkBtn.textContent = "✅ Valider";
+  checkBtn.className = "btn";
+  checkBtn.onclick = () => {
+    const val = select.value;
+    if(val === row.bonne){
+      alert("🎉 Bonne réponse !");
+    } else {
+      alert(`❌ Mauvaise réponse ! La bonne réponse était : ${row.bonne}`);
+    }
+  }
+
+  answersContainer.appendChild(select);
+  answersContainer.appendChild(checkBtn);
+  card.appendChild(answersContainer);
 }
 
 function adminAction(row){
