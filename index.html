@@ -22,13 +22,13 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 .panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
 .panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
 .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
-.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:6px; border:1px solid rgba(139,92,246,0.2); opacity:0; transform:translateY(15px); animation:fadeInUp 0.6s ease forwards;}
+.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:12px; border:1px solid rgba(139,92,246,0.2); opacity:0; transform:translateY(15px); animation:fadeInUp 0.6s ease forwards;}
 .card:hover{transform:translateY(-6px) rotateZ(1deg); box-shadow:0 12px 28px rgba(139,92,246,0.8); border:1px solid var(--accent);}
 .card h3{font-size:16px;}
 .card p{font-size:12px;color:var(--muted);}
 .card.flash{animation:flashNeon 0.3s;}
 @keyframes flashNeon{0%{box-shadow:0 0 8px #8b5cf6; transform:scale(1.02);}50%{box-shadow:0 0 20px #8b5cf6; transform:scale(1.05);}100%{box-shadow:0 0 8px #8b5cf6; transform:scale(1);}}
-.answer-btn{margin:4px 0; padding:6px 10px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; transition:0.3s;}
+.answer-btn{margin:8px 0; padding:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; transition:0.3s; display:block;}
 .answer-btn:hover{background:var(--accent); transform:scale(1.05);}
 .correct{background:green !important;}
 .wrong{background:red !important;}
@@ -77,63 +77,87 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 
 <div class="admin-panel" id="adminPanel">
   <div class="admin-content">
-    <h3>Admin (Modifier/Supprimer)</h3>
+    <h3>Admin Panel</h3>
     <input type="password" id="adminPass" placeholder="Mot de passe">
     <button class="btn" id="loginBtn">Se connecter</button>
     <div id="adminForms" style="display:none;">
-      <p>Admin activé uniquement pour modification/suppression des éléments sélectionnés.</p>
+      <h3>Ajouter un Quiz</h3>
+      <input id="quizName" placeholder="Nom du quiz">
+      <input id="quizQuestion" placeholder="Question">
+      <input id="r1" placeholder="Réponse 1">
+      <input id="r2" placeholder="Réponse 2">
+      <input id="r3" placeholder="Réponse 3">
+      <input id="good" placeholder="Bonne réponse">
+      <button class="btn" id="saveQuiz">Ajouter Quiz</button>
+      <hr>
+      <h3>Ajouter Actualité</h3>
+      <input id="newsTitle" placeholder="Titre">
+      <textarea id="newsContent" placeholder="Contenu"></textarea>
+      <button class="btn" id="saveNews">Ajouter Actualité</button>
     </div>
     <button class="btn close-btn" id="closeAdmin">Fermer</button>
   </div>
 </div>
 
-<audio id="clickSound" src="https://assets.codepen.io/605876/click-neon.mp3"></audio>
-<audio id="suspenseSound" src="https://assets.codepen.io/605876/suspense-loop.mp3" loop autoplay></audio>
-<audio id="monkeySound" src="https://assets.codepen.io/605876/monkey-cry.mp3"></audio>
+<audio id="clickSound" src="https://assets.codepen.io/605876/click-neon.mp3" preload="auto"></audio>
+<audio id="suspenseSound" src="https://assets.codepen.io/605876/suspense-loop.mp3" loop autoplay preload="auto"></audio>
+<audio id="monkeySound" src="https://assets.codepen.io/605876/monkey-cry.mp3" preload="auto"></audio>
 
 <script>
-const SHEET_URL="https://sheetdb.io/api/v1/lmifyr403m3ox";
+const SHEET_URL="https://sheetdb.io/api/v1/b3hru5umxritu";
 const ADMIN_PASS="Marius2013.";
 
 async function loadData(){
-  const res=await fetch(SHEET_URL);
-  const data=await res.json();
-  const quizList=document.getElementById("quizList");
-  const newsList=document.getElementById("newsList");
-  quizList.innerHTML=""; newsList.innerHTML="";
-  data.forEach((row,i)=>{
-    if(row.type==="quiz"){
-      const card=document.createElement("div");
-      card.className="card";
-      card.style.animationDelay=`${i*0.1}s`;
-      card.innerHTML=`<h3>${row.nom}</h3><p>${row.question}</p>`;
-      card.onclick=()=>showQuiz(card,row);
-      quizList.appendChild(card);
-    }else if(row.type==="news"){
-      const card=document.createElement("div");
-      card.className="card";
-      card.style.animationDelay=`${i*0.1}s`;
-      card.innerHTML=`<h3>${row.titre}</h3><p>${row.contenu}</p>`;
-      card.onclick=()=>selectCard(card,row);
-      newsList.appendChild(card);
-    }
-  });
+  try{
+    const res=await fetch(SHEET_URL);
+    const data=await res.json();
+    const quizList=document.getElementById("quizList");
+    const newsList=document.getElementById("newsList");
+    quizList.innerHTML=""; newsList.innerHTML="";
+    data.forEach((row,i)=>{
+      if(row.type==="quiz"){
+        const card=document.createElement("div");
+        card.className="card";
+        card.style.animationDelay=`${i*0.1}s`;
+        card.innerHTML=`<h3>${row.nom||"Sans Nom"}</h3><p>${row.question||"Pas de question"}</p>
+          <button class="btn adminQuizBtn">⚙️ Admin</button>`;
+        quizList.appendChild(card);
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{
+          e.stopPropagation();
+          adminAction(row);
+        }
+        card.onclick=()=>showQuiz(card,row);
+      } else if(row.type==="news"){
+        const card=document.createElement("div");
+        card.className="card";
+        card.style.animationDelay=`${i*0.1}s`;
+        card.innerHTML=`<h3>${row.titre||"Sans titre"}</h3><p>${row.contenu||"Pas de contenu"}</p>
+          <button class="btn adminQuizBtn">⚙️ Admin</button>`;
+        newsList.appendChild(card);
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{
+          e.stopPropagation();
+          adminAction(row);
+        }
+      }
+    });
+  } catch(e){alert("Erreur lecture SheetDB : "+e);}
 }
 
 function showQuiz(card,row){
   document.getElementById("clickSound").play();
   card.classList.add("flash");
   setTimeout(()=>card.classList.remove("flash"),300);
-  // crée les boutons réponses
-  if(card.querySelector(".answers")) return; // évite duplication
+  if(card.querySelector(".answers")) return;
   const answersContainer=document.createElement("div");
   answersContainer.className="answers";
   ["r1","r2","r3"].forEach(r=>{
-    const btn=document.createElement("button");
-    btn.className="answer-btn";
-    btn.textContent=row[r];
-    btn.onclick=()=>checkAnswer(btn,row.bonne);
-    answersContainer.appendChild(btn);
+    if(row[r]){
+      const btn=document.createElement("button");
+      btn.className="answer-btn";
+      btn.textContent=row[r];
+      btn.onclick=()=>checkAnswer(btn,row.bonne);
+      answersContainer.appendChild(btn);
+    }
   });
   card.appendChild(answersContainer);
 }
@@ -143,23 +167,21 @@ function checkAnswer(btn,good){
   else btn.classList.add("wrong");
 }
 
-function selectCard(card,row){
-  if(document.getElementById("adminForms").style.display==="block"){
-    const pass=prompt("Mot de passe admin requis :");
-    if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
-    const action=confirm("OK = Modifier, Annuler = Supprimer ?");
-    if(action){
-      const newValue=prompt("Édite ton contenu :", row.question||row.contenu);
-      if(newValue){
-        let updated=row;
-        if(row.type==="quiz") updated.question=newValue;
-        else updated.contenu=newValue;
-        fetch(`${SHEET_URL}/id/${row.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)}).then(()=>loadData());
-      }
-    }else{
-      if(confirm("Supprimer définitivement ?")){
-        fetch(`${SHEET_URL}/id/${row.id}`,{method:"DELETE"}).then(()=>loadData());
-      }
+function adminAction(row){
+  const pass=prompt("Mot de passe admin requis :");
+  if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
+  const action=confirm("OK = Modifier, Annuler = Supprimer ?");
+  if(action){
+    const newValue=prompt("Édite ton contenu :", row.question||row.contenu);
+    if(newValue){
+      let updated=row;
+      if(row.type==="quiz") updated.question=newValue;
+      else updated.contenu=newValue;
+      fetch(`${SHEET_URL}/id/${row.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)}).then(()=>loadData());
+    }
+  }else{
+    if(confirm("Supprimer définitivement ?")){
+      fetch(`${SHEET_URL}/id/${row.id}`,{method:"DELETE"}).then(()=>loadData());
     }
   }
 }
@@ -171,7 +193,19 @@ document.getElementById("loginBtn").onclick=()=>{
   if(val===ADMIN_PASS) document.getElementById("adminForms").style.display="block";
   else alert("Mot de passe incorrect 🟥");
 };
-document.getElementById("monkeySoundBtn").onclick=()=>document.getElementById("monkeySound").play();
+document.getElementById("saveQuiz").onclick=()=>{
+  const data={type:"quiz",nom:document.getElementById("quizName").value,question:document.getElementById("quizQuestion").value,r1:document.getElementById("r1").value,r2:document.getElementById("r2").value,r3:document.getElementById("r3").value,bonne:document.getElementById("good").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Quiz ajouté ✅");loadData();});
+};
+document.getElementById("saveNews").onclick=()=>{
+  const data={type:"news",titre:document.getElementById("newsTitle").value,contenu:document.getElementById("newsContent").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Actualité ajoutée ✅");loadData();});
+};
+document.getElementById("monkeySoundBtn").onclick=()=>{
+  const sound=document.getElementById("monkeySound");
+  sound.currentTime=0;
+  sound.play();
+};
 
 function createParticles(){
   for(let i=0;i<50;i++){
