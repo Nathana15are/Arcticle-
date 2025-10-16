@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monkey Games 🐵</title>
+<title>🐵 MonkeyGames Immersive</title>
 <style>
 :root{
   --bg:#0a1e0f;
@@ -14,227 +14,193 @@
   font-family: 'Segoe UI', Roboto, sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8;}
-.app{min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; gap:20px;}
+body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow-x:hidden; position:relative;}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.particle{position:absolute; width:10px; height:10px; background:rgba(139,92,246,0.3); border-radius:50%; animation:fall linear infinite;}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);}100%{transform:translateY(110vh) rotate(360deg);}}
+.app{position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; gap:20px;}
 .header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
-.logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow: 0 0 15px var(--accent);}
+.logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow:0 0 15px var(--accent);}
 .subtitle{font-size:12px;color:var(--muted);}
 .container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
-.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s;}
+.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
+.panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
 .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
-.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:6px; border:1px solid rgba(139,92,246,0.2);}
+.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:6px; border:1px solid rgba(139,92,246,0.2); opacity:0; transform:translateY(15px); animation:fadeInUp 0.6s ease forwards;}
 .card:hover{transform:translateY(-6px) rotateZ(1deg); box-shadow:0 12px 28px rgba(139,92,246,0.8); border:1px solid var(--accent);}
+.card h3{font-size:16px;}
+.card p{font-size:12px;color:var(--muted);}
+.card.flash{animation:flashNeon 0.3s;}
+@keyframes flashNeon{0%{box-shadow:0 0 8px #8b5cf6; transform:scale(1.02);}50%{box-shadow:0 0 20px #8b5cf6; transform:scale(1.05);}100%{box-shadow:0 0 8px #8b5cf6; transform:scale(1);}}
 .btn{padding:8px 12px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(139,92,246,0.5); color:inherit; cursor:pointer; transition:0.3s;}
 .btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
-.footer{text-align:center;color:var(--muted); font-size:12px;}
-.admin-panel,.quiz-popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000;}
-.admin-content,.quiz-content{background:var(--card); padding:20px; border-radius:12px; max-width:500px; width:90%; max-height:90%; overflow:auto; box-shadow:0 0 20px rgba(139,92,246,0.7);}
-input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:inherit;}
-.close-btn{margin-top:10px;background:var(--accent); color:#fff; cursor:pointer;}
-@media(max-width:900px){
-  .grid{grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap:12px;}
-  .panel{padding:12px;}
-}
+.btn.small{font-size:12px;padding:6px 10px;}
+input,textarea{width:100%;margin:6px 0;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:inherit; transition:0.2s;}
+input:focus, textarea:focus{border-color:var(--accent); box-shadow:0 0 6px var(--accent);}
+.footer{text-align:center;color:var(--muted); font-size:12px; display:flex; justify-content:center; align-items:center; gap:10px; flex-direction:column;}
+.admin-panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000; animation:fadeIn 0.3s;}
+.admin-content{background:var(--card); padding:20px; border-radius:12px; max-width:500px; width:90%; max-height:90%; overflow:auto; box-shadow:0 0 20px rgba(139,92,246,0.7);}
+.admin-content h3{color:var(--accent); text-align:center; text-shadow:0 0 6px var(--accent);}
+.admin-content label{display:block; margin-top:10px;}
+.admin-content input, .admin-content textarea{width:100%;}
+.close-btn{margin-top:10px;background:var(--accent); color:#fff; cursor:pointer; transition:0.3s;}
+.close-btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
+@keyframes fadeInUp{0%{opacity:0; transform:translateY(20px);}100%{opacity:1; transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+@media(max-width:900px){.grid{grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap:12px;}.panel{padding:12px;}}
+#monkeySoundBtn{margin-top:10px; background:#ffeb3b; color:#000; font-weight:bold;}
 </style>
 </head>
 <body>
+<div class="particles" id="particles"></div>
+
 <div class="app">
   <div class="header">
-    <div><span class="logo">Monkey Games 🐵</span><div class="subtitle">Thème Jungle Néon • SheetDB</div></div>
-    <div><button id="adminBtn" class="btn small">Admin</button></div>
+    <div>
+      <div class="logo">🐵 MonkeyGames</div>
+      <div class="subtitle">Quiz & Actualités de la Jungle</div>
+    </div>
+    <button class="btn" id="adminBtn">Admin</button>
   </div>
 
   <div class="container">
     <div class="panel">
-      <h2>🎮 Jeux & Quiz</h2>
-      <div class="grid" id="gamesGrid"></div>
+      <h2>🧠 Quiz de la Jungle</h2>
+      <div class="grid" id="quizList"></div>
     </div>
 
     <div class="panel">
       <h2>📰 Actualités</h2>
-      <div id="newsGrid" class="grid"></div>
+      <div class="grid" id="newsList"></div>
     </div>
   </div>
 
-  <div class="footer">© 2025 Monkey Games — Thème Jungle Néon 🍌</div>
+  <div class="footer">
+    © 2025 MonkeyGames - Tous droits réservés
+    <button class="btn" id="monkeySoundBtn">🎵 Cri de singe</button>
+  </div>
 </div>
 
-<!-- Admin Panel -->
 <div class="admin-panel" id="adminPanel">
-  <div class="admin-content" id="adminContent">
-    <h3>Admin Panel 🛠</h3>
-    <div id="loginSection">
-      <label>Mot de passe :</label>
-      <input type="password" id="adminPwd" placeholder="Entrez le mot de passe">
-      <button class="btn" id="loginBtn">Se connecter</button>
+  <div class="admin-content">
+    <h3>Connexion Admin</h3>
+    <input type="password" id="adminPass" placeholder="Mot de passe">
+    <button class="btn" id="loginBtn">Se connecter</button>
+    <div id="adminForms" style="display:none;">
+      <h3>Ajouter un Quiz</h3>
+      <label>Nom</label><input id="quizName">
+      <label>Question</label><input id="quizQuestion">
+      <label>Réponse 1</label><input id="r1">
+      <label>Réponse 2</label><input id="r2">
+      <label>Réponse 3</label><input id="r3">
+      <label>Bonne réponse</label><input id="good">
+      <button class="btn" id="saveQuiz">Ajouter Quiz</button>
+      <hr>
+      <h3>Ajouter une Actualité</h3>
+      <label>Titre</label><input id="newsTitle">
+      <label>Contenu</label><textarea id="newsContent"></textarea>
+      <button class="btn" id="saveNews">Ajouter Actualité</button>
     </div>
-    <div id="panelSection" style="display:none;">
-      <h4>Créer un Quiz</h4>
-      <input type="text" id="quizName" placeholder="Nom du quiz">
-      <input type="text" id="quizQ" placeholder="Question">
-      <input type="text" id="quizA1" placeholder="Réponse 1">
-      <input type="text" id="quizA2" placeholder="Réponse 2">
-      <input type="text" id="quizA3" placeholder="Réponse 3">
-      <input type="number" id="quizCorrect" placeholder="Bonne réponse (0,1,2)">
-      <button class="btn" id="addQuizBtn">Ajouter Quiz</button>
-
-      <h4>Créer une Actualité</h4>
-      <input type="text" id="newsTitle" placeholder="Titre">
-      <textarea id="newsContent" placeholder="Contenu"></textarea>
-      <button class="btn" id="addNewsBtn">Ajouter Actualité</button>
-
-      <button class="btn close-btn" id="closeAdminBtn">Fermer</button>
-    </div>
+    <button class="btn close-btn" id="closeAdmin">Fermer</button>
   </div>
 </div>
 
-<!-- Quiz Popup -->
-<div class="quiz-popup" id="quizPopup">
-  <div class="quiz-content">
-    <h3 id="quizTitle"></h3>
-    <p id="quizQuestion"></p>
-    <div id="quizAnswers"></div>
-    <p id="quizResult" style="margin-top:10px;"></p>
-    <button class="btn close-btn" id="closeQuizBtn">Fermer</button>
-  </div>
-</div>
-
-<template id="cardTemplate">
-  <div class="card">
-    <h3></h3>
-    <p></p>
-  </div>
-</template>
+<!-- Sons -->
+<audio id="clickSound" src="https://assets.codepen.io/605876/click-neon.mp3"></audio>
+<audio id="suspenseSound" src="https://assets.codepen.io/605876/suspense-loop.mp3" loop autoplay></audio>
+<audio id="monkeySound" src="https://assets.codepen.io/605876/monkey-cry.mp3"></audio>
 
 <script>
-const SHEETDB_URL = "https://sheetdb.io/api/v1/lmifyr403m3ox";
-const ADMIN_PWD = "Marius2013.";
-let DATA = { quizzes: [], news: [] };
+const SHEET_URL = "https://sheetdb.io/api/v1/lmifyr403m3ox";
+const ADMIN_PASS = "Marius2013.";
 
-// --- Charger depuis SheetDB ---
-async function fetchSheetDB(){
-  try{
-    const res = await fetch(SHEETDB_URL);
-    const json = await res.json();
-    DATA.quizzes = json.filter(x=>x.type==='quiz');
-    DATA.news = json.filter(x=>x.type==='news');
-    renderQuizzes();
-    renderNews();
-  }catch(e){console.error('Erreur SheetDB', e);}
-}
-
-async function postSheetDB(item){
-  try{
-    await fetch(SHEETDB_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({data:item})
-    });
-  }catch(e){console.error('Erreur POST', e);}
-}
-
-// --- Rendu ---
-function renderNews(){
-  const grid = document.getElementById('newsGrid'); grid.innerHTML='';
-  DATA.news.forEach(n=>{
-    const t = document.getElementById('cardTemplate').content.cloneNode(true);
-    t.querySelector('h3').textContent = n.name;
-    t.querySelector('p').textContent = n.content;
-    grid.appendChild(t);
+async function loadData(){
+  const res = await fetch(SHEET_URL);
+  const data = await res.json();
+  const quizList=document.getElementById("quizList");
+  const newsList=document.getElementById("newsList");
+  quizList.innerHTML=""; newsList.innerHTML="";
+  data.forEach((row,i)=>{
+    if(row.type==="quiz"){
+      const card=document.createElement("div");
+      card.className="card";
+      card.style.animationDelay=`${i*0.1}s`;
+      card.innerHTML=`<h3>${row.nom}</h3><p>${row.question}</p>`;
+      card.onclick=()=>flashCard(card,row);
+      quizList.appendChild(card);
+    }else if(row.type==="news"){
+      const card=document.createElement("div");
+      card.className="card";
+      card.style.animationDelay=`${i*0.1}s`;
+      card.innerHTML=`<h3>${row.titre}</h3><p>${row.contenu}</p>`;
+      card.onclick=()=>flashCard(card,row);
+      newsList.appendChild(card);
+    }
   });
 }
 
-function renderQuizzes(){
-  const grid = document.getElementById('gamesGrid'); grid.innerHTML='';
-  DATA.quizzes.forEach(q=>{
-    const t = document.getElementById('cardTemplate').content.cloneNode(true);
-    t.querySelector('h3').textContent = q.name;
-    t.querySelector('p').textContent = 'Clique pour jouer 🐒';
-    const el = t.querySelector('.card');
-    el.onclick = ()=>showQuiz(q);
-    grid.appendChild(t);
-  });
+function flashCard(card,row){
+  document.getElementById("clickSound").play();
+  // effet flash et rotation aléatoire de couleur
+  card.classList.add("flash");
+  card.style.borderColor = `hsl(${Math.random()*360},80%,60%)`;
+  setTimeout(()=>{
+    card.classList.remove("flash");
+    card.style.borderColor = "rgba(139,92,246,0.2)";
+  },300);
+  editItem(row);
 }
 
-// --- Quiz Logic ---
-function showQuiz(q){
-  const popup = document.getElementById('quizPopup');
-  const title = document.getElementById('quizTitle');
-  const question = document.getElementById('quizQuestion');
-  const answers = document.getElementById('quizAnswers');
-  const result = document.getElementById('quizResult');
-
-  title.textContent = q.name;
-  const data = JSON.parse(q.content || "[]")[0];
-  question.textContent = data.q;
-  answers.innerHTML = "";
-  result.textContent = "";
-
-  data.a.forEach((a,i)=>{
-    const btn = document.createElement('button');
-    btn.className="btn";
-    btn.style.display="block";
-    btn.style.width="100%";
-    btn.style.margin="6px 0";
-    btn.textContent = a;
-    btn.onclick=()=>{
-      if(i===data.correct){
-        result.textContent="Bonne réponse 🟩";
-        result.style.color="lightgreen";
-      }else{
-        result.textContent="Mauvaise réponse 🟥";
-        result.style.color="tomato";
-      }
-    };
-    answers.appendChild(btn);
-  });
-
-  popup.style.display='flex';
+function editItem(item){
+  const pass=prompt("Mot de passe admin requis :");
+  if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
+  const action=confirm("OK = Modifier, Annuler = Supprimer ?");
+  if(action){
+    const newValue=prompt("Édite ton contenu :", item.question||item.contenu);
+    if(newValue){
+      let updated=item;
+      if(item.type==="quiz") updated.question=newValue;
+      else updated.contenu=newValue;
+      fetch(`${SHEET_URL}/id/${item.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)}).then(()=>loadData());
+    }
+  }else{
+    if(confirm("Supprimer définitivement ?")){
+      fetch(`${SHEET_URL}/id/${item.id}`,{method:"DELETE"}).then(()=>loadData());
+    }
+  }
 }
 
-document.getElementById('closeQuizBtn').onclick=()=>{
-  document.getElementById('quizPopup').style.display='none';
+document.getElementById("adminBtn").onclick=()=>document.getElementById("adminPanel").style.display="flex";
+document.getElementById("closeAdmin").onclick=()=>document.getElementById("adminPanel").style.display="none";
+document.getElementById("loginBtn").onclick=()=>{
+  const val=document.getElementById("adminPass").value;
+  if(val===ADMIN_PASS) document.getElementById("adminForms").style.display="block";
+  else alert("Mot de passe incorrect 🟥");
 };
 
-// --- Admin ---
-const adminBtn=document.getElementById('adminBtn');
-const adminPanel=document.getElementById('adminPanel');
-const loginBtn=document.getElementById('loginBtn');
-const closeAdminBtn=document.getElementById('closeAdminBtn');
-
-adminBtn.onclick=()=>adminPanel.style.display='flex';
-closeAdminBtn.onclick=()=>adminPanel.style.display='none';
-
-loginBtn.onclick=()=>{
-  const pwd=document.getElementById('adminPwd').value;
-  if(pwd===ADMIN_PWD){
-    document.getElementById('loginSection').style.display='none';
-    document.getElementById('panelSection').style.display='block';
-  }else alert("Mot de passe incorrect 🟥");
+document.getElementById("saveQuiz").onclick=()=>{
+  const data={type:"quiz",nom:document.getElementById("quizName").value,question:document.getElementById("quizQuestion").value,r1:document.getElementById("r1").value,r2:document.getElementById("r2").value,r3:document.getElementById("r3").value,bonne:document.getElementById("good").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Quiz ajouté ✅");loadData();});
 };
-
-document.getElementById('addQuizBtn').onclick=async ()=>{
-  const name=document.getElementById('quizName').value;
-  const q=document.getElementById('quizQ').value;
-  const a1=document.getElementById('quizA1').value;
-  const a2=document.getElementById('quizA2').value;
-  const a3=document.getElementById('quizA3').value;
-  const correct=parseInt(document.getElementById('quizCorrect').value);
-  if(!name||!q||!a1||!a2||!a3||isNaN(correct)){alert("Tous les champs sont requis");return;}
-  const content=JSON.stringify([{q:q,a:[a1,a2,a3],correct:correct}]);
-  await postSheetDB({type:"quiz",name:name,content:content});
-  alert("Quiz ajouté ✅");fetchSheetDB();
+document.getElementById("saveNews").onclick=()=>{
+  const data={type:"news",titre:document.getElementById("newsTitle").value,contenu:document.getElementById("newsContent").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Actualité ajoutée ✅");loadData();});
 };
+document.getElementById("monkeySoundBtn").onclick=()=>{document.getElementById("monkeySound").play();};
 
-document.getElementById('addNewsBtn').onclick=async ()=>{
-  const name=document.getElementById('newsTitle').value;
-  const content=document.getElementById('newsContent').value;
-  if(!name||!content){alert("Tous les champs sont requis");return;}
-  await postSheetDB({type:"news",name:name,content:content});
-  alert("Actualité ajoutée ✅");fetchSheetDB();
-};
-
-fetchSheetDB();
+function createParticles(){
+  for(let i=0;i<50;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(3+Math.random()*5)+"s";
+    p.style.width=(5+Math.random()*10)+"px";
+    p.style.height=p.style.width;
+    document.getElementById("particles").appendChild(p);
+  }
+}
+createParticles();
+loadData();
 </script>
 </body>
 </html>
