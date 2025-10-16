@@ -3,229 +3,238 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐒 MonkeyGames - Jungle Royale</title>
+<title>🐵 MonkeyGames - Quiz Jungle</title>
 <style>
 :root{
-  --bg:#081a10;--accent:#8b5cf6;--muted:#c0c0b0;
-  font-family:'Segoe UI',Roboto,sans-serif;
+  --bg:#0a1e0f; --card:#123018; --accent:#8b5cf6; --muted:#c0c0b0; --glass: rgba(255,255,255,0.05);
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html, body{
-  width:100%; height:100%; overflow:hidden;
-  background:linear-gradient(160deg,#0a1e0f,#123018);
-}
-body{
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-}
-.header{
-  position:absolute;top:10px;left:0;width:100%;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:0 20px;z-index:10;
-}
-.logo{font-size:24px;font-weight:bold;color:var(--accent);}
-.btn{
-  background:rgba(255,255,255,0.08);border:1px solid var(--accent);
-  padding:8px 12px;border-radius:8px;color:#fff;cursor:pointer;
-  transition:0.3s;
-}
-.btn:hover{background:var(--accent);}
-.swipe-container{
-  display:flex;transition:transform 0.6s ease;
-  height:100%; width:300vw; will-change:transform;
-}
-.page{
-  width:100vw;height:100%;flex-shrink:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:20px;text-align:center;
-}
-.page h2{color:var(--accent);margin-bottom:10px;}
-.card{background:rgba(255,255,255,0.08);padding:12px 16px;margin:10px;border-radius:10px;max-width:300px;}
-.footer{
-  position:absolute;bottom:70px;width:100%;
-  text-align:center;font-size:12px;color:var(--muted);
-}
-.navbar{
-  position:absolute;bottom:10px;left:0;width:100%;
-  display:flex;justify-content:space-around;align-items:center;
-  background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);
-  border-top:1px solid rgba(255,255,255,0.1);
-  padding:8px 0;
-}
-.navbar button{
-  background:none;border:none;color:#fff;font-size:22px;cursor:pointer;
-  transition:0.3s;
-}
-.navbar button.active{color:var(--accent);transform:scale(1.2);}
-#gamePanel{
-  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:linear-gradient(180deg,#123018,#0a1e0f);
-  flex-direction:column;align-items:center;justify-content:center;z-index:2000;
-}
-#gameCanvas{
-  border:2px solid var(--accent);
-  border-radius:10px; background:transparent;
-}
-#score,#bestScoreGame{color:#fff;font-weight:bold;margin:8px;text-shadow:0 0 6px var(--accent);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow-x:hidden; position:relative;}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.particle{position:absolute; width:10px; height:10px; background:rgba(139,92,246,0.3); border-radius:50%; animation:fall linear infinite;}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);}100%{transform:translateY(110vh) rotate(360deg);}}
+.app{position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; gap:20px;}
+.header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
+.logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow:0 0 15px var(--accent);}
+.subtitle{font-size:12px;color:var(--muted);}
+.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
+.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
+.panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
+.grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
+.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:12px; border:1px solid rgba(139,92,246,0.2); opacity:0; transform:translateY(15px); animation:fadeInUp 0.6s ease forwards;}
+.card:hover{transform:translateY(-6px) rotateZ(1deg); box-shadow:0 12px 28px rgba(139,92,246,0.8); border:1px solid var(--accent);}
+.card h3{font-size:16px;}
+.card p{font-size:12px;color:var(--muted);}
+.card.flash{animation:flashNeon 0.3s;}
+@keyframes flashNeon{0%{box-shadow:0 0 8px #8b5cf6; transform:scale(1.02);}50%{box-shadow:0 0 20px #8b5cf6; transform:scale(1.05);}100%{box-shadow:0 0 8px #8b5cf6; transform:scale(1);}}
+.answer-select{margin:8px 0; padding:8px; border-radius:6px; background:rgba(255,255,255,0.1); border:none; color:#fff;}
+.answer-btn{margin:8px 0; padding:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; transition:0.3s; display:block;}
+.answer-btn:hover{background:var(--accent); transform:scale(1.05);}
+.correct{background:green !important;}
+.wrong{background:red !important;}
+.btn{padding:8px 12px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(139,92,246,0.5); color:inherit; cursor:pointer; transition:0.3s;}
+.btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
+.footer{text-align:center;color:var(--muted); font-size:12px; display:flex; justify-content:center; align-items:center; gap:10px; flex-direction:column;}
+.admin-panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000; animation:fadeIn 0.3s;}
+.admin-content{background:var(--card); padding:20px; border-radius:12px; max-width:500px; width:90%; max-height:90%; overflow:auto; box-shadow:0 0 20px rgba(139,92,246,0.7);}
+.admin-content h3{color:var(--accent); text-align:center; text-shadow:0 0 6px var(--accent);}
+.close-btn{margin-top:10px;background:var(--accent); color:#fff; cursor:pointer; transition:0.3s;}
+.close-btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
+#monkeySoundBtn{margin-top:10px; background:#ffeb3b; color:#000; font-weight:bold;}
+@keyframes fadeInUp{0%{opacity:0; transform:translateY(20px);}100%{opacity:1; transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
 </style>
 </head>
 <body>
+<div class="particles" id="particles"></div>
 
-<div class="header">
-  <div class="logo">🐒 MonkeyGames</div>
-  <button class="btn" id="adminBtn">Admin</button>
-</div>
-
-<div class="swipe-container" id="swipeContainer">
-  <div class="page" id="page1">
-    <h2>🧠 Quiz Jungle</h2>
-    <div class="card">Teste ton instinct sauvage !</div>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="logo">🐵 MonkeyGames</div>
+      <div class="subtitle">Quiz & Actualités de la Jungle</div>
+    </div>
+    <button class="btn" id="adminBtn">Admin</button>
   </div>
 
-  <div class="page" id="page2">
-    <h2>📰 Actualités</h2>
-    <div class="card">Un nouveau roi des bananes a été couronné 👑🍌</div>
+  <div class="container">
+    <div class="panel">
+      <h2>🧠 Quiz de la Jungle</h2>
+      <div class="grid" id="quizList"></div>
+    </div>
+
+    <div class="panel">
+      <h2>📰 Actualités</h2>
+      <div class="grid" id="newsList"></div>
+    </div>
   </div>
 
-  <div class="page" id="page3">
-    <h2>🔥 La Jungle Royale</h2>
-    <p>Attrape les 🍌, évite les 🐍 et bats ton record !</p>
-    <button class="btn" id="playGameBtn">🎮 Jouer</button>
-    <div id="bestScore">🏆 Meilleur score : 0</div>
+  <div class="footer">
+    © 2025 MonkeyGames
+    <button class="btn" id="monkeySoundBtn">🎵 Cri de singe</button>
   </div>
 </div>
 
-<div class="navbar">
-  <button id="navQuiz">🧠</button>
-  <button id="navNews">📰</button>
-  <button id="navGame">🎮</button>
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-content">
+    <h3>Admin Panel</h3>
+    <input type="password" id="adminPass" placeholder="Mot de passe">
+    <button class="btn" id="loginBtn">Se connecter</button>
+    <div id="adminForms" style="display:none;">
+      <h3>Ajouter un Quiz</h3>
+      <input id="quizName" placeholder="Nom du quiz">
+      <input id="quizQuestion" placeholder="Question">
+      <input id="r1" placeholder="Réponse 1">
+      <input id="r2" placeholder="Réponse 2">
+      <input id="r3" placeholder="Réponse 3">
+      <input id="good" placeholder="Bonne réponse">
+      <button class="btn" id="saveQuiz">Ajouter Quiz</button>
+      <hr>
+      <h3>Ajouter Actualité</h3>
+      <input id="newsTitle" placeholder="Titre">
+      <textarea id="newsContent" placeholder="Contenu"></textarea>
+      <button class="btn" id="saveNews">Ajouter Actualité</button>
+    </div>
+    <button class="btn close-btn" id="closeAdmin">Fermer</button>
+  </div>
 </div>
 
-<div id="gamePanel">
-  <canvas id="gameCanvas" width="400" height="400"></canvas>
-  <div id="score">Score : 0</div>
-  <div id="bestScoreGame">🏆 Meilleur : 0</div>
-  <button class="btn" id="closeGameBtn">❌ Quitter</button>
-</div>
-
+<audio id="clickSound" src="https://assets.codepen.io/605876/click-neon.mp3" preload="auto"></audio>
+<audio id="suspenseSound" src="https://assets.codepen.io/605876/suspense-loop.mp3" loop autoplay preload="auto"></audio>
 <audio id="monkeySound" src="https://assets.codepen.io/605876/monkey-cry.mp3" preload="auto"></audio>
-<audio id="bananaSound" src="https://cdn.pixabay.com/download/audio/2023/03/22/audio_c0f6b43738.mp3?filename=pop.mp3" preload="auto"></audio>
 
 <script>
-// Plein écran automatique
-function goFullScreen() {
-  if(document.documentElement.requestFullscreen){
-    document.documentElement.requestFullscreen();
-  } else if(document.documentElement.webkitRequestFullscreen){
-    document.documentElement.webkitRequestFullscreen();
-  }
-}
-window.onload=()=>{goFullScreen();};
+const SHEET_URL="https://sheetdb.io/api/v1/b3hru5umxritu";
+const ADMIN_PASS="Marius2013.";
 
-// Swipe navigation
-let currentPage=0;
-const swipeContainer=document.getElementById('swipeContainer');
-const navBtns=[navQuiz,navNews,navGame];
-function updateSwipe(){
-  swipeContainer.style.transform=`translateX(-${currentPage*100}vw)`;
-  navBtns.forEach((b,i)=>b.classList.toggle('active',i===currentPage));
-}
-navQuiz.onclick=()=>{currentPage=0;updateSwipe();}
-navNews.onclick=()=>{currentPage=1;updateSwipe();}
-navGame.onclick=()=>{currentPage=2;updateSwipe();}
-
-let startX=0,endX=0;
-document.body.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;});
-document.body.addEventListener('touchend',e=>{
-  endX=e.changedTouches[0].clientX;
-  if(startX-endX>50&&currentPage<2){currentPage++;updateSwipe();}
-  else if(endX-startX>50&&currentPage>0){currentPage--;updateSwipe();}
-});
-
-// Jungle Royale amélioré
-let gameInterval,player,bananas,serpents,score=0,best=localStorage.getItem("bestScore")||0;
-document.getElementById("bestScore").textContent="🏆 Meilleur score : "+best;
-document.getElementById("playGameBtn").onclick=()=>{
-  document.getElementById("gamePanel").style.display="flex";
-  startGame();
-};
-document.getElementById("closeGameBtn").onclick=()=>{
-  document.getElementById("gamePanel").style.display="none";
-  stopGame();
-};
-
-function startGame(){
-  const c=document.getElementById("gameCanvas");
-  const ctx=c.getContext("2d");
-  score=0;
-  player={x:200,y:200,vx:0,vy:0,img:new Image()};
-  player.img.src="https://i.imgur.com/ntYyP2C.png";
-  bananas=[];serpents=[];
-  const bananaImg=new Image(); bananaImg.src="https://i.imgur.com/ZQ6t9kU.png";
-  const snakeImg=new Image(); snakeImg.src="https://i.imgur.com/6cRzVYs.png";
-  document.getElementById("bestScoreGame").textContent="🏆 Meilleur : "+best;
-  
-  // Particules feuilles
-  const leaves=[];
-  for(let i=0;i<30;i++){leaves.push({x:Math.random()*400,y:Math.random()*400,vx:Math.random()*0.5-0.25,vy:Math.random()*1+0.2});}
-
-  function spawn(){
-    if(Math.random()<0.03)bananas.push({x:Math.random()*380,y:Math.random()*380});
-    if(Math.random()<0.02)serpents.push({x:Math.random()*380,y:Math.random()*380});
-  }
-  function move(e){
-    if(e.key==="ArrowUp")player.vy=-4;
-    if(e.key==="ArrowDown")player.vy=4;
-    if(e.key==="ArrowLeft")player.vx=-4;
-    if(e.key==="ArrowRight")player.vx=4;
-  }
-  document.addEventListener("keydown",move);
-  function update(){
-    ctx.clearRect(0,0,400,400);
-    spawn();
-    // fond dynamique feuilles
-    ctx.fillStyle="rgba(0,255,0,0.15)";
-    leaves.forEach(l=>{
-      l.x+=l.vx; l.y+=l.vy;
-      if(l.y>400) l.y=0; if(l.x>400) l.x=0;
-      ctx.fillRect(l.x,l.y,2,2);
-    });
-
-    // player
-    player.x+=player.vx; player.y+=player.vy;
-    player.vx*=0.9; player.vy*=0.9;
-    player.x=Math.max(0,Math.min(380,player.x));
-    player.y=Math.max(0,Math.min(380,player.y));
-
-    // bananes
-    bananas.forEach((b,i)=>{
-      ctx.drawImage(bananaImg,b.x,b.y,20,20);
-      if(Math.abs(b.x-player.x)<20 && Math.abs(b.y-player.y)<20){
-        bananas.splice(i,1); score+=10;
-        document.getElementById("bananaSound").play();
+async function loadData(){
+  try{
+    const res=await fetch(SHEET_URL);
+    const data=await res.json();
+    const quizList=document.getElementById("quizList");
+    const newsList=document.getElementById("newsList");
+    quizList.innerHTML=""; newsList.innerHTML="";
+    data.forEach((row,i)=>{
+      if(row.type==="quiz"){
+        const card=document.createElement("div");
+        card.className="card";
+        card.style.animationDelay=`${i*0.1}s`;
+        card.innerHTML=`<h3>${row.nom||"Sans Nom"}</h3><p>${row.question||"Pas de question"}</p>
+          <button class="btn adminQuizBtn">⚙️ Admin</button>`;
+        quizList.appendChild(card);
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{
+          e.stopPropagation();
+          adminAction(row);
+        }
+        card.onclick=()=>showQuiz(card,row);
+      } else if(row.type==="news"){
+        const card=document.createElement("div");
+        card.className="card";
+        card.style.animationDelay=`${i*0.1}s`;
+        card.innerHTML=`<h3>${row.titre||"Sans titre"}</h3><p>${row.contenu||"Pas de contenu"}</p>
+          <button class="btn adminQuizBtn">⚙️ Admin</button>`;
+        newsList.appendChild(card);
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{
+          e.stopPropagation();
+          adminAction(row);
+        }
       }
     });
-    // serpents
-    serpents.forEach((s,i)=>{
-      ctx.drawImage(snakeImg,s.x,s.y,30,30);
-      if(Math.abs(s.x-player.x)<25 && Math.abs(s.y-player.y)<25){
-        document.getElementById("monkeySound").play();
-        alert("🐍 Tu t'es fait mordre ! Score final : "+score);
-        stopGame();
-      }
-    });
-    ctx.drawImage(player.img,player.x,player.y,25,25);
-    document.getElementById("score").textContent="Score : "+score;
-  }
-  gameInterval=setInterval(update,60);
+  } catch(e){alert("Erreur lecture SheetDB : "+e);}
 }
-function stopGame(){
-  clearInterval(gameInterval);
-  if(score>best){
-    best=score;
-    localStorage.setItem("bestScore",best);
+
+function showQuiz(card,row){
+  document.getElementById("clickSound").play();
+  card.classList.add("flash");
+  setTimeout(()=>card.classList.remove("flash"),300);
+  if(card.querySelector(".answers")) return;
+
+  const answersContainer = document.createElement("div");
+  answersContainer.className = "answers";
+
+  const select = document.createElement("select");
+  select.className = "answer-select";
+
+  ["r1","r2","r3"].forEach((r,i)=>{
+    if(row[r]){
+      const option = document.createElement("option");
+      option.value = row[r];
+      option.textContent = `${i+1}. ${row[r]}`;
+      select.appendChild(option);
+    }
+  });
+
+  const checkBtn = document.createElement("button");
+  checkBtn.textContent = "✅ Valider";
+  checkBtn.className = "btn";
+  checkBtn.onclick = () => {
+    const val = select.value;
+    if(val === row.bonne){
+      alert("🎉 Bonne réponse !");
+    } else {
+      alert(`❌ Mauvaise réponse ! La bonne réponse était : ${row.bonne}`);
+    }
   }
-  document.getElementById("bestScore").textContent="🏆 Meilleur score : "+best;
+
+  answersContainer.appendChild(select);
+  answersContainer.appendChild(checkBtn);
+  card.appendChild(answersContainer);
 }
+
+function adminAction(row){
+  const pass=prompt("Mot de passe admin requis :");
+  if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
+  const action=confirm("OK = Modifier, Annuler = Supprimer ?");
+  if(action){
+    const newValue=prompt("Édite ton contenu :", row.question||row.contenu);
+    if(newValue){
+      let updated=row;
+      if(row.type==="quiz") updated.question=newValue;
+      else updated.contenu=newValue;
+      fetch(`${SHEET_URL}/id/${row.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)}).then(()=>loadData());
+    }
+  }else{
+    if(confirm("Supprimer définitivement ?")){
+      fetch(`${SHEET_URL}/id/${row.id}`,{method:"DELETE"}).then(()=>loadData());
+    }
+  }
+}
+
+document.getElementById("adminBtn").onclick=()=>document.getElementById("adminPanel").style.display="flex";
+document.getElementById("closeAdmin").onclick=()=>document.getElementById("adminPanel").style.display="none";
+document.getElementById("loginBtn").onclick=()=>{
+  const val=document.getElementById("adminPass").value;
+  if(val===ADMIN_PASS) document.getElementById("adminForms").style.display="block";
+  else alert("Mot de passe incorrect 🟥");
+};
+document.getElementById("saveQuiz").onclick=()=>{
+  const data={type:"quiz",nom:document.getElementById("quizName").value,question:document.getElementById("quizQuestion").value,r1:document.getElementById("r1").value,r2:document.getElementById("r2").value,r3:document.getElementById("r3").value,bonne:document.getElementById("good").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Quiz ajouté ✅");loadData();});
+};
+document.getElementById("saveNews").onclick=()=>{
+  const data={type:"news",titre:document.getElementById("newsTitle").value,contenu:document.getElementById("newsContent").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Actualité ajoutée ✅");loadData();});
+};
+document.getElementById("monkeySoundBtn").onclick=()=>{
+  const sound=document.getElementById("monkeySound");
+  sound.currentTime=0;
+  sound.play();
+};
+
+function createParticles(){
+  for(let i=0;i<50;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(3+Math.random()*5)+"s";
+    p.style.width=(5+Math.random()*10)+"px";
+    p.style.height=p.style.width;
+    document.getElementById("particles").appendChild(p);
+  }
+}
+createParticles();
+loadData();
 </script>
 </body>
 </html>
