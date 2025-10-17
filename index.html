@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐵 MonkeyGames - Jungle Royale</title>
+<title>🐵 MonkeyGames - Jungle</title>
 <style>
 :root{
   --bg:#0a1e0f; --card:#123018; --accent:#8b5cf6; --muted:#c0c0b0; --glass: rgba(255,255,255,0.05);
   font-family: 'Segoe UI', Roboto, sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow:hidden; position:relative; height:100vh;}
+body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow-x:hidden; position:relative;}
 .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
 .particle{position:absolute; width:10px; height:10px; background:rgba(139,92,246,0.3); border-radius:50%; animation:fall linear infinite;}
 @keyframes fall{0%{transform:translateY(-10px) rotate(0deg);}100%{transform:translateY(110vh) rotate(360deg);}}
@@ -18,7 +18,7 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 .header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
 .logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow:0 0 15px var(--accent);}
 .subtitle{font-size:12px;color:var(--muted);}
-.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px; overflow-y:auto; flex:1;}
+.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
 .panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
 .panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
 .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
@@ -42,10 +42,12 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 .close-btn{margin-top:10px;background:var(--accent); color:#fff; cursor:pointer; transition:0.3s;}
 .close-btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
 #monkeySoundBtn{margin-top:10px; background:#ffeb3b; color:#000; font-weight:bold;}
+.wheel-container{margin:30px auto; position:relative; width:300px; height:300px;}
+#wheelCanvas{transition:transform 5s cubic-bezier(.17,.67,.83,.67);}
+#wheelPointer{position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:20px solid #ffeb3b;}
+#wheelResult{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; font-weight:bold; text-align:center;}
 @keyframes fadeInUp{0%{opacity:0; transform:translateY(20px);}100%{opacity:1; transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
-/* Roue du destin */
-#wheelCanvas{background:#123018; border-radius:50%; display:block; margin:20px auto;}
 </style>
 </head>
 <body>
@@ -55,27 +57,31 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
   <div class="header">
     <div>
       <div class="logo">🐵 MonkeyGames</div>
-      <div class="subtitle">Quiz & Actualités de la Jungle</div>
+      <div class="subtitle">Quiz, Actualités & Roue de la Jungle</div>
     </div>
     <button class="btn" id="adminBtn">Admin</button>
   </div>
 
   <div class="container">
+    <!-- Quiz Panel -->
     <div class="panel">
       <h2>🧠 Quiz de la Jungle</h2>
       <div class="grid" id="quizList"></div>
     </div>
-
+    <!-- Actualités Panel -->
     <div class="panel">
       <h2>📰 Actualités</h2>
       <div class="grid" id="newsList"></div>
     </div>
-
+    <!-- Roue du Destin -->
     <div class="panel">
-      <h2>🎡 Roue du Destin</h2>
-      <canvas id="wheelCanvas" width="400" height="400"></canvas>
-      <button class="btn" id="spinBtn">Tourner la roue !</button>
-      <p id="wheelResult"></p>
+      <h2>🎡 La Roue du Destin de la Jungle</h2>
+      <div class="wheel-container">
+        <canvas id="wheelCanvas" width="300" height="300"></canvas>
+        <div id="wheelPointer"></div>
+        <div id="wheelResult"></div>
+      </div>
+      <button class="btn" id="spinWheelBtn">Tourner la roue</button>
     </div>
   </div>
 
@@ -116,26 +122,8 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 <script>
 const SHEET_URL="https://sheetdb.io/api/v1/b3hru5umxritu";
 const ADMIN_PASS="Marius2013.";
-const wheelRoles=[
-  "🪶 Esprit Suprême","⚡ Singe Ancestral","🌕 Singe Lunaire",
-  "🔥 Singe du Chaos","💎 Singe Doré","🍃 Singe Forestier","🌧️ Singe Pluvieux"
-];
 
-// ---------------- PARTICULES ----------------
-function createParticles(){
-  for(let i=0;i<50;i++){
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.left=Math.random()*100+"%";
-    p.style.animationDuration=(3+Math.random()*5)+"s";
-    p.style.width=(5+Math.random()*10)+"px";
-    p.style.height=p.style.width;
-    document.getElementById("particles").appendChild(p);
-  }
-}
-createParticles();
-
-// ---------------- LOAD DATA ----------------
+// Quiz & News
 async function loadData(){
   try{
     const res=await fetch(SHEET_URL);
@@ -146,85 +134,57 @@ async function loadData(){
     data.forEach((row,i)=>{
       if(row.type==="quiz"){
         const card=document.createElement("div");
-        card.className="card";
-        card.style.animationDelay=`${i*0.1}s`;
+        card.className="card"; card.style.animationDelay=`${i*0.1}s`;
         card.innerHTML=`<h3>${row.nom||"Sans Nom"}</h3><p>${row.question||"Pas de question"}</p>
           <button class="btn adminQuizBtn">⚙️ Admin</button>`;
         quizList.appendChild(card);
         card.querySelector(".adminQuizBtn").onclick=(e)=>{
-          e.stopPropagation();
-          adminAction(row);
+          e.stopPropagation(); adminAction(row);
         }
         card.onclick=()=>showQuiz(card,row);
       } else if(row.type==="news"){
         const card=document.createElement("div");
-        card.className="card";
-        card.style.animationDelay=`${i*0.1}s`;
+        card.className="card"; card.style.animationDelay=`${i*0.1}s`;
         card.innerHTML=`<h3>${row.titre||"Sans titre"}</h3><p>${row.contenu||"Pas de contenu"}</p>
           <button class="btn adminQuizBtn">⚙️ Admin</button>`;
         newsList.appendChild(card);
-        card.querySelector(".adminQuizBtn").onclick=(e)=>{
-          e.stopPropagation();
-          adminAction(row);
-        }
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{e.stopPropagation(); adminAction(row);}
       }
     });
   } catch(e){alert("Erreur lecture SheetDB : "+e);}
 }
 
-// ---------------- QUIZ ----------------
 function showQuiz(card,row){
   document.getElementById("clickSound").play();
-  card.classList.add("flash");
-  setTimeout(()=>card.classList.remove("flash"),300);
+  card.classList.add("flash"); setTimeout(()=>card.classList.remove("flash"),300);
   if(card.querySelector(".answers")) return;
 
-  const answersContainer = document.createElement("div");
-  answersContainer.className = "answers";
-
-  const select = document.createElement("select");
-  select.className = "answer-select";
-
+  const answersContainer=document.createElement("div");
+  answersContainer.className="answers";
+  const select=document.createElement("select"); select.className="answer-select";
   ["r1","r2","r3"].forEach((r,i)=>{
     if(row[r]){
-      const option = document.createElement("option");
-      option.value = row[r];
-      option.textContent = `${i+1}. ${row[r]}`;
+      const option=document.createElement("option"); option.value=row[r]; option.textContent=`${i+1}. ${row[r]}`;
       select.appendChild(option);
     }
   });
-
-  const checkBtn = document.createElement("button");
-  checkBtn.textContent = "✅ Valider";
-  checkBtn.className = "btn";
-  checkBtn.onclick = () => {
-    const val = select.value;
-    if(val === row.bonne){
-      alert("🎉 Bonne réponse !");
-    } else {
-      alert(`❌ Mauvaise réponse ! La bonne réponse était : ${row.bonne}`);
-    }
-  }
-
-  answersContainer.appendChild(select);
-  answersContainer.appendChild(checkBtn);
+  const checkBtn=document.createElement("button"); checkBtn.textContent="✅ Valider"; checkBtn.className="btn";
+  checkBtn.onclick=()=>{alert(select.value===row.bonne? "🎉 Bonne réponse !":`❌ Mauvaise réponse ! La bonne était : ${row.bonne}`);}
+  answersContainer.appendChild(select); answersContainer.appendChild(checkBtn);
   card.appendChild(answersContainer);
 }
 
-// ---------------- ADMIN ----------------
 function adminAction(row){
-  const pass=prompt("Mot de passe admin requis :");
-  if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
+  const pass=prompt("Mot de passe admin requis :"); if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
   const action=confirm("OK = Modifier, Annuler = Supprimer ?");
   if(action){
     const newValue=prompt("Édite ton contenu :", row.question||row.contenu);
     if(newValue){
       let updated=row;
-      if(row.type==="quiz") updated.question=newValue;
-      else updated.contenu=newValue;
+      if(row.type==="quiz") updated.question=newValue; else updated.contenu=newValue;
       fetch(`${SHEET_URL}/id/${row.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)}).then(()=>loadData());
     }
-  }else{
+  } else {
     if(confirm("Supprimer définitivement ?")){
       fetch(`${SHEET_URL}/id/${row.id}`,{method:"DELETE"}).then(()=>loadData());
     }
@@ -246,60 +206,72 @@ document.getElementById("saveNews").onclick=()=>{
   const data={type:"news",titre:document.getElementById("newsTitle").value,contenu:document.getElementById("newsContent").value};
   fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Actualité ajoutée ✅");loadData();});
 };
-document.getElementById("monkeySoundBtn").onclick=()=>{
-  const sound=document.getElementById("monkeySound");
-  sound.currentTime=0;
-  sound.play();
-};
+document.getElementById("monkeySoundBtn").onclick=()=>{const s=document.getElementById("monkeySound"); s.currentTime=0; s.play();};
 
-// ---------------- WHEEL ----------------
+function createParticles(){
+  for(let i=0;i<50;i++){
+    const p=document.createElement("div"); p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(3+Math.random()*5)+"s";
+    p.style.width=(5+Math.random()*10)+"px";
+    p.style.height=p.style.width;
+    document.getElementById("particles").appendChild(p);
+  }
+}
+createParticles();
+loadData();
+
+// Roue du Destin
 const wheelCanvas=document.getElementById("wheelCanvas");
 const ctx=wheelCanvas.getContext("2d");
-const wheelRadius=200;
-let spinning=false;
-let lastSpin=localStorage.getItem("lastSpin")||0;
+const wheelRoles=["🪶 Esprit Suprême","⚡ Singe Ancestral","🌕 Singe Lunaire","🔥 Singe du Chaos","💎 Singe Doré","🍃 Singe Forestier","🌧️ Singe Pluvieux"];
+const colors=["#8b5cf6","#facc15","#22c55e","#f87171","#60a5fa","#a78bfa","#f472b6"];
+const spinBtn=document.getElementById("spinWheelBtn");
+const wheelResult=document.getElementById("wheelResult");
+let isSpinning=false;
 
 function drawWheel(){
-  const angleStep=(2*Math.PI)/wheelRoles.length;
+  const size=wheelCanvas.width; const center=size/2; const arc=2*Math.PI/wheelRoles.length;
   for(let i=0;i<wheelRoles.length;i++){
-    const start=i*angleStep;
-    const end=start+angleStep;
-    ctx.beginPath();
-    ctx.moveTo(wheelRadius,wheelRadius);
-    ctx.arc(wheelRadius,wheelRadius,wheelRadius,start,end);
-    ctx.fillStyle=i%2===0?"#8b5cf6":"#ffb347";
-    ctx.fill();
-    ctx.save();
-    ctx.translate(wheelRadius,wheelRadius);
-    ctx.rotate(start+angleStep/2);
-    ctx.fillStyle="#000";
-    ctx.font="16px Arial";
-    ctx.textAlign="right";
-    ctx.fillText(wheelRoles[i],wheelRadius-10,0);
-    ctx.restore();
+    ctx.beginPath(); ctx.moveTo(center,center); ctx.fillStyle=colors[i]; ctx.arc(center,center,size/2,arc*i,arc*(i+1)); ctx.fill();
+    ctx.save(); ctx.translate(center,center); ctx.rotate(arc*(i+0.5)); ctx.textAlign="right"; ctx.fillStyle="#fff"; ctx.font="14px Arial"; ctx.fillText(wheelRoles[i],size/2-10,5); ctx.restore();
   }
 }
 drawWheel();
 
-document.getElementById("spinBtn").onclick=()=>{
-  const now=Date.now();
-  if(now-lastSpin<24*60*60*1000){alert("⏳ Tu ne peux tourner la roue qu'une fois par jour !"); return;}
-  lastSpin=now;
-  localStorage.setItem("lastSpin",lastSpin);
-  spinning=true;
-  let spinDeg=0;
-  const spinInterval=setInterval(()=>{
-    spinDeg+=10+Math.random()*20;
-    ctx.clearRect(0,0,wheelCanvas.width,wheelCanvas.height);
-    ctx.save();
-    ctx.translate(wheelRadius,wheelRadius);
-    ctx.rotate(spinDeg*Math.PI/180);
-    ctx.translate(-wheelRadius,-wheelRadius);
-    drawWheel();
-    ctx.restore();
-    if(spinDeg>=3600){ // arrête après ~10 tours
-      clearInterval(spinInterval);
-      spinning=false;
-      const finalAngle=(spinDeg%360);
-      const idx=Math.floor((360-finalAngle)/(360/wheelRoles.length))%wheelRoles.length;
-      const role=wheelRoles
+function canSpinToday(){
+  const lastSpin=localStorage.getItem("lastSpin");
+  if(!lastSpin) return true;
+  const last=new Date(lastSpin); const now=new Date();
+  return !(last.getDate()===now.getDate() && last.getMonth()===now.getMonth() && last.getFullYear()===now.getFullYear());
+}
+
+spinBtn.onclick=()=>{
+  if(isSpinning) return;
+  if(!canSpinToday()){ alert("⏳ Tu as déjà tourné la roue aujourd'hui !"); return; }
+  isSpinning=true;
+  const index=Math.floor(Math.random()*wheelRoles.length);
+  const arc=360/wheelRoles.length;
+  const spins=Math.floor(Math.random()*3)+5;
+  const finalAngle=360*spins + index*arc + arc/2;
+  let current=0;
+  const step=()=> {
+    current+=5;
+    if(current>=finalAngle){
+      wheelCanvas.style.transform=`rotate(${finalAngle}deg)`;
+      setTimeout(()=>{
+        wheelResult.textContent=`🎉 Ton rôle est : ${wheelRoles[index]}`;
+        localStorage.setItem("lastSpin", new Date());
+        localStorage.setItem("lastRole", wheelRoles[index]);
+        isSpinning=false;
+      },500);
+    } else { wheelCanvas.style.transform=`rotate(${current}deg)`; requestAnimationFrame(step); }
+  };
+  step();
+}
+
+const lastRole=localStorage.getItem("lastRole");
+if(lastRole) wheelResult.textContent=lastRole;
+</script>
+</body>
+</html>
