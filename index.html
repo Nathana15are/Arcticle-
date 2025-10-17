@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐵 MonkeyGames - Quiz Jungle</title>
+<title>🐵 MonkeyGames - Jungle Royale</title>
 <style>
 :root{
   --bg:#0a1e0f; --card:#123018; --accent:#8b5cf6; --muted:#c0c0b0; --glass: rgba(255,255,255,0.05);
   font-family: 'Segoe UI', Roboto, sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow-x:hidden; position:relative;}
+body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow:hidden; position:relative; height:100vh;}
 .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
 .particle{position:absolute; width:10px; height:10px; background:rgba(139,92,246,0.3); border-radius:50%; animation:fall linear infinite;}
 @keyframes fall{0%{transform:translateY(-10px) rotate(0deg);}100%{transform:translateY(110vh) rotate(360deg);}}
@@ -18,7 +18,7 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 .header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
 .logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow:0 0 15px var(--accent);}
 .subtitle{font-size:12px;color:var(--muted);}
-.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
+.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px; overflow-y:auto; flex:1;}
 .panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
 .panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
 .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
@@ -44,6 +44,8 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 #monkeySoundBtn{margin-top:10px; background:#ffeb3b; color:#000; font-weight:bold;}
 @keyframes fadeInUp{0%{opacity:0; transform:translateY(20px);}100%{opacity:1; transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+/* Roue du destin */
+#wheelCanvas{background:#123018; border-radius:50%; display:block; margin:20px auto;}
 </style>
 </head>
 <body>
@@ -67,6 +69,13 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
     <div class="panel">
       <h2>📰 Actualités</h2>
       <div class="grid" id="newsList"></div>
+    </div>
+
+    <div class="panel">
+      <h2>🎡 Roue du Destin</h2>
+      <canvas id="wheelCanvas" width="400" height="400"></canvas>
+      <button class="btn" id="spinBtn">Tourner la roue !</button>
+      <p id="wheelResult"></p>
     </div>
   </div>
 
@@ -107,7 +116,26 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 <script>
 const SHEET_URL="https://sheetdb.io/api/v1/b3hru5umxritu";
 const ADMIN_PASS="Marius2013.";
+const wheelRoles=[
+  "🪶 Esprit Suprême","⚡ Singe Ancestral","🌕 Singe Lunaire",
+  "🔥 Singe du Chaos","💎 Singe Doré","🍃 Singe Forestier","🌧️ Singe Pluvieux"
+];
 
+// ---------------- PARTICULES ----------------
+function createParticles(){
+  for(let i=0;i<50;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(3+Math.random()*5)+"s";
+    p.style.width=(5+Math.random()*10)+"px";
+    p.style.height=p.style.width;
+    document.getElementById("particles").appendChild(p);
+  }
+}
+createParticles();
+
+// ---------------- LOAD DATA ----------------
 async function loadData(){
   try{
     const res=await fetch(SHEET_URL);
@@ -144,6 +172,7 @@ async function loadData(){
   } catch(e){alert("Erreur lecture SheetDB : "+e);}
 }
 
+// ---------------- QUIZ ----------------
 function showQuiz(card,row){
   document.getElementById("clickSound").play();
   card.classList.add("flash");
@@ -182,6 +211,7 @@ function showQuiz(card,row){
   card.appendChild(answersContainer);
 }
 
+// ---------------- ADMIN ----------------
 function adminAction(row){
   const pass=prompt("Mot de passe admin requis :");
   if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
@@ -222,19 +252,54 @@ document.getElementById("monkeySoundBtn").onclick=()=>{
   sound.play();
 };
 
-function createParticles(){
-  for(let i=0;i<50;i++){
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.left=Math.random()*100+"%";
-    p.style.animationDuration=(3+Math.random()*5)+"s";
-    p.style.width=(5+Math.random()*10)+"px";
-    p.style.height=p.style.width;
-    document.getElementById("particles").appendChild(p);
+// ---------------- WHEEL ----------------
+const wheelCanvas=document.getElementById("wheelCanvas");
+const ctx=wheelCanvas.getContext("2d");
+const wheelRadius=200;
+let spinning=false;
+let lastSpin=localStorage.getItem("lastSpin")||0;
+
+function drawWheel(){
+  const angleStep=(2*Math.PI)/wheelRoles.length;
+  for(let i=0;i<wheelRoles.length;i++){
+    const start=i*angleStep;
+    const end=start+angleStep;
+    ctx.beginPath();
+    ctx.moveTo(wheelRadius,wheelRadius);
+    ctx.arc(wheelRadius,wheelRadius,wheelRadius,start,end);
+    ctx.fillStyle=i%2===0?"#8b5cf6":"#ffb347";
+    ctx.fill();
+    ctx.save();
+    ctx.translate(wheelRadius,wheelRadius);
+    ctx.rotate(start+angleStep/2);
+    ctx.fillStyle="#000";
+    ctx.font="16px Arial";
+    ctx.textAlign="right";
+    ctx.fillText(wheelRoles[i],wheelRadius-10,0);
+    ctx.restore();
   }
 }
-createParticles();
-loadData();
-</script>
-</body>
-</html>
+drawWheel();
+
+document.getElementById("spinBtn").onclick=()=>{
+  const now=Date.now();
+  if(now-lastSpin<24*60*60*1000){alert("⏳ Tu ne peux tourner la roue qu'une fois par jour !"); return;}
+  lastSpin=now;
+  localStorage.setItem("lastSpin",lastSpin);
+  spinning=true;
+  let spinDeg=0;
+  const spinInterval=setInterval(()=>{
+    spinDeg+=10+Math.random()*20;
+    ctx.clearRect(0,0,wheelCanvas.width,wheelCanvas.height);
+    ctx.save();
+    ctx.translate(wheelRadius,wheelRadius);
+    ctx.rotate(spinDeg*Math.PI/180);
+    ctx.translate(-wheelRadius,-wheelRadius);
+    drawWheel();
+    ctx.restore();
+    if(spinDeg>=3600){ // arrête après ~10 tours
+      clearInterval(spinInterval);
+      spinning=false;
+      const finalAngle=(spinDeg%360);
+      const idx=Math.floor((360-finalAngle)/(360/wheelRoles.length))%wheelRoles.length;
+      const role=wheelRoles
