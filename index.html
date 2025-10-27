@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7375895978180283"
-     crossorigin="anonymous"></script>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -14,42 +12,42 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflow-x:hidden; position:relative;}
 .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
-.particle{position:absolute; width:10px; height:10px; background:rgba(139,92,246,0.3); border-radius:50%; animation:fall linear infinite;}
+.particle{position:absolute; border-radius:50%; animation:fall linear infinite;}
 @keyframes fall{0%{transform:translateY(-10px) rotate(0deg);}100%{transform:translateY(110vh) rotate(360deg);}}
-.app{position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:20px; gap:20px;}
-.header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center;}
-.logo{font-size:28px;font-weight:bold; color:var(--accent); text-shadow:0 0 15px var(--accent);}
+.app{position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:10px; gap:15px;}
+.header{width:100%; max-width:1200px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;}
+.logo{font-size:24px;font-weight:bold; color:var(--accent); text-shadow:0 0 10px var(--accent);}
 .subtitle{font-size:12px;color:var(--muted);}
-.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:20px;}
-.panel{background:var(--card); border-radius:12px; padding:16px; box-shadow: 0 8px 20px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
-.panel:hover{transform:translateY(-4px); box-shadow:0 12px 28px rgba(139,92,246,0.6);}
-.grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:16px;}
-.card{background:var(--glass); padding:12px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:12px; border:1px solid rgba(139,92,246,0.2); opacity:0; transform:translateY(15px); animation:fadeInUp 0.6s ease forwards;}
-.card:hover{transform:translateY(-6px) rotateZ(1deg); box-shadow:0 12px 28px rgba(139,92,246,0.8); border:1px solid var(--accent);}
-.card h3{font-size:16px;}
-.card p{font-size:12px;color:var(--muted);}
+.container{display:flex; flex-direction:column; width:100%; max-width:1200px; gap:15px;}
+.panel{background:var(--card); border-radius:12px; padding:12px; box-shadow: 0 6px 15px rgba(0,0,0,0.7); transition:0.3s; transform:translateY(0);}
+.panel:hover{transform:translateY(-3px); box-shadow:0 10px 20px rgba(139,92,246,0.6);}
+.grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap:10px;}
+.card{background:var(--glass); padding:10px; border-radius:10px; cursor:pointer; transition:0.3s; display:flex; flex-direction:column; gap:8px; border:1px solid rgba(139,92,246,0.2); opacity:0; transform:translateY(15px); animation:fadeInUp 0.6s ease forwards;}
+.card:hover{transform:translateY(-4px) rotateZ(1deg); box-shadow:0 10px 20px rgba(139,92,246,0.8); border:1px solid var(--accent);}
+.card h3{font-size:14px;}
+.card p{font-size:11px;color:var(--muted);}
 .card.flash{animation:flashNeon 0.3s;}
-@keyframes flashNeon{0%{box-shadow:0 0 8px #8b5cf6; transform:scale(1.02);}50%{box-shadow:0 0 20px #8b5cf6; transform:scale(1.05);}100%{box-shadow:0 0 8px #8b5cf6; transform:scale(1);}}
-.answer-select{margin:8px 0; padding:8px; border-radius:6px; background:rgba(255,255,255,0.1); border:none; color:#fff;}
-.answer-btn{margin:8px 0; padding:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; transition:0.3s; display:block;}
+@keyframes flashNeon{0%{box-shadow:0 0 6px #8b5cf6; transform:scale(1.02);}50%{box-shadow:0 0 16px #8b5cf6; transform:scale(1.05);}100%{box-shadow:0 0 6px #8b5cf6; transform:scale(1);}}
+.answer-select{margin:5px 0; padding:6px; border-radius:6px; background:rgba(255,255,255,0.1); border:none; color:#fff;}
+.answer-btn{margin:5px 0; padding:8px; border-radius:6px; border:none; background:rgba(255,255,255,0.1); color:#fff; cursor:pointer; transition:0.3s;}
 .answer-btn:hover{background:var(--accent); transform:scale(1.05);}
-.correct{background:green !important;}
-.wrong{background:red !important;}
-.btn{padding:8px 12px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(139,92,246,0.5); color:inherit; cursor:pointer; transition:0.3s;}
-.btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
-.footer{text-align:center;color:var(--muted); font-size:12px; display:flex; justify-content:center; align-items:center; gap:10px; flex-direction:column;}
+.btn{padding:6px 10px; border-radius:8px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(139,92,246,0.5); color:inherit; cursor:pointer; transition:0.3s; font-size:12px;}
+.btn:hover{box-shadow:0 0 10px var(--accent); transform:scale(1.05);}
+.footer{text-align:center;color:var(--muted); font-size:11px; display:flex; justify-content:center; align-items:center; gap:8px; flex-direction:column;}
 .admin-panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:1000; animation:fadeIn 0.3s;}
-.admin-content{background:var(--card); padding:20px; border-radius:12px; max-width:500px; width:90%; max-height:90%; overflow:auto; box-shadow:0 0 20px rgba(139,92,246,0.7);}
-.admin-content h3{color:var(--accent); text-align:center; text-shadow:0 0 6px var(--accent);}
-.close-btn{margin-top:10px;background:var(--accent); color:#fff; cursor:pointer; transition:0.3s;}
-.close-btn:hover{box-shadow:0 0 12px var(--accent); transform:scale(1.05);}
-#monkeySoundBtn{margin-top:10px; background:#ffeb3b; color:#000; font-weight:bold;}
-.wheel-container{margin:30px auto; position:relative; width:300px; height:300px;}
+.admin-content{background:var(--card); padding:15px; border-radius:12px; max-width:400px; width:90%; max-height:90%; overflow:auto; box-shadow:0 0 15px rgba(139,92,246,0.7);}
+.admin-content h3{color:var(--accent); text-align:center; text-shadow:0 0 5px var(--accent);}
+.close-btn{margin-top:8px;background:var(--accent); color:#fff; cursor:pointer; transition:0.3s;}
+.close-btn:hover{box-shadow:0 0 10px var(--accent); transform:scale(1.05);}
+.wheel-container{margin:20px auto; position:relative; width:250px; height:250px;}
 #wheelCanvas{transition:transform 5s cubic-bezier(.17,.67,.83,.67);}
-#wheelPointer{position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:20px solid #ffeb3b;}
-#wheelResult{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; font-weight:bold; text-align:center;}
-@keyframes fadeInUp{0%{opacity:0; transform:translateY(20px);}100%{opacity:1; transform:translateY(0);}}
+#wheelPointer{position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:16px solid #ffeb3b;}
+#wheelResult{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; font-weight:bold; text-align:center; font-size:12px;}
+@keyframes fadeInUp{0%{opacity:0; transform:translateY(15px);}100%{opacity:1; transform:translateY(0);}}
 @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+.ad-banner{width:100%; background: rgba(255,255,255,0.05); border-radius:12px; border:1px solid rgba(139,92,246,0.3); padding:8px; margin:20px auto; box-shadow:0 3px 10px rgba(0,0,0,0.15); backdrop-filter:blur(8px); text-align:center;}
+.ad-box{min-height:70px;}
+@media(max-width:480px){.ad-box{min-height:60px;}}
 </style>
 </head>
 <body>
@@ -58,6 +56,162 @@ body{background: linear-gradient(160deg,#0a1e0f,#123018); color:#e6eef8; overflo
 <div class="app">
   <div class="header">
     <div>
-      <div class="logo">🐵 Maintenance</
-      </style>
+      <div class="logo">🐵 MonkeyGames</div>
+      <div class="subtitle">Quiz, Actualités & Roue de la Jungle</div>
+    </div>
+    <button class="btn" id="adminBtn">Admin</button>
+  </div>
+
+  <div class="container">
+    <div class="panel"><h2>🧠 Quiz</h2><div class="grid" id="quizList"></div></div>
+    <div class="panel"><h2>📰 Actualités</h2><div class="grid" id="newsList"></div></div>
+    <div class="panel"><h2>🎡 Roue du Destin</h2>
+      <div class="wheel-container">
+        <canvas id="wheelCanvas" width="250" height="250"></canvas>
+        <div id="wheelPointer"></div>
+        <div id="wheelResult"></div>
+      </div>
+      <button class="btn" id="spinWheelBtn">Tourner</button>
+    </div>
+
+    <div class="ad-banner">
+      <div class="ad-box">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7375895978180283" crossorigin="anonymous"></script>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-7375895978180283"
+             data-ad-slot="6641703657"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2025 MonkeyGames
+    <button class="btn" id="monkeySoundBtn">🎵 Cri de singe</button>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-content">
+    <h3>Admin Panel</h3>
+    <input type="password" id="adminPass" placeholder="Mot de passe">
+    <button class="btn" id="loginBtn">Se connecter</button>
+    <div id="adminForms" style="display:none;">
+      <h3>Ajouter Quiz</h3>
+      <input id="quizName" placeholder="Nom du quiz">
+      <input id="quizQuestion" placeholder="Question">
+      <input id="r1" placeholder="Réponse 1">
+      <input id="r2" placeholder="Réponse 2">
+      <input id="r3" placeholder="Réponse 3">
+      <input id="good" placeholder="Bonne réponse">
+      <button class="btn" id="saveQuiz">Ajouter</button>
+      <hr>
+      <h3>Ajouter Actualité</h3>
+      <input id="newsTitle" placeholder="Titre">
+      <textarea id="newsContent" placeholder="Contenu"></textarea>
+      <button class="btn" id="saveNews">Ajouter</button>
+    </div>
+    <button class="btn close-btn" id="closeAdmin">Fermer</button>
+  </div>
+</div>
+
+<audio id="clickSound" src="https://assets.codepen.io/605876/click-neon.mp3" preload="auto"></audio>
+<audio id="suspenseSound" src="https://assets.codepen.io/605876/suspense-loop.mp3" loop preload="auto"></audio>
+<audio id="monkeySound" src="https://assets.codepen.io/605876/monkey-cry.mp3" preload="auto"></audio>
+
+<script>
+const SHEET_URL="https://sheetdb.io/api/v1/s5vpefb6zjed3";
+const ADMIN_PASS="Marius2013.";
+let cacheData=null;
+
+// === Particules ===
+function createParticles(){for(let i=0;i<50;i++){const p=document.createElement("div");p.className="particle";p.style.left=Math.random()*100+"%";p.style.width=p.style.height=(5+Math.random()*10)+"px";p.style.animationDuration=(3+Math.random()*5)+"s";document.getElementById("particles").appendChild(p);}}createParticles();
+
+// === Charger Quiz & News ===
+async function loadData(){
+  try{
+    const res=await fetch(SHEET_URL); cacheData=await res.json();
+    const quizList=document.getElementById("quizList"), newsList=document.getElementById("newsList");
+    quizList.innerHTML=""; newsList.innerHTML="";
+    cacheData.forEach((row,i)=>{
+      if(row.type==="quiz"){
+        const card=document.createElement("div"); card.className="card"; card.style.animationDelay=`${i*0.05}s`;
+        card.innerHTML=`<h3>${row.nom||"Sans Nom"}</h3><p>${row.question||"Pas de question"}</p><button class="btn adminQuizBtn">⚙️ Admin</button>`;
+        quizList.appendChild(card);
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{e.stopPropagation(); adminAction(row);}
+        card.onclick=()=>showQuiz(card,row);
+      } else if(row.type==="news"){
+        const card=document.createElement("div"); card.className="card"; card.style.animationDelay=`${i*0.05}s`;
+        card.innerHTML=`<h3>${row.titre||"Sans titre"}</h3><p>${row.contenu||"Pas de contenu"}</p><button class="btn adminQuizBtn">⚙️ Admin</button>`;
+        newsList.appendChild(card);
+        card.querySelector(".adminQuizBtn").onclick=(e)=>{e.stopPropagation(); adminAction(row);}
+      }
+    });
+  }catch(e){alert("Erreur SheetDB : "+e);}
+}
+
+// === Quiz Interaction ===
+function showQuiz(card,row){
+  document.getElementById("clickSound").play();
+  card.classList.add("flash"); setTimeout(()=>card.classList.remove("flash"),300);
+  if(card.querySelector(".answers")) return;
+  const answersContainer=document.createElement("div"); answersContainer.className="answers";
+  const select=document.createElement("select"); select.className="answer-select";
+  ["r1","r2","r3"].forEach((r,i)=>{if(row[r]){const opt=document.createElement("option");opt.value=row[r];opt.textContent=`${i+1}. ${row[r]}`;select.appendChild(opt);}});
+  const checkBtn=document.createElement("button"); checkBtn.textContent="✅ Valider"; checkBtn.className="btn";
+  checkBtn.onclick=()=>{alert(select.value===row.bonne? "🎉 Bonne réponse !":`❌ Mauvaise : ${row.bonne}`);}
+  answersContainer.appendChild(select); answersContainer.appendChild(checkBtn); card.appendChild(answersContainer);
+}
+
+// === Admin ===
+function adminAction(row){
+  const pass=prompt("Mot de passe admin requis :"); if(pass!==ADMIN_PASS)return alert("Mot de passe incorrect !");
+  const action=confirm("OK=Modifier, Annuler=Supprimer ?");
+  if(action){
+    const newValue=prompt("Édite ton contenu :", row.question||row.contenu);
+    if(newValue){ let updated=row; if(row.type==="quiz") updated.question=newValue; else updated.contenu=newValue;
+      fetch(`${SHEET_URL}/id/${row.id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(updated)}).then(()=>loadData());
+    }
+  } else {if(confirm("Supprimer définitivement ?")){fetch(`${SHEET_URL}/id/${row.id}`,{method:"DELETE"}).then(()=>loadData());}}
+}
+
+document.getElementById("adminBtn").onclick=()=>document.getElementById("adminPanel").style.display="flex";
+document.getElementById("closeAdmin").onclick=()=>document.getElementById("adminPanel").style.display="none";
+document.getElementById("loginBtn").onclick=()=>{
+  if(document.getElementById("adminPass").value===ADMIN_PASS) document.getElementById("adminForms").style.display="block";
+  else alert("Mot de passe incorrect 🟥");
+};
+document.getElementById("saveQuiz").onclick=()=>{
+  const data={type:"quiz",nom:document.getElementById("quizName").value,question:document.getElementById("quizQuestion").value,r1:document.getElementById("r1").value,r2:document.getElementById("r2").value,r3:document.getElementById("r3").value,bonne:document.getElementById("good").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Quiz ajouté ✅");loadData();});
+};
+document.getElementById("saveNews").onclick=()=>{
+  const data={type:"news",titre:document.getElementById("newsTitle").value,contenu:document.getElementById("newsContent").value};
+  fetch(SHEET_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}).then(()=>{alert("Actualité ajoutée ✅");loadData();});
+};
+
+// === Sons ===
+document.getElementById("monkeySoundBtn").onclick=()=>{const s=document.getElementById("monkeySound"); s.currentTime=0; s.play();};
+
+// === Roue du destin ===
+const wheelCanvas=document.getElementById("wheelCanvas"), ctx=wheelCanvas.getContext("2d");
+const wheelRoles=["🪶 Esprit Suprême","⚡ Singe Ancestral","🌕 Singe Lunaire","🔥 Singe du Chaos","💎 Singe Doré","🍃 Singe Forestier","🌧️ Singe Pluvieux"];
+const colors=["#8b5cf6","#facc15","#22c55e","#f87171","#60a5fa","#a78bfa","#f472b6"];
+let isSpinning=false;
+function drawWheel(){const size=wheelCanvas.width; const center=size/2; const arc=2*Math.PI/wheelRoles.length;for(let i=0;i<wheelRoles.length;i++){ctx.beginPath();ctx.moveTo(center,center);ctx.fillStyle=colors[i];ctx.arc(center,center,size/2,arc*i,arc*(i+1));ctx.fill();ctx.save();ctx.translate(center,center);ctx.rotate(arc*(i+0.5));ctx.textAlign="right";ctx.fillStyle="#fff";ctx.font="14px Arial";ctx.fillText(wheelRoles[i],size/2-10,5);ctx.restore();}}drawWheel();
+function canSpinToday(){const lastSpin=localStorage.getItem("lastSpin");if(!lastSpin)return true;const last=new Date(lastSpin);const now=new Date();return !(last.getDate()===now.getDate() && last.getMonth()===now.getMonth() && last.getFullYear()===now.getFullYear());}
+document.getElementById("spinWheelBtn").onclick=()=>{
+  if(isSpinning)return;
+  if(!canSpinToday()){alert("⏳ Déjà tourné aujourd'hui !"); return;}
+  isSpinning=true;
+  const index=Math.floor(Math.random()*wheelRoles.length); const deg=index*(360/wheelRoles.length)+360*5; wheelCanvas.style.transform=`rotate(${deg}deg)`; setTimeout(()=>{alert(`🎉 Gagné : ${wheelRoles[index]} !`); localStorage.setItem("lastSpin",new Date()); isSpinning=false;},5000);
+};
+
+// === Charger data au lancement ===
+loadData();
+</script>
+</body>
 </html>
